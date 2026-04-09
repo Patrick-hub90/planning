@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EMACO — Planning Maintenance Aéronefs</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0a0e17;--bg2:#0c1019;--bg3:#0f1520;--border:#1a1f2e;--border2:#1e2a3a;
+    --text:#c8d6e5;--text2:#5a6a7e;--white:#e8eef5;
+    --pf-bg:#1a2744;--pf-text:#7eb8ff;--pf-border:#2d4a7a;
+    --lav-bg:#1a3a2a;--lav-text:#7effa8;--lav-border:#2d7a4a;
+    --tc-bg:#3a2a1a;--tc-text:#ffc87e;--tc-border:#7a5a2d;
+    --ok-bg:#0f2e1a;--ok-text:#4ade80;--ok-border:#166534;
+    --wait-bg:#1e1a2e;--wait-text:#a78bfa;--wait-border:#4c3d8f}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;font-size:14px}
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+  .header{border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;background:var(--bg2);flex-wrap:wrap;gap:12px}
+  .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--pf-bg),var(--pf-border));display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--pf-text)}
+  .title{font-weight:700;font-size:20px;color:var(--white);letter-spacing:-.5px}
+  .subtitle{font-size:12px;color:var(--text2);margin-top:2px}
+  .conn-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
+  .conn-dot.on{background:#4ade80}.conn-dot.off{background:#f87171}
+
+  .btn{padding:9px 18px;border-radius:8px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:all .15s}
+  .btn:hover{background:#1a2535;border-color:#2d4a6a}
+  .btn.active{background:var(--pf-bg);border-color:var(--pf-border);color:var(--pf-text)}
+  .btn-primary{background:var(--pf-bg);border-color:var(--pf-border);color:var(--pf-text)}
+  .btn-danger{border-color:#7a2d2d;color:#ff7e7e}.btn-danger:hover{background:#2e0f0f}
+  .btn-sm{padding:5px 12px;font-size:12px}.btn-xs{padding:3px 8px;font-size:11px}
+
+  .content{padding:20px 24px}
+  .stats{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+  .stat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 20px;min-width:120px;flex:1}
+  .stat-label{font-size:11px;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;font-weight:500}
+  .stat-value{font-size:28px;font-weight:700}
+
+  .tag{display:inline-block;padding:3px 10px;border-radius:5px;font-size:12px;font-weight:600}
+  input[type="date"],input[type="text"],select{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:7px 12px;border-radius:6px;font-family:inherit;font-size:13px}
+  input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.7)}
+
+  table{width:100%;border-collapse:collapse}
+  th{padding:12px 14px;text-align:left;font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;font-weight:600;border-bottom:1px solid var(--border)}
+  td{padding:10px 14px;border-bottom:1px solid #0f1520;font-size:13px}
+
+  .week-block{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden}
+  .week-header{padding:10px 16px;border-bottom:1px solid var(--border);background:#0a0e14;font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+  .week-grid{display:grid}
+  .day-col{border-right:1px solid #12161f;padding:12px 10px;min-height:150px;transition:all .15s}
+  .day-col:hover{background:#0d1220}
+  .day-col:last-child{border-right:none}
+  .day-col.today{background:#0d1525;border-top:2px solid var(--pf-border)}
+  .day-label{font-size:13px;font-weight:700;margin-bottom:10px}
+  .section-label{font-size:10px;opacity:.6;margin-bottom:3px;letter-spacing:1px;font-weight:600}
+  .ac-tag{border-radius:5px;padding:4px 8px;font-size:12px;font-weight:600;margin-bottom:3px;display:flex;align-items:center;gap:6px}
+  .ac-tag.done{opacity:.6}
+  .ac-tag.overdue{animation:overduePulse 2s infinite}
+  @keyframes overduePulse{0%,100%{opacity:1}50%{opacity:.7}}
+  .overdue-banner{background:#2e0f0f;border:1px solid #7a2d2d;border-radius:12px;padding:16px 20px;margin-bottom:18px}
+  .overdue-banner h3{color:#ff7e7e;font-size:15px;margin-bottom:10px}
+  .overdue-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #3a1515;font-size:13px}
+  .overdue-item:last-child{border-bottom:none}
+  .overdue-badge{background:#5c1a1a;color:#ff7e7e;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700}
+  .ac-tag .status-icon{font-size:13px}
+  .legend{display:flex;gap:8px;flex-wrap:wrap}
+
+  .toggle{width:42px;height:24px;border-radius:12px;cursor:pointer;position:relative;border:none;transition:all .2s}
+  .toggle.on{background:#2d7a4a}.toggle.off{background:#7a2d2d}
+  .toggle::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;transition:all .2s}
+  .toggle.on::after{left:21px}.toggle.off::after{left:3px}
+
+  .pin-row{display:flex;gap:6px;align-items:center;margin-top:4px;flex-wrap:wrap}
+  .pin-btn{padding:2px 6px;border-radius:4px;border:1px dashed var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:10px;font-family:inherit;transition:all .15s}
+  .pin-btn:hover{border-style:solid;background:var(--bg3)}
+
+  .overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:100}
+  .modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:480px;width:90%;max-height:80vh;overflow-y:auto}
+  .modal h3{font-size:16px;color:var(--white);margin-bottom:16px}
+  .modal-row{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap}
+  .field label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500}
+
+  #notif{display:none;position:fixed;top:20px;right:20px;padding:14px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:200;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+
+  .sync-bar{background:#0f1a2e;border-bottom:1px solid var(--pf-border);padding:8px 24px;display:flex;align-items:center;gap:12px;font-size:13px;color:var(--pf-text)}
+  .sync-bar .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--pf-text);border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .print-header{display:none}
+  @media print{
+    @page{size:landscape;margin:10mm}
+    *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+    body{background:#fff!important;color:#222!important;font-size:11px!important;font-family:'Helvetica Neue',Arial,sans-serif!important}
+    .header,.stats,.no-print,.overlay,.pin-row,.pin-btn,.legend,.btn,#notif,.sync-bar{display:none!important}
+    .print-header{display:block!important;text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:3px solid #1a2744}
+    .print-header h1{font-size:17px;color:#1a2744;margin-bottom:4px}
+    .print-header p{font-size:10px;color:#555;margin-top:2px}
+    .print-header .print-legend{display:flex!important;gap:16px;justify-content:center;margin-top:10px}
+    .print-header .print-legend span{padding:3px 12px;border-radius:4px;font-weight:700;font-size:9px;border:1px solid #bbb}
+    .pl-pf{background:#d0e2ff!important;color:#102a5c!important}.pl-lav{background:#c8f7d5!important;color:#0a4d20!important}.pl-tc{background:#ffeacc!important;color:#6b3e00!important}
+    .content{padding:0!important}
+    .week-block{border:1.5px solid #bbb!important;border-radius:6px!important;margin-bottom:12px!important;break-inside:avoid;background:#fff!important}
+    .week-header{background:#1a2744!important;color:#fff!important;padding:7px 12px!important;font-size:11px!important}
+    .day-col{border-right:1px solid #d0d5dd!important;padding:8px 7px!important;min-height:75px!important;background:#fff!important}
+    .day-col.today{background:#eef4ff!important;border-top:2px solid #3b7ddd!important}
+    .day-label{font-size:11px!important;font-weight:700!important;color:#1a2744!important;margin-bottom:6px!important;padding-bottom:4px;border-bottom:1px solid #e5e9ef}
+    .section-label{font-size:8px!important;font-weight:700!important;opacity:1!important}
+    .ac-tag{font-size:9px!important;padding:2px 6px!important;margin-bottom:2px!important;border-radius:3px!important}
+    .ac-tag[style*="pf-bg"]{background:#d0e2ff!important;color:#102a5c!important;border:1px solid #7aacf0!important}
+    .ac-tag[style*="lav-bg"]{background:#c8f7d5!important;color:#0a4d20!important;border:1px solid #5cc97a!important}
+    .ac-tag[style*="tc-bg"]{background:#ffeacc!important;color:#6b3e00!important;border:1px solid #e0a84c!important}
+    .ac-tag.done{background:#e8fce8!important;color:#166534!important;border:1px solid #86d99e!important}
+    .print-footer{display:block!important;text-align:center;margin-top:12px;font-size:8px;color:#888;border-top:1px solid #ddd;padding-top:8px}
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  .fade-in{animation:fadeIn .3s ease}
+</style>
+</head>
+<body>
+
+<!-- ==================== FIREBASE CONFIG ==================== -->
+<script>
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAtYDTWrrpHlKRrkJajBU87m1Pbw_mfwOQ",
+  authDomain: "planning-pf-tc-la.firebaseapp.com",
+  databaseURL: "https://planning-pf-tc-la-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "planning-pf-tc-la",
+  storageBucket: "planning-pf-tc-la.firebasestorage.app",
+  messagingSenderId: "822523737615",
+  appId: "1:822523737615:web:44ef0cd81eec1f1da4d57a"
+};
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<div class="print-header">
+  <h1>EMACO — Programme de Maintenance Aéronefs</h1>
+  <p id="printSub"></p>
+  <div class="print-legend">
+    <span class="pl-pf">PF = Point Fixe</span>
+    <span class="pl-lav">LAV = Lavage</span>
+    <span class="pl-tc">TC = Trait. Corrosion</span>
+    <span style="background:#e8fce8!important;color:#166534!important;border:1px solid #86d99e!important;padding:3px 12px;border-radius:4px;font-weight:700;font-size:9px">✓ = Réalisé</span>
+  </div>
+</div>
+
+<div class="header">
+  <div style="display:flex;align-items:center;gap:16px">
+    <div class="logo">✈</div>
+    <div>
+      <div class="title">EMACO — Planning Maintenance</div>
+      <div class="subtitle">Synchronisé en temps réel avec Firebase</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <span id="connStatus" style="font-size:12px"><span class="conn-dot off"></span>Hors ligne</span>
+    <button class="btn" id="btnFleet" onclick="showView('fleet')">Flotte (<span id="fleetCount">0</span>)</button>
+    <button class="btn active" id="btnSchedule" onclick="showView('schedule')">Planning</button>
+    <button class="btn" id="btnRetards" onclick="showView('retards')" style="position:relative">🔴 Retards <span id="retardsBadge" style="background:#dc2626;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;font-weight:700">0</span></button>
+    <button class="btn" onclick="window.print()">🖨️</button>
+  </div>
+</div>
+
+<div id="syncBar" class="sync-bar" style="display:none"><span class="spinner"></span> Synchronisation en cours...</div>
+<div id="notif"></div>
+
+<div class="content">
+  <div class="stats" id="statsBar"></div>
+  <div id="fleetView" class="fade-in" style="display:none"></div>
+  <div id="scheduleView" class="fade-in"></div>
+  <div id="retardsView" class="fade-in" style="display:none"></div>
+  <div class="print-footer" style="display:none">PF: 7-9j après vol/PF · Lavage: 9-14j · Trait. Corrosion: 9-14j · LAV+TC même jour OK · PF jamais avec LAV/TC</div>
+</div>
+<div id="pinModal" class="overlay" style="display:none"></div>
+
+<script>
+const WD=["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"];
+const toISO=d=>d.toISOString().slice(0,10);
+const addD=(d,n)=>{const r=new Date(d);r.setDate(r.getDate()+n);return r;};
+const dk=d=>new Date(d).toISOString().slice(0,10);
+const isWE=d=>{const x=new Date(d).getDay();return x===0||x===6;};
+const fmt=d=>{if(!d)return"";return new Date(d).toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"});};
+const dAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return toISO(d);};
+const today=toISO(new Date());
+function fbKey(im){return im.replace(/[.#$/\[\]]/g,"_");}
+
+function makeAc(im,ty){return{immat:im,type:ty,active:true,lastFlight:dAgo(10),lastLavage:dAgo(15),lastCorrosion:dAgo(15),lastPointFixe:dAgo(30)};}
+const DEF=["TY-43L","TY-44L","TY-45L","TY-46L","TY-47L","TY-48L","TY-49L","TY-50L","TY-51L","TY-52L","TY-53L","TY-54L","TY-55L","TY-56L","TY-60L","TY-61L","TY-62L","TY-63L","TY-64L"].map(i=>makeAc(i,"ULM")).concat([makeAc("TY-27A","Avion"),makeAc("TY-29A","Avion")]);
+
+let fleet=[],sched={},pins={},curView="schedule",db=null;
+let startDate=(()=>{const d=new Date();while(d.getDay()!==1)d.setDate(d.getDate()-1);return toISO(d);})();
+
+// ============ FIREBASE ============
+function initFB(){
+  try{
+    if(FIREBASE_CONFIG.apiKey==="VOTRE_API_KEY"){
+      updateConn(false);fleet=JSON.parse(JSON.stringify(DEF));refresh();return;
+    }
+    firebase.initializeApp(FIREBASE_CONFIG);db=firebase.database();
+    db.ref(".info/connected").on("value",s=>updateConn(!!s.val()));
+    showSync(true);
+    // Real-time sync
+    db.ref("fleet").on("value",snap=>{
+      const d=snap.val();
+      if(d){fleet=Object.values(d);}else{fleet=JSON.parse(JSON.stringify(DEF));pushAll();}
+      showSync(false);refresh();
+    });
+    db.ref("pins").on("value",snap=>{pins=snap.val()||{};refresh();});
+  }catch(e){console.error(e);updateConn(false);fleet=JSON.parse(JSON.stringify(DEF));refresh();}
+}
+function pushAll(){if(!db)return;const o={};fleet.forEach(a=>{o[fbKey(a.immat)]=a;});db.ref("fleet").set(o);}
+function updateConn(on){
+  document.getElementById("connStatus").innerHTML=on?'<span class="conn-dot on"></span>Firebase connecté':'<span class="conn-dot off"></span>Hors ligne';
+}
+function showSync(on){document.getElementById("syncBar").style.display=on?"flex":"none";}
+function showNotif(msg,type){
+  const n=document.getElementById("notif");n.textContent=msg;
+  n.style.background=type==="err"?"#5c1a1a":"#1a3a2a";n.style.color=type==="err"?"#ff7e7e":"#7effa8";
+  n.style.display="block";setTimeout(()=>{n.style.display="none";},3000);
+}
+
+// ============ VALIDATION LOGIC ============
+// A task is "done" if the aircraft's last date for that type >= the scheduled date
+function isDone(immat,type,schedDate){
+  const ac=fleet.find(a=>a.immat===immat);if(!ac)return false;
+  let ref=null;
+  if(type==="pointFixe")ref=ac.lastPointFixe;
+  if(type==="lavage")ref=ac.lastLavage;
+  if(type==="corrosion")ref=ac.lastCorrosion;
+  if(!ref)return false;
+  return ref>=schedDate;
+}
+
+// ============ SCHEDULE ============
+let overdueList=[];
+function genSched(){
+  const days=35,sd=new Date(startDate),sc={};
+  overdueList=[];
+  for(let i=0;i<days;i++){sc[dk(addD(sd,i))]={pointFixe:[],lavage:[],corrosion:[]};}
+
+  Object.keys(pins).forEach(key=>{const[im,type,date]=key.split("|");if(sc[date]&&!sc[date][type]?.includes(im))sc[date][type].push(im);});
+
+  const activeFleet=fleet.filter(a=>a.active);
+  const needs=[];
+  const NOW=new Date(today);
+
+  activeFleet.forEach(ac=>{
+    if(!ac.lastFlight)return;
+    const lf=new Date(ac.lastFlight);
+
+    // Point fixe
+    const pfRef=ac.lastPointFixe?new Date(ac.lastPointFixe):null;
+    const pfBase=pfRef&&pfRef>lf?pfRef:lf;
+    const pfDue=addD(pfBase,7);
+    const pfDeadline=addD(pfBase,9);
+    const pfDone=ac.lastPointFixe&&new Date(ac.lastPointFixe)>=pfBase;
+    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|pointFixe|"))){
+      const isOverdue=!pfDone&&pfDeadline<NOW;
+      if(isOverdue){
+        // Force schedule ASAP (today or next working day)
+        needs.push({immat:ac.immat,type:"pointFixe",due:sd,priority:0,overdue:true});
+        overdueList.push({immat:ac.immat,type:"pointFixe",dueDate:dk(pfDue),deadline:dk(pfDeadline),daysLate:Math.floor((NOW-pfDeadline)/86400000)});
+      } else {
+        needs.push({immat:ac.immat,type:"pointFixe",due:pfDue,priority:pfDue.getTime()});
+      }
+    }
+
+    // Lavage
+    const lavRef=ac.lastLavage?new Date(ac.lastLavage):lf;
+    const lavDeadline=addD(lavRef,14);
+    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|lavage|"))){
+      const isOverdue=lavDeadline<NOW;
+      if(isOverdue){
+        needs.push({immat:ac.immat,type:"lavage",due:sd,priority:1,overdue:true});
+        overdueList.push({immat:ac.immat,type:"lavage",dueDate:dk(addD(lavRef,9)),deadline:dk(lavDeadline),daysLate:Math.floor((NOW-lavDeadline)/86400000)});
+      } else {
+        needs.push({immat:ac.immat,type:"lavage",due:addD(lavRef,9),priority:addD(lavRef,9).getTime()});
+      }
+    }
+
+    // Corrosion
+    const corRef=ac.lastCorrosion?new Date(ac.lastCorrosion):lf;
+    const corDeadline=addD(corRef,14);
+    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|corrosion|"))){
+      const isOverdue=corDeadline<NOW;
+      if(isOverdue){
+        needs.push({immat:ac.immat,type:"corrosion",due:sd,priority:2,overdue:true});
+        overdueList.push({immat:ac.immat,type:"corrosion",dueDate:dk(addD(corRef,9)),deadline:dk(corDeadline),daysLate:Math.floor((NOW-corDeadline)/86400000)});
+      } else {
+        needs.push({immat:ac.immat,type:"corrosion",due:addD(corRef,9),priority:addD(corRef,9).getTime()});
+      }
+    }
+  });
+  needs.sort((a,b)=>a.priority-b.priority);
+  const assigned=new Set();
+  for(let ni=0;ni<needs.length;ni++){
+    const n=needs[ni],key=`${n.immat}-${n.type}-${n.due.getTime()}`;
+    if(assigned.has(key))continue;
+    for(let i=0;i<days;i++){
+      const d=addD(sd,i),ddkk=dk(d);
+      if(isWE(d)||d<n.due)continue;
+      const slot=sc[ddkk];if(!slot)continue;
+      if(n.type==="pointFixe"&&slot.pointFixe.length>=3)continue;
+      if(n.type==="lavage"&&slot.lavage.length>=3)continue;
+      if(n.type==="corrosion"&&slot.corrosion.length>=1)continue;
+      if(n.type==="pointFixe"&&(slot.lavage.includes(n.immat)||slot.corrosion.includes(n.immat)))continue;
+      if((n.type==="lavage"||n.type==="corrosion")&&slot.pointFixe.includes(n.immat))continue;
+      if(slot[n.type].includes(n.immat))continue;
+      slot[n.type].push(n.immat);assigned.add(key);
+      if(n.type==="lavage"||n.type==="corrosion"){const next=addD(d,9);if(next<addD(sd,days)){needs.push({immat:n.immat,type:n.type,due:next,priority:next.getTime()});needs.sort((a,b)=>a.priority-b.priority);}}
+      if(n.type==="pointFixe"){const next=addD(d,7);if(next<addD(sd,days)){needs.push({immat:n.immat,type:"pointFixe",due:next,priority:next.getTime()});needs.sort((a,b)=>a.priority-b.priority);}}
+      break;
+    }
+  }
+  sched=sc;
+}
+
+const typeLabel=t=>t==="pointFixe"?"Point Fixe":t==="lavage"?"Lavage":"Trait. Corrosion";
+const typeBg=t=>t==="pointFixe"?"var(--pf-bg)":t==="lavage"?"var(--lav-bg)":"var(--tc-bg)";
+const typeText=t=>t==="pointFixe"?"var(--pf-text)":t==="lavage"?"var(--lav-text)":"var(--tc-text)";
+const typeBorder=t=>t==="pointFixe"?"var(--pf-border)":t==="lavage"?"var(--lav-border)":"var(--tc-border)";
+
+function getStats(){
+  let pf=0,lav=0,cor=0,done=0,total=0;
+  Object.entries(sched).forEach(([date,s])=>{
+    ["pointFixe","lavage","corrosion"].forEach(type=>{
+      s[type].forEach(im=>{total++;if(isDone(im,type,date))done++;});
+    });
+    pf+=s.pointFixe.length;lav+=s.lavage.length;cor+=s.corrosion.length;
+  });
+  return{pf,lav,cor,done,total,overdue:overdueList.length,active:fleet.filter(a=>a.active&&a.lastFlight).length,fleetSize:fleet.length};
+}
+
+// ============ RENDER ============
+function renderStats(){
+  const s=getStats();
+  document.getElementById("fleetCount").textContent=s.fleetSize;
+  const pct=s.total?Math.round(s.done/s.total*100):0;
+  document.getElementById("statsBar").innerHTML=[
+    {l:"Actifs",v:s.active,c:"var(--pf-text)"},
+    {l:"Points Fixes",v:s.pf,c:"var(--pf-text)"},
+    {l:"Lavages",v:s.lav,c:"var(--lav-text)"},
+    {l:"Trait. Corrosion",v:s.cor,c:"var(--tc-text)"},
+    {l:"Réalisés",v:`${s.done}/${s.total}`,c:"var(--ok-text)"},
+    {l:"En retard",v:s.overdue,c:s.overdue?"#ff7e7e":"var(--ok-text)"},
+    {l:"Progression",v:pct+"%",c:pct>60?"var(--ok-text)":"var(--tc-text)"},
+  ].map(x=>`<div class="stat"><div class="stat-label">${x.l}</div><div class="stat-value" style="color:${x.c}">${x.v}</div></div>`).join("");
+  const sd=new Date(startDate),ed=addD(sd,34);
+  document.getElementById("printSub").innerHTML=`Période du ${fmt(startDate)} au ${fmt(toISO(ed))} · ${s.active} aéronefs · ${new Date().toLocaleDateString("fr-FR")}`;
+}
+
+function renderFleet(){
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px">
+    <h2 style="font-size:18px;color:var(--white)">Flotte (lecture depuis Firebase)</h2>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary btn-sm" onclick="showAdd()">+ Ajouter</button>
+    </div></div>`;
+  h+=`<div id="addRow" style="display:none" class="modal-row">
+    <div class="field"><label>Immatriculation</label><input type="text" id="newImmat" placeholder="TY-XXX" style="text-transform:uppercase"></div>
+    <div class="field"><label>Type</label><input type="text" id="newType" value="ULM"></div>
+    <button class="btn btn-primary btn-sm" onclick="addAc()">Valider</button>
+    <button class="btn btn-sm" onclick="document.getElementById('addRow').style.display='none'">Annuler</button></div>`;
+  h+=`<div style="overflow-x:auto"><table><thead><tr>`;
+  ["Actif","Immat","Type","Dern. Vol","Dern. Lavage","Dern. Trait. Corrosion","Dern. Pt Fixe",""].forEach(x=>{h+=`<th>${x}</th>`;});
+  h+=`</tr></thead><tbody>`;
+  fleet.forEach((ac,i)=>{
+    const dim=!ac.active?"opacity:.4":"";
+    h+=`<tr style="${dim}">
+      <td><button class="toggle ${ac.active?'on':'off'}" onclick="toggleActive(${i})"></button></td>
+      <td style="font-weight:700;color:var(--white)">${ac.immat}</td>
+      <td><span class="tag" style="background:${ac.type==='ULM'?'var(--pf-bg)':'#2a1a44'};color:${ac.type==='ULM'?'var(--pf-text)':'#b87eff'}">${ac.type}</span></td>
+      <td>${ac.lastFlight?fmt(ac.lastFlight):'—'}</td>
+      <td>${ac.lastLavage?fmt(ac.lastLavage):'—'}</td>
+      <td>${ac.lastCorrosion?fmt(ac.lastCorrosion):'—'}</td>
+      <td>${ac.lastPointFixe?fmt(ac.lastPointFixe):'—'}</td>
+      <td><button class="btn btn-danger btn-xs" onclick="removeAc(${i})">✕</button></td></tr>`;
+  });
+  h+=`</tbody></table></div>
+  <p style="margin-top:14px;font-size:12px;color:var(--text2)">📱 Les dates sont mises à jour depuis l'application mobile de saisie. Le planning se synchronise automatiquement.</p>`;
+  document.getElementById("fleetView").innerHTML=h;
+}
+
+function renderSched(){
+  const sortd=Object.keys(sched).sort().filter(d=>!isWE(d));
+  const weeks=[];let cur=[];
+  sortd.forEach(d=>{if(new Date(d).getDay()===1&&cur.length>0){weeks.push(cur);cur=[];}cur.push(d);});
+  if(cur.length)weeks.push(cur);
+
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px">
+    <h2 style="font-size:18px;color:var(--white)">Planning Mensuel <span style="font-size:12px;color:var(--text2);font-weight:400">— synchronisé en temps réel</span></h2>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <label style="font-size:12px;color:var(--text2)">Début:</label>
+      <input type="date" value="${startDate}" onchange="startDate=this.value;refresh()">
+      <div class="legend no-print">
+        <span class="tag" style="background:var(--pf-bg);color:var(--pf-text);border:1px solid var(--pf-border)">PF</span>
+        <span class="tag" style="background:var(--lav-bg);color:var(--lav-text);border:1px solid var(--lav-border)">LAV</span>
+        <span class="tag" style="background:var(--tc-bg);color:var(--tc-text);border:1px solid var(--tc-border)">TC</span>
+        <span class="tag" style="background:var(--ok-bg);color:var(--ok-text);border:1px solid var(--ok-border)">✓ Réalisé</span>
+      </div>
+    </div></div>`;
+
+  if(!fleet.some(a=>a.active&&a.lastFlight)){
+    h+=`<div style="background:var(--bg2);border:1px dashed var(--border2);border-radius:12px;padding:40px;text-align:center;color:var(--text2)"><div style="font-size:36px;margin-bottom:12px">✈</div><div style="font-size:15px">En attente de données Firebase...</div></div>`;
+  } else {
+    if(overdueList.length){
+      h+=`<div onclick="showView('retards')" style="background:#2e0f0f;border:1px solid #7a2d2d;border-radius:10px;padding:12px 20px;margin-bottom:16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .15s" onmouseover="this.style.background='#3a1515'" onmouseout="this.style.background='#2e0f0f'">
+        <span style="color:#ff7e7e;font-weight:700;font-size:14px">🔴 ${overdueList.length} tâche(s) en retard — reprogrammées en priorité</span>
+        <span style="color:#ff7e7e;font-size:13px">Voir détails →</span>
+      </div>`;
+    }
+    weeks.forEach(week=>{
+      h+=`<div class="week-block"><div class="week-header">Semaine du ${fmt(week[0])} au ${fmt(week[week.length-1])}</div>`;
+      h+=`<div class="week-grid" style="grid-template-columns:repeat(${week.length},1fr)">`;
+      week.forEach(d=>{
+        const slot=sched[d]||{pointFixe:[],lavage:[],corrosion:[]};
+        const isT=d===today;const dt=new Date(d);
+        h+=`<div class="day-col${isT?' today':''}">`;
+        h+=`<div class="day-label" style="color:${isT?'var(--pf-text)':'var(--text2)'}">${WD[dt.getDay()]} ${dt.getDate()}/${String(dt.getMonth()+1).padStart(2,'0')}</div>`;
+
+        ["pointFixe","lavage","corrosion"].forEach(type=>{
+          if(!slot[type].length)return;
+          const label=type==="pointFixe"?"POINT FIXE":type==="lavage"?"LAVAGE":"TRAIT. CORROSION";
+          h+=`<div style="margin-bottom:8px"><div class="section-label" style="color:${typeText(type)}">${label}</div>`;
+          slot[type].forEach(im=>{
+            const done=isDone(im,type,d);
+            const pinned=pins[`${im}|${type}|${d}`];
+            if(done){
+              h+=`<div class="ac-tag done" style="background:var(--ok-bg);border:1px solid var(--ok-border);color:var(--ok-text)">
+                <span class="status-icon">✓</span><span>${im}${pinned?' 📌':''}</span></div>`;
+            } else {
+              h+=`<div class="ac-tag" style="background:${typeBg(type)};border:1px solid ${typeBorder(type)};color:${typeText(type)}">
+                <span class="status-icon">○</span><span>${im}${pinned?' 📌':''}</span></div>`;
+            }
+          });
+          h+=`</div>`;
+        });
+
+        if(!slot.pointFixe.length&&!slot.lavage.length&&!slot.corrosion.length)
+          h+=`<div style="font-size:12px;color:#1e2a3a;font-style:italic;margin-top:18px">—</div>`;
+        h+=`<div class="pin-row no-print">
+          <button class="pin-btn" onclick="openPin('pointFixe','${d}')">+PF</button>
+          <button class="pin-btn" onclick="openPin('lavage','${d}')">+LAV</button>
+          <button class="pin-btn" onclick="openPin('corrosion','${d}')">+TC</button></div>`;
+        h+=`</div>`;
+      });
+      h+=`</div></div>`;
+    });
+  }
+  document.getElementById("scheduleView").innerHTML=h;
+}
+
+function openPin(type,date){
+  const activeAc=fleet.filter(a=>a.active);
+  let h=`<div class="modal"><h3>Fixer ${typeLabel(type)} — ${fmt(date)}</h3><div style="max-height:300px;overflow-y:auto">`;
+  activeAc.forEach(ac=>{
+    const key=`${ac.immat}|${type}|${date}`;const already=pins[key];
+    h+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span style="font-weight:600;color:var(--white);font-size:14px">${ac.immat}</span>
+      ${already?`<button class="btn btn-danger btn-xs" onclick="removePin('${key}');closePin()">Retirer</button>`:`<button class="btn btn-primary btn-xs" onclick="addPin('${key}');closePin()">Fixer 📌</button>`}
+    </div>`;
+  });
+  h+=`</div><div style="margin-top:16px;text-align:right"><button class="btn btn-sm" onclick="closePin()">Fermer</button></div></div>`;
+  document.getElementById("pinModal").innerHTML=h;document.getElementById("pinModal").style.display="flex";
+}
+function closePin(){document.getElementById("pinModal").style.display="none";}
+function addPin(k){pins[k]=true;if(db)db.ref("pins").set(pins);refresh();}
+function removePin(k){delete pins[k];if(db)db.ref("pins").set(pins);refresh();}
+
+function showView(v){
+  curView=v;
+  ["fleet","schedule","retards"].forEach(id=>{
+    document.getElementById(id+"View").style.display=v===id?"block":"none";
+  });
+  document.getElementById("btnFleet").className="btn"+(v==="fleet"?" active":"");
+  document.getElementById("btnSchedule").className="btn"+(v==="schedule"?" active":"");
+  document.getElementById("btnRetards").className="btn"+(v==="retards"?" active":"");
+  if(v==="retards")document.getElementById("btnRetards").style.background=v==="retards"?"#5c1a1a":"";
+}
+function refresh(){genSched();renderStats();renderFleet();renderSched();renderRetards();}
+
+function renderRetards(){
+  const badge=document.getElementById("retardsBadge");
+  badge.textContent=overdueList.length;
+  badge.style.display=overdueList.length?"inline":"none";
+
+  let h=`<h2 style="font-size:18px;color:var(--white);margin-bottom:18px">Tâches en retard</h2>`;
+
+  if(!overdueList.length){
+    h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok-border);border-radius:14px;padding:40px;text-align:center">
+      <div style="font-size:40px;margin-bottom:12px">✅</div>
+      <div style="font-size:16px;font-weight:700;color:var(--ok-text);margin-bottom:6px">Aucun retard</div>
+      <div style="font-size:13px;color:var(--text2)">Toutes les tâches sont dans les délais</div>
+    </div>`;
+  } else {
+    // Group by type
+    const groups={pointFixe:[],lavage:[],corrosion:[]};
+    overdueList.forEach(o=>groups[o.type].push(o));
+
+    const sections=[
+      {key:"pointFixe",label:"Points Fixes en retard",icon:"🔧",bg:"var(--pf-bg)",text:"var(--pf-text)",border:"var(--pf-border)",rule:"Délai: 7-9 jours après dernier vol ou PF"},
+      {key:"lavage",label:"Lavages en retard",icon:"🚿",bg:"var(--lav-bg)",text:"var(--lav-text)",border:"var(--lav-border)",rule:"Délai: 9-14 jours"},
+      {key:"corrosion",label:"Traitements Corrosion en retard",icon:"🧪",bg:"var(--tc-bg)",text:"var(--tc-text)",border:"var(--tc-border)",rule:"Délai: 9-14 jours"},
+    ];
+
+    sections.forEach(sec=>{
+      const items=groups[sec.key];
+      if(!items.length)return;
+      h+=`<div style="background:var(--bg2);border:1px solid ${sec.border};border-radius:14px;margin-bottom:18px;overflow:hidden">
+        <div style="padding:14px 20px;background:${sec.bg};border-bottom:1px solid ${sec.border};display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:20px">${sec.icon}</span>
+            <span style="font-size:15px;font-weight:700;color:${sec.text}">${sec.label}</span>
+            <span style="background:#5c1a1a;color:#ff7e7e;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:700">${items.length}</span>
+          </div>
+          <span style="font-size:11px;color:var(--text2)">${sec.rule}</span>
+        </div>
+        <div style="padding:4px 0">`;
+
+      // Table
+      h+=`<table style="width:100%"><thead><tr>
+        <th>Aéronef</th><th>Type</th><th>Échéance dépassée</th><th>Retard</th><th>Reprogrammé</th>
+      </tr></thead><tbody>`;
+
+      items.forEach(o=>{
+        const ac=fleet.find(a=>a.immat===o.immat);
+        const acType=ac?ac.type:"—";
+        // Find when it's rescheduled in sched
+        let rescheduled="—";
+        const sortedDays=Object.keys(sched).sort();
+        for(const d of sortedDays){
+          if(sched[d][o.type].includes(o.immat)){rescheduled=fmt(d);break;}
+        }
+        h+=`<tr>
+          <td style="font-weight:700;color:var(--white);font-size:14px">${o.immat}</td>
+          <td><span class="tag" style="background:${acType==='ULM'?'var(--pf-bg)':'#2a1a44'};color:${acType==='ULM'?'var(--pf-text)':'#b87eff'};font-size:11px">${acType}</span></td>
+          <td style="color:#ff7e7e;font-weight:600">${fmt(o.deadline)}</td>
+          <td><span style="background:#5c1a1a;color:#ff7e7e;padding:3px 10px;border-radius:6px;font-size:13px;font-weight:700">+${o.daysLate} jour${o.daysLate>1?'s':''}</span></td>
+          <td style="color:var(--ok-text);font-weight:600">${rescheduled}</td>
+        </tr>`;
+      });
+
+      h+=`</tbody></table></div></div>`;
+    });
+
+    h+=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-top:12px">
+      <p style="font-size:13px;color:var(--text2)">
+        Les tâches en retard sont <strong style="color:var(--white)">automatiquement reprogrammées en priorité</strong> au premier créneau disponible.
+        Mettez à jour les dates via l'application mobile pour valider les tâches réalisées.
+      </p>
+    </div>`;
+  }
+  document.getElementById("retardsView").innerHTML=h;
+}
+function toggleActive(i){fleet[i].active=!fleet[i].active;if(db)db.ref("fleet/"+fbKey(fleet[i].immat)+"/active").set(fleet[i].active);refresh();}
+function removeAc(i){if(!confirm("Supprimer "+fleet[i].immat+" ?"))return;const im=fleet[i].immat;fleet.splice(i,1);if(db)db.ref("fleet/"+fbKey(im)).remove();refresh();}
+function showAdd(){document.getElementById("addRow").style.display="flex";}
+function addAc(){
+  const im=document.getElementById("newImmat").value.trim().toUpperCase();
+  const ty=document.getElementById("newType").value.trim()||"ULM";
+  if(!im||fleet.find(a=>a.immat===im))return;
+  const ac={immat:im,type:ty,active:true,lastFlight:null,lastLavage:null,lastCorrosion:null,lastPointFixe:null};
+  fleet.push(ac);if(db)db.ref("fleet/"+fbKey(im)).set(ac);
+  document.getElementById("addRow").style.display="none";document.getElementById("newImmat").value="";refresh();
+}
+
+initFB();
+</script>
+</body>
+</html>
