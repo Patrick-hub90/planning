@@ -173,12 +173,14 @@ function taskStatus(im,ty,schedDate){
   const minInt=MIN_INT[ty];
 
   // 1. FAIT: last date >= scheduled date
-  if(lastDate&&lastDate>=schedDate)return{st:"done"};
+  if(lastDate&&lastDate>=schedDate){
+    // If done after scheduled date → show actual date
+    const late=lastDate>schedDate;
+    return{st:"done",doneDate:late?lastDate:null};
+  }
 
-  // 2. INUTILE checks
-  // For Point Fixe: also check lastFlight (a new flight resets the PF timer)
+  // 2. INUTILE — check interval not reached
   if(ty==="pointFixe"){
-    // PF base = whichever is more recent: lastFlight or lastPointFixe
     const lf=ac.lastFlight, lp=ac.lastPointFixe;
     const base=(!lf&&!lp)?null:(!lp)?lf:(!lf)?lp:(lf>lp?lf:lp);
     if(base){
@@ -190,7 +192,6 @@ function taskStatus(im,ty,schedDate){
       }
     }
   } else {
-    // For lavage/corrosion: check against last date of same type
     if(lastDate){
       const gap=daysBetween(lastDate,schedDate);
       if(gap<minInt){
@@ -200,7 +201,7 @@ function taskStatus(im,ty,schedDate){
     }
   }
 
-  // 3. MANQUÉ: date passed, not done, not inutile
+  // 3. MANQUÉ: date passed
   if(schedDate<today)return{st:"missed"};
 
   // 4. À FAIRE
@@ -286,8 +287,7 @@ function rSch(){
   let fri=new Date(le);while(fri.getDay()!==5)fri.setDate(fri.getDate()+1);
   const wks=[];let cur=new Date(mon);while(cur<=fri){const w=[];for(let i=0;i<5;i++){w.push({d:dk(cur),in:cur.getMonth()===cM&&cur.getFullYear()===cY});cur.setDate(cur.getDate()+1);}cur.setDate(cur.getDate()+2);wks.push(w);}
 
-  let h=`<div class="month-nav no-print"><button onclick="pM()">◀</button><div class="month-label">${MO[cM]} ${cY}</div><button onclick="nM()">▶</button>
-    <button class="btn btn-sm no-print" onclick="publishSchedule()" style="margin-left:auto;color:var(--tc);border-color:var(--tc)">🔄 Regénérer</button></div>`;
+  let h=`<div class="month-nav no-print"><button onclick="pM()">◀</button><div class="month-label">${MO[cM]} ${cY}</div><button onclick="nM()">▶</button></div>`;
   h+=`<div class="legend-bar no-print">
     <div class="legend-item"><div class="ld ld-p"></div>À faire</div>
     <div class="legend-item"><div class="ld ld-d"></div>✓ Fait</div>
@@ -316,7 +316,7 @@ function rSch(){
         sl[ty].forEach(im=>{
           const r=taskStatus(im,ty,d);const pin=pins[`${im}|${ty}|${d}`];
           let cls,ico,bdg="";
-          if(r.st==="done"){cls="done";ico="✓";bdg=`<span class="tp-badge" style="background:var(--ok);color:#fff">FAIT</span>`;}
+          if(r.st==="done"){cls="done";ico="✓";bdg=r.doneDate?`<span class="tp-badge" style="background:var(--ok);color:#fff">FAIT le ${fmt(r.doneDate)}</span>`:`<span class="tp-badge" style="background:var(--ok);color:#fff">FAIT</span>`;}
           else if(r.st==="missed"){cls="missed";ico="✗";bdg=`<span class="tp-badge" style="background:var(--dn);color:#fff">MANQUÉ</span>`;}
           else if(r.st==="skip"){cls="skip";ico="—";bdg=`<span class="tp-badge" style="background:var(--skip);color:#fff">${r.label}</span>`;}
           else{cls=`pending ${tP(ty)}`;ico="○";}
@@ -343,7 +343,7 @@ function rRet(){
   let h=`<h2 style="font-size:18px;font-weight:900;margin-bottom:16px">Tâches manquées</h2>`;
   if(!missed.length)h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok);border-radius:14px;padding:40px;text-align:center"><div style="font-size:36px;margin-bottom:8px">✅</div><div style="font-weight:900;font-size:16px;color:var(--ok-dark)">Tout est à jour</div></div>`;
   else{
-    h+=`<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Ces tâches n'ont pas été réalisées à la date prévue. Quand elles seront faites (depuis l'app mobile), elles passeront en ✓ FAIT et les prochaines occurrences trop proches seront marquées INUTILE.</p>`;
+    h+=`<p style="font-size:13px;color:var(--text2);margin-bottom:14px">Quand une tâche est réalisée depuis l'app mobile, elle passe en ✓ FAIT avec la date effective. Les prochaines occurrences trop proches sont automatiquement marquées INUTILE.</p>`;
     const g={pointFixe:[],lavage:[],corrosion:[]};missed.forEach(m=>g[m.ty].push(m));
     [{k:"pointFixe",l:"Points Fixes"},{k:"lavage",l:"Lavages"},{k:"corrosion",l:"Trait. Corrosion"}].forEach(s=>{if(!g[s.k].length)return;
       h+=`<div class="ocard"><div class="ohead"><span style="font-weight:900;color:var(--dn)">${s.l} manqués (${g[s.k].length})</span></div><table><thead><tr><th>Aéronef</th><th>Date prévue</th><th>Retard</th></tr></thead><tbody>`;
