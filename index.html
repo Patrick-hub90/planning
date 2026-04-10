@@ -2,326 +2,348 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PISTE — Saisie Maintenance</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PISTE — Planning Maintenance Aéronefs</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#f5f7fa;--bg2:#ffffff;--bg3:#f0f2f5;--border:#e2e8f0;--border2:#cbd5e1;
-    --text:#1e293b;--text2:#64748b;--white:#ffffff;
-    --pf:#2563eb;--pf-bg:#eff6ff;--pf-border:#bfdbfe;
-    --lav:#059669;--lav-bg:#ecfdf5;--lav-border:#a7f3d0;
-    --tc:#d97706;--tc-bg:#fffbeb;--tc-border:#fde68a;
-    --vol:#7c3aed;--vol-bg:#f5f3ff;--vol-border:#ddd6fe;
-    --ok:#16a34a;--ok-bg:#f0fdf4;--ok-border:#bbf7d0;
-    --danger:#dc2626;--danger-bg:#fef2f2;
-    --shadow:0 1px 3px rgba(0,0,0,.08);
-  }
-  [data-theme="dark"]{
-    --bg:#0a0e17;--bg2:#0f1520;--bg3:#1a2030;--border:#1e2a3a;--border2:#2d3a4a;
-    --text:#e2e8f0;--text2:#7a8a9e;--white:#0f1520;
-    --pf-bg:#172554;--pf-border:#1e3a5f;
-    --lav-bg:#052e16;--lav-border:#14532d;
-    --tc-bg:#422006;--tc-border:#713f12;
-    --vol-bg:#1e1b4b;--vol-border:#312e81;
-    --ok-bg:#052e16;--ok-border:#14532d;
-    --danger-bg:#450a0a;
-    --shadow:0 1px 3px rgba(0,0,0,.3);
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;font-size:15px;padding-bottom:72px;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+:root{--bg:#f5f7fa;--bg2:#fff;--bg3:#f0f2f5;--border:#e2e8f0;--border2:#cbd5e1;--text:#1e293b;--text2:#64748b;--white:#fff;--pf:#2563eb;--pf-bg:#eff6ff;--pf-bd:#bfdbfe;--lav:#059669;--lav-bg:#ecfdf5;--lav-bd:#a7f3d0;--tc:#d97706;--tc-bg:#fffbeb;--tc-bd:#fde68a;--ok:#16a34a;--ok-bg:#f0fdf4;--ok-bd:#bbf7d0;--dn:#dc2626;--dn-bg:#fef2f2;--dn-bd:#fecaca;--sh:0 1px 3px rgba(0,0,0,.06)}
+[data-theme="dark"]{--bg:#0a0e17;--bg2:#0f1520;--bg3:#1a2030;--border:#1e2a3a;--border2:#2d3a4a;--text:#e2e8f0;--text2:#7a8a9e;--white:#0f1520;--pf-bg:#172554;--pf-bd:#1e3a5f;--lav-bg:#052e16;--lav-bd:#14532d;--tc-bg:#422006;--tc-bd:#713f12;--ok-bg:#052e16;--ok-bd:#14532d;--dn-bg:#450a0a;--dn-bd:#7f1d1d;--sh:0 1px 3px rgba(0,0,0,.3)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
-  .header{position:sticky;top:0;z-index:50;background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
-  .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center}
-  .logo svg{width:20px;height:20px;fill:#fff}
-  .header h2{font-size:16px;color:var(--text);font-weight:800;letter-spacing:-.3px}
-  .header p{font-size:11px;color:var(--text2);font-weight:500}
-  .conn{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:700;border:1px solid}
-  .conn.on{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-border)}.conn.off{background:var(--danger-bg);color:var(--danger);border-color:#fecaca}
-  .theme-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent}
-  .theme-btn svg{width:18px;height:18px;stroke:var(--text2);fill:none;stroke-width:2}
+.hdr{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;background:var(--bg2);flex-wrap:wrap;gap:10px;box-shadow:var(--sh)}
+.logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center}
+.logo svg{width:20px;height:20px;fill:#fff}
+.htitle{font-weight:800;font-size:18px;color:var(--text);letter-spacing:-.4px}
+.hsub{font-size:11px;color:var(--text2);font-weight:500}
+.cdot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+.cdot.on{background:var(--ok)}.cdot.off{background:var(--dn)}
 
-  .search-bar{padding:10px 16px;position:sticky;top:61px;z-index:40;background:var(--bg)}
-  .search-bar input{width:100%;padding:10px 14px 10px 38px;border-radius:12px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-family:inherit;font-size:14px;box-shadow:var(--shadow)}
-  .search-bar input::placeholder{color:var(--text2)}
-  .search-wrap{position:relative}
-  .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:none;stroke:var(--text2);stroke-width:2}
+.btn{padding:8px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:all .15s;box-shadow:var(--sh)}
+.btn:hover{background:var(--bg3)}.btn.active{background:var(--pf);border-color:var(--pf);color:#fff}
+.btn-sm{padding:5px 12px;font-size:11px}.btn-xs{padding:3px 8px;font-size:10px}
+.btn-primary{background:var(--pf);border-color:var(--pf);color:#fff}
+.btn-dn{border-color:var(--dn-bd);color:var(--dn);background:var(--dn-bg)}
+.badge{background:var(--dn);color:#fff;font-size:9px;padding:1px 6px;border-radius:10px;font-weight:800;margin-left:3px}
+.theme-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.theme-btn svg{width:16px;height:16px;stroke:var(--text2);fill:none;stroke-width:2}
 
-  .filter-pills{padding:4px 16px 8px;display:flex;gap:8px;overflow-x:auto}
-  .filter-pills::-webkit-scrollbar{display:none}
-  .pill{padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:var(--bg2);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;box-shadow:var(--shadow)}
-  .pill.active{background:var(--pf);border-color:var(--pf);color:#fff}
+.content{padding:20px 24px}
+.stats{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 18px;min-width:100px;flex:1;box-shadow:var(--sh)}
+.stat-label{font-size:10px;color:var(--text2);margin-bottom:3px;text-transform:uppercase;letter-spacing:.7px;font-weight:700}
+.stat-value{font-size:24px;font-weight:800;letter-spacing:-.5px}
 
-  .ac-list{padding:0 16px}
-  .ac-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow)}
-  .ac-head{padding:12px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
-  .ac-head-top{display:flex;align-items:center;justify-content:space-between}
-  .ac-immat{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-.3px}
-  .ac-type{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;margin-left:8px;text-transform:uppercase;letter-spacing:.5px}
-  .type-ulm{background:var(--pf-bg);color:var(--pf);border:1px solid var(--pf-border)}
-  .type-avion{background:var(--vol-bg);color:var(--vol);border:1px solid var(--vol-border)}
-  .chevron{color:var(--text2);transition:transform .2s}
-  .ac-card.open .chevron{transform:rotate(180deg)}
+.tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700}
+input[type="date"],input[type="text"],select{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:8px;font-family:inherit;font-size:12px;box-shadow:var(--sh)}
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.7)}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 12px;text-align:left;font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;font-weight:700;border-bottom:1px solid var(--border);background:var(--bg3)}
+td{padding:8px 12px;border-bottom:1px solid var(--bg3);font-size:12px}
 
-  .ac-summary{margin-top:6px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-  .date-text{font-size:12px;color:var(--text2);font-weight:500}
-  .date-text strong{color:var(--text)}
-  .date-text .warn{color:var(--danger);font-weight:700}
-  .date-text .ok{color:var(--ok);font-weight:700}
-  .sched-badge{font-size:10px;font-weight:800;padding:3px 10px;border-radius:8px;white-space:nowrap;animation:softPulse 2s infinite}
-  .sched-pf{background:var(--pf-bg);color:var(--pf);border:1px solid var(--pf-border)}
-  .sched-lav{background:var(--lav-bg);color:var(--lav);border:1px solid var(--lav-border)}
-  .sched-tc{background:var(--tc-bg);color:var(--tc);border:1px solid var(--tc-border)}
-  .done-badge{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-border);font-size:10px;font-weight:800;padding:3px 10px;border-radius:8px;animation:none}
-  @keyframes softPulse{0%,100%{opacity:1}50%{opacity:.6}}
+.month-nav{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.month-nav button{padding:7px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:16px;font-weight:700;color:var(--text);box-shadow:var(--sh)}
+.month-nav button:hover{background:var(--bg3)}
+.month-label{font-size:17px;font-weight:800;min-width:180px;text-align:center;text-transform:capitalize}
 
-  .ac-body{padding:0 16px 16px;display:none}
-  .ac-card.open .ac-body{display:block}
-  .field-group{margin-bottom:12px;background:var(--bg3);border-radius:14px;padding:14px;border:1px solid var(--border)}
-  .field-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-  .field-label svg{width:14px;height:14px;flex-shrink:0}
-  .field-row{display:flex;gap:8px;align-items:center}
-  .field-row input[type="date"]{flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-family:inherit;font-size:14px;box-shadow:var(--shadow)}
-  .btn-today{padding:10px 14px;border-radius:10px;border:none;background:var(--pf);color:#fff;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;white-space:nowrap;transition:all .15s;min-width:100px;text-align:center;box-shadow:0 2px 6px rgba(37,99,235,.25)}
-  .btn-today:active{transform:scale(.96)}
-  .btn-done{background:var(--ok);box-shadow:0 2px 6px rgba(22,163,74,.25)}
-  .btn-undo{background:var(--danger);box-shadow:0 2px 6px rgba(220,38,38,.25)}
-  .field-info{font-size:11px;color:var(--text2);margin-top:6px;display:flex;justify-content:space-between}
-  .field-info .ago{font-weight:700}
-  .field-info .ago.recent{color:var(--ok)}.field-info .ago.mid{color:var(--tc)}.field-info .ago.old{color:var(--danger)}
+.wblock{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:var(--sh)}
+.wheader{padding:8px 14px;border-bottom:1px solid var(--border);background:var(--bg3);font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.7px}
+.wgrid{display:grid;grid-template-columns:repeat(5,1fr)}
+.dcol{border-right:1px solid var(--bg3);padding:10px 8px;min-height:120px;transition:all .15s}
+.dcol:hover{background:var(--bg)}.dcol:last-child{border-right:none}
+.dcol.today{background:var(--pf-bg);border-top:3px solid var(--pf)}
+.dcol.past{opacity:.6}.dcol.outside{background:var(--bg3);opacity:.3;min-height:50px}
+.dlbl{font-size:11px;font-weight:700;margin-bottom:6px}
+.slbl{font-size:8px;font-weight:700;margin:3px 0 1px;letter-spacing:.7px;text-transform:uppercase}
+.atag{border-radius:5px;padding:3px 6px;font-size:10px;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:3px}
+.atag.done{background:var(--ok-bg)!important;color:var(--ok)!important;border-color:var(--ok-bd)!important}
+.atag.missed{background:var(--dn-bg)!important;color:var(--dn)!important;border-color:var(--dn-bd)!important}
+.pin-row{display:flex;gap:3px;margin-top:3px}.pin-btn{padding:1px 4px;border-radius:3px;border:1px dashed var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:8px;font-family:inherit}.pin-btn:hover{background:var(--bg3)}
+.overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:100}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,.15)}
+.modal h3{font-size:15px;font-weight:800;margin-bottom:14px}
+.mrow{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+.field label{font-size:11px;color:var(--text2);display:block;margin-bottom:3px;font-weight:600}
+.legend{display:flex;gap:5px;flex-wrap:wrap}
+.toggle{width:40px;height:22px;border-radius:11px;cursor:pointer;position:relative;border:none;transition:all .2s}
+.toggle.on{background:var(--ok)}.toggle.off{background:var(--dn)}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:3px;transition:all .2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.toggle.on::after{left:21px}.toggle.off::after{left:3px}
+#notif{display:none;position:fixed;top:16px;right:16px;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:700;z-index:200;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.ocard{background:var(--bg2);border:1px solid var(--dn-bd);border-radius:12px;margin-bottom:14px;overflow:hidden;box-shadow:var(--sh)}
+.ohead{padding:12px 18px;background:var(--dn-bg);border-bottom:1px solid var(--dn-bd);display:flex;align-items:center;justify-content:space-between}
+.sig-area{margin-top:16px;padding:18px;background:var(--bg3);border-radius:12px;border:1px solid var(--border)}
 
-  .saved-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--ok);color:#fff;padding:10px 22px;border-radius:14px;font-weight:700;font-size:13px;z-index:200;display:none;box-shadow:0 4px 12px rgba(0,0,0,.2)}
-
-  .tab-bar{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;z-index:50;padding:4px 6px;padding-bottom:max(4px,env(safe-area-inset-bottom));box-shadow:0 -1px 8px rgba(0,0,0,.05)}
-  .tab{flex:1;text-align:center;padding:6px 2px;cursor:pointer;color:var(--text2);font-size:10px;font-weight:600;-webkit-tap-highlight-color:transparent;transition:all .15s;border-radius:10px;margin:2px}
-  .tab.active{color:var(--pf);background:var(--pf-bg)}
-  .tab svg{display:block;margin:0 auto 1px;width:20px;height:20px}
-  .tab.active svg{stroke:var(--pf)}
-
-  @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-  .ac-card{animation:fadeUp .2s ease}
+.print-header,.print-footer{display:none}
+@media print{
+  @page{size:landscape;margin:8mm}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+  body{background:#fff!important;font-size:9px!important;color:#000!important}
+  .hdr,.stats,.no-print,#notif,.pin-row,.legend,.month-nav button,.theme-btn{display:none!important}
+  .print-header{display:block!important;text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:3px solid #1e293b}
+  .print-header h1{font-size:15px;font-weight:800;color:#1e293b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+  .print-header p{font-size:9px;color:#555}
+  .print-header .pleg{display:flex!important;gap:12px;justify-content:center;margin-top:8px}
+  .print-header .pleg span{padding:2px 8px;border-radius:3px;font-weight:700;font-size:7px;border:1px solid #bbb}
+  .ppf{background:#dbeafe!important;color:#1e40af!important}.plav{background:#d1fae5!important;color:#065f46!important}.ptc{background:#fef3c7!important;color:#92400e!important}.pok{background:#dcfce7!important;color:#166534!important}
+  .content{padding:0!important}.month-label{font-size:0!important;height:0!important;overflow:hidden}
+  .wblock{border:1px solid #bbb!important;margin-bottom:6px!important;break-inside:avoid;background:#fff!important}
+  .wheader{background:#f1f5f9!important;font-size:8px!important;padding:5px 8px!important;color:#000!important}
+  .dcol{padding:5px 4px!important;min-height:55px!important;border-color:#ddd!important;background:#fff!important}
+  .dcol.today{background:#eff6ff!important;border-top:2px solid #2563eb!important}
+  .dcol.past,.dcol.outside{opacity:1!important}.dcol.outside{background:#f8f8f8!important}
+  .dlbl{font-size:8px!important;color:#000!important}.slbl{font-size:6px!important}.atag{font-size:7px!important;padding:1px 3px!important}
+  .atag.done{background:#dcfce7!important;color:#166534!important;border:1px solid #86efac!important}
+  .atag.missed{background:#fee2e2!important;color:#991b1b!important;border:1px solid #fca5a5!important}
+  .print-footer{display:block!important;margin-top:10px;page-break-inside:avoid}
+}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}.fade-in{animation:fadeIn .2s ease}
 </style>
 </head>
 <body>
-
 <script>
-const FIREBASE_CONFIG={apiKey:"AIzaSyAtYDTWrrpHlKRrkJajBU87m1Pbw_mfwOQ",authDomain:"planning-pf-tc-la.firebaseapp.com",databaseURL:"https://planning-pf-tc-la-default-rtdb.europe-west1.firebasedatabase.app",projectId:"planning-pf-tc-la",storageBucket:"planning-pf-tc-la.firebasestorage.app",messagingSenderId:"822523737615",appId:"1:822523737615:web:44ef0cd81eec1f1da4d57a"};
+const FC={apiKey:"AIzaSyAtYDTWrrpHlKRrkJajBU87m1Pbw_mfwOQ",authDomain:"planning-pf-tc-la.firebaseapp.com",databaseURL:"https://planning-pf-tc-la-default-rtdb.europe-west1.firebasedatabase.app",projectId:"planning-pf-tc-la",storageBucket:"planning-pf-tc-la.firebasestorage.app",messagingSenderId:"822523737615",appId:"1:822523737615:web:44ef0cd81eec1f1da4d57a"};
 </script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-<div class="header">
-  <div style="display:flex;align-items:center;gap:10px">
+<div class="print-header" id="pH"><h1 id="pTitle"></h1><p id="pSub"></p>
+<div class="pleg"><span class="ppf">PF = Point Fixe</span><span class="plav">LAV = Lavage</span><span class="ptc">TC = Trait. Corrosion</span><span class="pok">✓ = Réalisé</span></div></div>
+
+<div class="hdr">
+  <div style="display:flex;align-items:center;gap:12px">
     <div class="logo"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0011.5 2 1.5 1.5 0 0010 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
-    <div><h2>Saisie PISTE</h2><p>Mise à jour maintenance</p></div>
+    <div><div class="htitle">PISTE — Planning Maintenance</div><div class="hsub">Temps réel Firebase</div></div>
   </div>
-  <div style="display:flex;gap:8px;align-items:center">
-    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">
-      <svg id="themeIcon" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-    </button>
-    <span class="conn off" id="connBadge">--</span>
-  </div>
-</div>
-
-<div class="search-bar">
-  <div class="search-wrap">
-    <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" id="searchInput" placeholder="Rechercher..." oninput="render()">
+  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+    <span id="cs" style="font-size:11px;font-weight:600"><span class="cdot off"></span>--</span>
+    <button class="btn active" id="bSch" onclick="sv('schedule')">Planning</button>
+    <button class="btn" id="bFlt" onclick="sv('fleet')">Flotte <span id="fc">0</span></button>
+    <button class="btn btn-dn" id="bRet" onclick="sv('retards')">Retards <span class="badge" id="rb" style="display:none">0</span></button>
+    <button class="btn" id="bAdm" onclick="sv('admin')">Admin</button>
+    <button class="theme-btn" onclick="toggleTheme()" id="tBtn"><svg id="tIco" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+    <button class="btn no-print" onclick="window.print()" title="Imprimer"><svg style="width:14px;height:14px;vertical-align:middle" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
   </div>
 </div>
 
-<div class="filter-pills">
-  <div class="pill active" onclick="setFilter('all',this)">Tous</div>
-  <div class="pill" onclick="setFilter('ULM',this)">ULM</div>
-  <div class="pill" onclick="setFilter('Avion',this)">Avions</div>
+<div id="notif"></div>
+<div class="content">
+  <div class="stats" id="stBar"></div>
+  <div id="vSch" class="fade-in"></div>
+  <div id="vFlt" class="fade-in" style="display:none"></div>
+  <div id="vRet" class="fade-in" style="display:none"></div>
+  <div id="vAdm" class="fade-in" style="display:none"></div>
+  <div class="print-footer" id="pFoot">
+    <div style="border-top:1px solid #ccc;padding-top:6px;font-size:7px;color:#64748b;text-align:center">PF: 7-9j après vol/PF · Lavage: 9-14j · Trait. Corrosion: 9-14j · LAV+TC même jour OK · PF jamais avec LAV/TC</div>
+    <div id="sigArea"></div>
+  </div>
 </div>
-
-<div id="acList" class="ac-list"></div>
-<div class="saved-toast" id="toast">✓ Sauvegardé</div>
-
-<div class="tab-bar">
-  <div class="tab active" onclick="setTab('vol',this)"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>Vols</div>
-  <div class="tab" onclick="setTab('lav',this)"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2v6m0 0a4 4 0 014 4v1a2 2 0 01-2 2H10a2 2 0 01-2-2v-1a4 4 0 014-4z"/><path d="M6 22v-4a2 2 0 012-2h8a2 2 0 012 2v4"/></svg>Lavage</div>
-  <div class="tab" onclick="setTab('pf',this)"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>Pt Fixe</div>
-  <div class="tab" onclick="setTab('tc',this)"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M10 2v7.527a2 2 0 01-.211.896L4.72 20.55a1 1 0 00.9 1.45h12.76a1 1 0 00.9-1.45l-5.069-10.127A2 2 0 0114 9.527V2"/><path d="M8.5 2h7"/></svg>Corrosion</div>
-</div>
+<div id="pinM" class="overlay" style="display:none"></div>
 
 <script>
-const toISO=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');};
-const today=toISO(new Date());
-const dAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return toISO(d);};
-const daysBetween=(a,b)=>{if(!a||!b)return 999;return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/86400000);};
+const WD=["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"],MO=["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+const iso=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');};
+const addD=(d,n)=>{const r=new Date(d);r.setDate(r.getDate()+n);return r;};
+const dkk=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');};
+const isWE=d=>{const x=new Date(d+'T12:00:00');return x.getDay()===0||x.getDay()===6;};
+const fmt=d=>{if(!d)return"";return new Date(d+'T12:00:00').toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"});};
+const fmtL=d=>{if(!d)return"";return new Date(d+'T12:00:00').toLocaleDateString("fr-FR",{day:"2-digit",month:"long",year:"numeric"});};
+const today=iso(new Date());
+const fbK=im=>im.replace(/[.#$/\[\]]/g,"_");
+const dim=m=>new Date(2026,m+1,0).getDate();
 
-let fleet=[],db=null,todaySched=null,currentFilter="all",currentTab="vol",openCard=null,isDark=false;
-
-function makeAc(im,ty){return{immat:im,type:ty,active:true,lastFlight:dAgo(10),lastLavage:dAgo(15),lastCorrosion:dAgo(15),lastPointFixe:dAgo(30)};}
-const DEF=["TY-43L","TY-44L","TY-45L","TY-46L","TY-47L","TY-48L","TY-49L","TY-50L","TY-51L","TY-52L","TY-53L","TY-54L","TY-55L","TY-56L","TY-60L","TY-61L","TY-62L","TY-63L","TY-64L"].map(i=>makeAc(i,"ULM")).concat([makeAc("TY-27A","Avion"),makeAc("TY-29A","Avion")]);
-function fbKey(im){return im.replace(/[.#$/\[\]]/g,"_");}
+let fleet=[],sc={},pins={},OD=[],cv="schedule",db=null,isDark=false;
+let sigName="",sigPost="",sigImage="";
+let cM=new Date().getMonth(),cY=new Date().getFullYear();
+let monthTotalSnap=0; // stable denominator
 
 // Theme
-function toggleTheme(){
-  isDark=!isDark;
-  document.documentElement.setAttribute("data-theme",isDark?"dark":"");
-  localStorage.setItem("piste_theme",isDark?"dark":"light");
-  document.getElementById("themeIcon").innerHTML=isDark
-    ?'<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>'
-    :'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-}
-if(localStorage.getItem("piste_theme")==="dark"){toggleTheme();}
+function toggleTheme(){isDark=!isDark;document.documentElement.setAttribute("data-theme",isDark?"dark":"");localStorage.setItem("piste_theme",isDark?"dark":"light");document.getElementById("tIco").innerHTML=isDark?'<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>':'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';}
+if(localStorage.getItem("piste_theme")==="dark")toggleTheme();
 
-function initFB(){
-  try{
-    firebase.initializeApp(FIREBASE_CONFIG);db=firebase.database();
-    db.ref(".info/connected").on("value",s=>{
-      const on=!!s.val();const b=document.getElementById("connBadge");
-      b.className="conn "+(on?"on":"off");b.textContent=on?"Connecté":"Hors ligne";
-    });
-    db.ref("fleet").on("value",snap=>{
-      const d=snap.val();
-      if(d)fleet=Object.values(d).filter(a=>a.active!==false);
-      else{fleet=JSON.parse(JSON.stringify(DEF));const o={};fleet.forEach(a=>{o[fbKey(a.immat)]=a;});db.ref("fleet").set(o);}
-      render();
-    });
-    // Listen to today's schedule published by planning app
-    db.ref("todaySchedule").on("value",snap=>{todaySched=snap.val()||null;render();});
-  }catch(e){console.error(e);fleet=JSON.parse(JSON.stringify(DEF));render();}
-}
+// Firebase
+function initFB(){try{
+  firebase.initializeApp(FC);db=firebase.database();
+  db.ref(".info/connected").on("value",s=>{const on=!!s.val();document.getElementById("cs").innerHTML=on?'<span class="cdot on"></span>Connecté':'<span class="cdot off"></span>Hors ligne';});
+  db.ref("fleet").on("value",s=>{const d=s.val();if(d)fleet=Object.values(d);else{fleet=defFleet();pushAll();}refresh();});
+  db.ref("pins").on("value",s=>{pins=s.val()||{};refresh();});
+  db.ref("config").on("value",s=>{const c=s.val()||{};sigName=c.sigName||"";sigPost=c.sigPost||"";sigImage=c.sigImage||"";});
+}catch(e){console.error(e);fleet=defFleet();refresh();}}
 
-function updateField(immat,field,value){
-  const ac=fleet.find(a=>a.immat===immat);if(!ac)return;
-  ac[field]=value||null;
-  if(db)db.ref("fleet/"+fbKey(immat)+"/"+field).set(value||null);
-  showToast();render();
-}
-function markDone(immat,field){
-  const ac=fleet.find(a=>a.immat===immat);if(!ac)return;
-  if(ac[field]===today){
-    // Undo: set to null (or could store previous value)
-    updateField(immat,field,null);
-  } else {
-    updateField(immat,field,today);
-  }
-  if(navigator.vibrate)navigator.vibrate(50);
-}
-function setToday(immat,field){updateField(immat,field,today);if(navigator.vibrate)navigator.vibrate(50);}
-function showToast(){const t=document.getElementById("toast");t.style.display="block";setTimeout(()=>{t.style.display="none";},1500);}
-function setFilter(f,el){currentFilter=f;document.querySelectorAll(".pill").forEach(p=>p.classList.remove("active"));el.classList.add("active");render();}
-function setTab(t,el){currentTab=t;document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));el.classList.add("active");render();}
-function toggleCard(im){openCard=openCard===im?null:im;render();}
+function defFleet(){const dA=n=>{const d=new Date();d.setDate(d.getDate()-n);return iso(d);};const mk=(i,t)=>({immat:i,type:t,active:true,lastFlight:dA(10),lastLavage:dA(15),lastCorrosion:dA(15),lastPointFixe:dA(30)});return["TY-43L","TY-44L","TY-45L","TY-46L","TY-47L","TY-48L","TY-49L","TY-50L","TY-51L","TY-52L","TY-53L","TY-54L","TY-55L","TY-56L","TY-60L","TY-61L","TY-62L","TY-63L","TY-64L"].map(i=>mk(i,"ULM")).concat([mk("TY-27A","Avion"),mk("TY-29A","Avion")]);}
+function pushAll(){if(!db)return;const o={};fleet.forEach(a=>{o[fbK(a.immat)]=a;});db.ref("fleet").set(o);}
+function notif(m,t){const n=document.getElementById("notif");n.textContent=m;n.style.background=t==="err"?"var(--dn-bg)":"var(--ok-bg)";n.style.color=t==="err"?"var(--dn)":"var(--ok)";n.style.border="1px solid "+(t==="err"?"var(--dn-bd)":"var(--ok-bd)");n.style.display="block";setTimeout(()=>{n.style.display="none";},3e3);}
 
-function fmtShort(d){if(!d)return"—";return new Date(d+'T12:00:00').toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"});}
-function fmtFull(d){if(!d)return"Non renseigné";return new Date(d+'T12:00:00').toLocaleDateString("fr-FR",{weekday:"short",day:"2-digit",month:"short"});}
-function fmtAgo(d){if(!d)return"";const days=daysBetween(d,today);if(days===0)return"Aujourd'hui";if(days===1)return"Hier";if(days<0)return"Dans "+(-days)+"j";return"Il y a "+days+"j";}
-function agoClass(d,w,c){if(!d)return"old";const days=daysBetween(d,today);if(days<=w)return"recent";if(days<=c)return"mid";return"old";}
+// Validation
+function isDone(im,ty,dt){const ac=fleet.find(a=>a.immat===im);if(!ac)return false;let r=ty==="pointFixe"?ac.lastPointFixe:ty==="lavage"?ac.lastLavage:ac.lastCorrosion;return r&&r>=dt;}
+function isMissed(im,ty,dt){return!isDone(im,ty,dt)&&dt<today;}
 
-// Check if aircraft has a scheduled task today
-function hasTaskToday(immat,type){
-  if(!todaySched)return false;
-  const typeKey=type==="pf"?"pointFixe":type==="lav"?"lavage":type==="tc"?"corrosion":null;
-  if(!typeKey||!todaySched[typeKey])return false;
-  return todaySched[typeKey].includes(immat);
-}
-function isTaskDoneToday(ac,tab){
-  if(tab==="pf")return ac.lastPointFixe===today;
-  if(tab==="lav")return ac.lastLavage===today;
-  if(tab==="tc")return ac.lastCorrosion===today;
-  if(tab==="vol")return ac.lastFlight===today;
-  return false;
-}
-function taskField(tab){
-  if(tab==="pf")return"lastPointFixe";
-  if(tab==="lav")return"lastLavage";
-  if(tab==="tc")return"lastCorrosion";
-  return"lastFlight";
-}
-
-function render(){
-  const q=document.getElementById("searchInput").value.trim().toUpperCase();
-  let list=fleet.filter(a=>{
-    if(q&&!a.immat.includes(q))return false;
-    if(currentFilter!=="all"&&a.type!==currentFilter)return false;
-    return true;
-  });
-  // Sort: scheduled today first, then alphabetical
-  list.sort((a,b)=>{
-    const aTask=hasTaskToday(a.immat,currentTab)?-1:0;
-    const bTask=hasTaskToday(b.immat,currentTab)?-1:0;
-    if(aTask!==bTask)return aTask-bTask;
-    return a.immat.localeCompare(b.immat);
-  });
-
-  if(!list.length){
-    document.getElementById("acList").innerHTML=`<div style="text-align:center;padding:40px;color:var(--text2)">Aucun aéronef trouvé</div>`;
-    return;
-  }
-
-  let h="";
-  list.forEach(ac=>{
-    const isOpen=openCard===ac.immat;
-    const scheduled=hasTaskToday(ac.immat,currentTab);
-    const doneToday=isTaskDoneToday(ac,currentTab);
-
-    // Summary date
-    let sDate,sDays,sLabel;
-    const lfD=daysBetween(ac.lastFlight,today),llD=daysBetween(ac.lastLavage,today),lpD=daysBetween(ac.lastPointFixe,today),lcD=daysBetween(ac.lastCorrosion,today);
-    if(currentTab==="vol"){sDate=ac.lastFlight;sDays=lfD;sLabel="Dern. vol";}
-    else if(currentTab==="lav"){sDate=ac.lastLavage;sDays=llD;sLabel="Dern. lavage";}
-    else if(currentTab==="pf"){sDate=ac.lastPointFixe;sDays=lpD;sLabel="Dern. pt fixe";}
-    else{sDate=ac.lastCorrosion;sDays=lcD;sLabel="Dern. trait. corr.";}
-    const sClass=!sDate?"warn":sDays<=5?"ok":sDays<=9?"":"warn";
-
-    const typeClass=ac.type==="ULM"?"type-ulm":"type-avion";
-    const schedClass=currentTab==="pf"?"sched-pf":currentTab==="lav"?"sched-lav":currentTab==="tc"?"sched-tc":"sched-pf";
-
-    h+=`<div class="ac-card${isOpen?' open':''}">`;
-    h+=`<div class="ac-head" onclick="toggleCard('${ac.immat}')">
-      <div class="ac-head-top">
-        <div style="display:flex;align-items:center"><span class="ac-immat">${ac.immat}</span><span class="ac-type ${typeClass}">${ac.type}</span></div>
-        <div style="display:flex;align-items:center;gap:6px">
-          ${doneToday?`<span class="done-badge">✓ Fait</span>`
-            :scheduled?`<span class="sched-badge ${schedClass}">PRÉVU AUJOURD'HUI</span>`:''}
-          <span class="chevron"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
-        </div>
-      </div>
-      <div class="ac-summary">
-        <span class="date-text">${sLabel}: <strong>${fmtShort(sDate)}</strong> <span class="${sClass}">${fmtAgo(sDate)}</span></span>
-      </div>
-    </div>`;
-
-    h+=`<div class="ac-body">`;
-
-    // Fields per tab
-    const fields=[];
-    if(currentTab==="vol")fields.push({key:"lastFlight",label:"Dernier Vol",warn:5,crit:7});
-    if(currentTab==="lav")fields.push({key:"lastLavage",label:"Dernier Lavage",warn:9,crit:14});
-    if(currentTab==="pf")fields.push({key:"lastPointFixe",label:"Dernier Point Fixe",warn:7,crit:9});
-    if(currentTab==="tc")fields.push({key:"lastCorrosion",label:"Dernier Trait. Corrosion",warn:9,crit:14});
-
-    fields.forEach(f=>{
-      const val=ac[f.key];const ago=fmtAgo(val);const cls=agoClass(val,f.warn,f.crit);
-      const isDoneNow=val===today;
-      h+=`<div class="field-group">
-        <div class="field-label">${f.label}</div>
-        <div class="field-row">
-          <input type="date" value="${val||''}" onchange="updateField('${ac.immat}','${f.key}',this.value)">
-          <button class="btn-today" onclick="event.stopPropagation();setToday('${ac.immat}','${f.key}')">Aujourd'hui</button>
-        </div>
-        <div class="field-info"><span>${fmtFull(val)}</span><span class="ago ${cls}">${ago}</span></div>
-      </div>`;
-    });
-
-    // Mark done / undo button for scheduled tasks
-    if(scheduled||doneToday){
-      const fld=taskField(currentTab);
-      h+=`<button onclick="event.stopPropagation();markDone('${ac.immat}','${fld}')" class="btn-today ${doneToday?'btn-undo':'btn-done'}" style="width:100%;padding:14px;font-size:14px;border-radius:14px;margin-top:4px">
-        ${doneToday?'↩ Annuler — Tâche non réalisée':'✓ Marquer comme réalisé aujourd\'hui'}
-      </button>`;
+// Schedule
+function genSc(){
+  const nd=dim(cM),sd=new Date(cY,cM,1);sc={};OD=[];
+  for(let i=0;i<nd;i++){sc[dkk(addD(sd,i))]={pointFixe:[],lavage:[],corrosion:[]};}
+  Object.keys(pins).forEach(k=>{const[im,ty,dt]=k.split("|");if(sc[dt]&&sc[dt][ty]&&!sc[dt][ty].includes(im))sc[dt][ty].push(im);});
+  const af=fleet.filter(a=>a.active),needs=[],NOW=new Date(today+'T12:00:00');
+  af.forEach(ac=>{
+    if(!ac.lastFlight)return;const lf=new Date(ac.lastFlight);
+    // PF
+    const pfR=ac.lastPointFixe?new Date(ac.lastPointFixe):null,pfB=pfR&&pfR>lf?pfR:lf,pfDue=addD(pfB,7),pfDead=addD(pfB,9);
+    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|pointFixe|"))){
+      if(pfDead<NOW&&!(ac.lastPointFixe&&new Date(ac.lastPointFixe+'T12:00:00')>=pfB)){needs.push({im:ac.immat,ty:"pointFixe",due:sd,pr:0});OD.push({im:ac.immat,ty:"pointFixe",dl:dkk(pfDead),late:Math.floor((NOW-pfDead)/864e5)});}
+      else needs.push({im:ac.immat,ty:"pointFixe",due:pfDue,pr:pfDue.getTime()});
     }
+    // LAV
+    const lR=ac.lastLavage?new Date(ac.lastLavage):lf,lD=addD(lR,14);
+    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|lavage|"))){
+      if(lD<NOW){needs.push({im:ac.immat,ty:"lavage",due:sd,pr:1});OD.push({im:ac.immat,ty:"lavage",dl:dkk(lD),late:Math.floor((NOW-lD)/864e5)});}
+      else needs.push({im:ac.immat,ty:"lavage",due:addD(lR,9),pr:addD(lR,9).getTime()});
+    }
+    // TC
+    const cR=ac.lastCorrosion?new Date(ac.lastCorrosion):lf,cD=addD(cR,14);
+    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|corrosion|"))){
+      if(cD<NOW){needs.push({im:ac.immat,ty:"corrosion",due:sd,pr:2});OD.push({im:ac.immat,ty:"corrosion",dl:dkk(cD),late:Math.floor((NOW-cD)/864e5)});}
+      else needs.push({im:ac.immat,ty:"corrosion",due:addD(cR,9),pr:addD(cR,9).getTime()});
+    }
+  });
+  needs.sort((a,b)=>a.pr-b.pr);const used=new Set();
+  for(let i=0;i<needs.length;i++){
+    const n=needs[i],k=`${n.im}-${n.ty}-${n.due.getTime()}`;if(used.has(k))continue;
+    for(let j=0;j<nd;j++){
+      const d=addD(sd,j),dk2=dkk(d);if(isWE(dk2)||d<n.due)continue;const s=sc[dk2];if(!s)continue;
+      if(n.ty==="pointFixe"&&s.pointFixe.length>=3)continue;if(n.ty==="lavage"&&s.lavage.length>=3)continue;if(n.ty==="corrosion"&&s.corrosion.length>=1)continue;
+      if(n.ty==="pointFixe"&&(s.lavage.includes(n.im)||s.corrosion.includes(n.im)))continue;
+      if((n.ty==="lavage"||n.ty==="corrosion")&&s.pointFixe.includes(n.im))continue;
+      if(s[n.ty].includes(n.im))continue;
+      s[n.ty].push(n.im);used.add(k);
+      const me=dkk(new Date(cY,cM,nd));
+      if(n.ty!=="pointFixe"){const nx=addD(d,9);if(dkk(nx)<=me){needs.push({im:n.im,ty:n.ty,due:nx,pr:nx.getTime()});needs.sort((a,b)=>a.pr-b.pr);}}
+      else{const nx=addD(d,7);if(dkk(nx)<=me){needs.push({im:n.im,ty:"pointFixe",due:nx,pr:nx.getTime()});needs.sort((a,b)=>a.pr-b.pr);}}
+      break;
+    }
+  }
+  // Publish today's schedule to Firebase
+  if(db&&sc[today])db.ref("todaySchedule").set(sc[today]);
+  // Stable total: only increase, never decrease
+  let t=0;Object.values(sc).forEach(s=>{t+=s.pointFixe.length+s.lavage.length+s.corrosion.length;});
+  if(t>monthTotalSnap)monthTotalSnap=t;
+}
 
+const tl=t=>t==="pointFixe"?"POINT FIXE":t==="lavage"?"LAVAGE":"TRAIT. CORROSION";
+const tls=t=>t==="pointFixe"?"Point Fixe":t==="lavage"?"Lavage":"Trait. Corrosion";
+const tc=t=>t==="pointFixe"?{c:"var(--pf)",bg:"var(--pf-bg)",bd:"var(--pf-bd)"}:t==="lavage"?{c:"var(--lav)",bg:"var(--lav-bg)",bd:"var(--lav-bd)"}:{c:"var(--tc)",bg:"var(--tc-bg)",bd:"var(--tc-bd)"};
+
+function getSt(){let pf=0,lv=0,co=0,dn=0;Object.entries(sc).forEach(([dt,s])=>{["pointFixe","lavage","corrosion"].forEach(ty=>{s[ty].forEach(im=>{if(isDone(im,ty,dt))dn++;});});pf+=s.pointFixe.length;lv+=s.lavage.length;co+=s.corrosion.length;});return{pf,lv,co,dn,total:monthTotalSnap,od:OD.length,act:fleet.filter(a=>a.active&&a.lastFlight).length,sz:fleet.length};}
+
+// Render
+function rSt(){
+  const s=getSt();document.getElementById("fc").textContent=s.sz;
+  document.getElementById("stBar").innerHTML=[
+    {l:"Actifs",v:s.act,c:"var(--pf)"},{l:"Pt Fixes",v:s.pf,c:"var(--pf)"},{l:"Lavages",v:s.lv,c:"var(--lav)"},
+    {l:"Trait. Corr.",v:s.co,c:"var(--tc)"},{l:"Réalisés",v:s.dn+"/"+s.total,c:"var(--ok)"},{l:"Retards",v:s.od,c:s.od?"var(--dn)":"var(--ok)"}
+  ].map(x=>`<div class="stat"><div class="stat-label">${x.l}</div><div class="stat-value" style="color:${x.c}">${x.v}</div></div>`).join("");
+  document.getElementById("rb").textContent=s.od;document.getElementById("rb").style.display=s.od?"inline":"none";
+  document.getElementById("pTitle").textContent=`PLANNING DE MAINTENANCE — ${MO[cM].toUpperCase()} ${cY}`;
+  document.getElementById("pSub").textContent=`DU 01 ${MO[cM]} ${cY} AU ${dim(cM)} ${MO[cM]} ${cY} · ${s.act} aéronefs · Généré le ${fmtL(today)}`;
+  // Signature for print
+  let sh="";if(sigName||sigPost||sigImage){sh+=`<div style="text-align:right;margin-top:16px">`;if(sigImage)sh+=`<img src="${sigImage}" style="max-height:70px;display:block;margin-left:auto;margin-bottom:4px">`;if(sigName)sh+=`<div style="font-size:11px;font-weight:800;color:#1e293b">${sigName}</div>`;if(sigPost)sh+=`<div style="font-size:9px;font-weight:600;color:#64748b">${sigPost}</div>`;sh+=`</div>`;}
+  document.getElementById("sigArea").innerHTML=sh;
+}
+
+function rSch(){
+  const nd=dim(cM),sd=new Date(cY,cM,1),le=new Date(cY,cM,nd);
+  let mon=new Date(sd);while(mon.getDay()!==1)mon.setDate(mon.getDate()-1);
+  let fri=new Date(le);while(fri.getDay()!==5)fri.setDate(fri.getDate()+1);
+  const wks=[];let cur=new Date(mon);
+  while(cur<=fri){const w=[];for(let i=0;i<5;i++){w.push({d:dkk(cur),in:cur.getMonth()===cM&&cur.getFullYear()===cY});cur.setDate(cur.getDate()+1);}cur.setDate(cur.getDate()+2);wks.push(w);}
+
+  let h=`<div class="month-nav no-print"><button onclick="pM()">◀</button><div class="month-label">${MO[cM]} ${cY}</div><button onclick="nM()">▶</button></div>`;
+  h+=`<div class="legend no-print" style="margin-bottom:12px"><span class="tag" style="background:var(--pf-bg);color:var(--pf);border:1px solid var(--pf-bd)">PF</span><span class="tag" style="background:var(--lav-bg);color:var(--lav);border:1px solid var(--lav-bd)">LAV</span><span class="tag" style="background:var(--tc-bg);color:var(--tc);border:1px solid var(--tc-bd)">TC</span><span class="tag" style="background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-bd)">✓</span><span class="tag" style="background:var(--dn-bg);color:var(--dn);border:1px solid var(--dn-bd)">✗</span></div>`;
+  if(OD.length)h+=`<div onclick="sv('retards')" style="background:var(--dn-bg);border:1px solid var(--dn-bd);border-radius:8px;padding:8px 16px;margin-bottom:12px;cursor:pointer;display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--dn)" class="no-print"><span>${OD.length} retard(s)</span><span>Voir →</span></div>`;
+
+  wks.forEach(w=>{
+    const inW=w.filter(x=>x.in);const ws=inW.length?inW[0].d:w[0].d,we=inW.length?inW[inW.length-1].d:w[4].d;
+    h+=`<div class="wblock"><div class="wheader">Sem. ${fmt(ws)} — ${fmt(we)}</div><div class="wgrid">`;
+    w.forEach(({d,in:inM})=>{
+      const dt=new Date(d+'T12:00:00'),isT=d===today,isP=d<today;
+      if(!inM){h+=`<div class="dcol outside"><div class="dlbl" style="color:var(--border2)">${WD[dt.getDay()]} ${dt.getDate()}</div></div>`;return;}
+      const sl=sc[d]||{pointFixe:[],lavage:[],corrosion:[]};
+      h+=`<div class="dcol${isT?' today':''}${isP&&!isT?' past':''}"><div class="dlbl" style="color:${isT?'var(--pf)':'var(--text2)'}">${WD[dt.getDay()]} ${dt.getDate()}</div>`;
+      ["pointFixe","lavage","corrosion"].forEach(ty=>{
+        if(!sl[ty]||!sl[ty].length)return;const c=tc(ty);
+        h+=`<div style="margin-bottom:4px"><div class="slbl" style="color:${c.c}">${tl(ty)}</div>`;
+        sl[ty].forEach(im=>{
+          const dn=isDone(im,ty,d),ms=isMissed(im,ty,d),pin=pins[`${im}|${ty}|${d}`];
+          let cls="",bg=c.bg,bd=c.bd,col=c.c,ico="○";
+          if(dn){cls="done";bg="var(--ok-bg)";bd="var(--ok-bd)";col="var(--ok)";ico="✓";}
+          else if(ms){cls="missed";bg="var(--dn-bg)";bd="var(--dn-bd)";col="var(--dn)";ico="✗";}
+          h+=`<div class="atag ${cls}" style="background:${bg};border:1px solid ${bd};color:${col}"><span style="font-size:11px">${ico}</span>${im}${pin?' 📌':''}</div>`;
+        });h+=`</div>`;
+      });
+      if(!sl.pointFixe.length&&!sl.lavage.length&&!sl.corrosion.length)h+=`<div style="font-size:10px;color:var(--border2);margin-top:12px">—</div>`;
+      h+=`<div class="pin-row no-print"><button class="pin-btn" onclick="oP('pointFixe','${d}')">+PF</button><button class="pin-btn" onclick="oP('lavage','${d}')">+LAV</button><button class="pin-btn" onclick="oP('corrosion','${d}')">+TC</button></div></div>`;
+    });
     h+=`</div></div>`;
   });
-  document.getElementById("acList").innerHTML=h;
+  document.getElementById("vSch").innerHTML=h;
 }
+
+function rFlt(){
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h2 style="font-size:16px;font-weight:800">Flotte</h2><button class="btn btn-primary btn-sm" onclick="document.getElementById('aR').style.display='flex'">+ Ajouter</button></div>`;
+  h+=`<div id="aR" style="display:none" class="mrow"><div class="field"><label>Immat</label><input type="text" id="nI" placeholder="TY-XXX" style="text-transform:uppercase"></div><div class="field"><label>Type</label><input type="text" id="nT" value="ULM"></div><button class="btn btn-primary btn-sm" onclick="addA()">OK</button><button class="btn btn-sm" onclick="document.getElementById('aR').style.display='none'">×</button></div>`;
+  h+=`<div style="overflow-x:auto"><table><thead><tr><th>Actif</th><th>Immat</th><th>Type</th><th>Vol</th><th>Lavage</th><th>Trait.Corr.</th><th>Pt Fixe</th><th></th></tr></thead><tbody>`;
+  fleet.forEach((a,i)=>{h+=`<tr style="${!a.active?'opacity:.4':''}"><td><button class="toggle ${a.active?'on':'off'}" onclick="tA(${i})"></button></td><td style="font-weight:800">${a.immat}</td><td><span class="tag" style="background:${a.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${a.type==='ULM'?'var(--pf)':'#7c3aed'};border:1px solid ${a.type==='ULM'?'var(--pf-bd)':'#ddd6fe'}">${a.type}</span></td><td>${a.lastFlight?fmt(a.lastFlight):'—'}</td><td>${a.lastLavage?fmt(a.lastLavage):'—'}</td><td>${a.lastCorrosion?fmt(a.lastCorrosion):'—'}</td><td>${a.lastPointFixe?fmt(a.lastPointFixe):'—'}</td><td><button class="btn btn-dn btn-xs" onclick="rmA(${i})">✕</button></td></tr>`;});
+  h+=`</tbody></table></div>`;
+  document.getElementById("vFlt").innerHTML=h;
+}
+
+function rRet(){
+  let h=`<h2 style="font-size:16px;font-weight:800;margin-bottom:14px">Retards</h2>`;
+  if(!OD.length){h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:12px;padding:36px;text-align:center"><div style="font-size:32px;margin-bottom:8px">✅</div><div style="font-weight:800;color:var(--ok)">Aucun retard</div></div>`;}
+  else{const g={pointFixe:[],lavage:[],corrosion:[]};OD.forEach(o=>g[o.ty].push(o));
+    [{k:"pointFixe",l:"Points Fixes"},{k:"lavage",l:"Lavages"},{k:"corrosion",l:"Trait. Corrosion"}].forEach(s=>{
+      if(!g[s.k].length)return;
+      h+=`<div class="ocard"><div class="ohead"><span style="font-weight:800;color:var(--dn)">${s.l} (${g[s.k].length})</span></div><table><thead><tr><th>Aéronef</th><th>Échéance</th><th>Retard</th><th>Reprogrammé</th></tr></thead><tbody>`;
+      g[s.k].forEach(o=>{let rp="—";for(const d of Object.keys(sc).sort()){if(sc[d][o.ty]?.includes(o.im)){rp=fmt(d);break;}}
+        h+=`<tr><td style="font-weight:800">${o.im}</td><td style="color:var(--dn);font-weight:700">${fmt(o.dl)}</td><td><span style="background:var(--dn-bg);color:var(--dn);padding:2px 8px;border-radius:5px;font-weight:800;font-size:11px">+${o.late}j</span></td><td style="color:var(--ok);font-weight:700">${rp}</td></tr>`;
+      });h+=`</tbody></table></div>`;
+    });
+  }
+  document.getElementById("vRet").innerHTML=h;
+}
+
+function rAdm(){
+  let h=`<h2 style="font-size:16px;font-weight:800;margin-bottom:14px">Administration</h2>`;
+  h+=`<div class="sig-area"><h3 style="font-size:14px;font-weight:700;margin-bottom:12px">Signature PDF</h3>
+    <p style="font-size:11px;color:var(--text2);margin-bottom:14px">Ordre d'affichage: Signature (image) → Nom → Poste</p>
+    <div class="field" style="margin-bottom:10px"><label>Image signature</label><input type="file" accept="image/*" onchange="uSig(event)" style="font-size:12px"></div>
+    ${sigImage?`<div style="margin-bottom:12px"><img src="${sigImage}" style="max-height:70px;border-radius:6px;border:1px solid var(--border)"><br><button class="btn btn-dn btn-xs" style="margin-top:6px" onclick="rSig()">Supprimer</button></div>`:''}
+    <div class="field" style="margin-bottom:10px"><label>Nom</label><input type="text" id="sN" value="${sigName}" placeholder="Cpt Jean DUPONT" style="width:100%;padding:8px 12px" onchange="sSig()"></div>
+    <div class="field" style="margin-bottom:10px"><label>Poste</label><input type="text" id="sP" value="${sigPost}" placeholder="Chef Section Maintenance" style="width:100%;padding:8px 12px" onchange="sSig()"></div>
+    ${(sigName||sigImage)?`<div style="margin-top:14px;padding:14px;background:var(--bg);border-radius:10px;border:1px dashed var(--border)"><div style="font-size:10px;color:var(--text2);margin-bottom:6px;font-weight:700">APERÇU</div><div style="text-align:right">${sigImage?`<img src="${sigImage}" style="max-height:50px;display:block;margin-left:auto;margin-bottom:3px">`:''}${sigName?`<div style="font-size:12px;font-weight:800">${sigName}</div>`:''}${sigPost?`<div style="font-size:11px;color:var(--text2)">${sigPost}</div>`:''}</div></div>`:''}</div>`;
+  h+=`<div style="margin-top:16px;padding:16px;background:var(--bg2);border-radius:12px;border:1px solid var(--border)"><h3 style="font-size:14px;font-weight:700;margin-bottom:10px">Données</h3><button class="btn btn-sm" onclick="xBk()">💾 Backup</button> <button class="btn btn-sm" onclick="document.getElementById('iF').click()">📂 Importer</button><input type="file" id="iF" accept=".json" style="display:none" onchange="iBk(event)"></div>`;
+  document.getElementById("vAdm").innerHTML=h;
+}
+
+function sSig(){sigName=document.getElementById("sN").value;sigPost=document.getElementById("sP").value;if(db){db.ref("config/sigName").set(sigName);db.ref("config/sigPost").set(sigPost);}rAdm();}
+function uSig(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{sigImage=ev.target.result;if(db)db.ref("config/sigImage").set(sigImage);rAdm();};r.readAsDataURL(f);}
+function rSig(){sigImage="";if(db)db.ref("config/sigImage").remove();rAdm();}
+function xBk(){const d=JSON.stringify({fleet,pins,sigName,sigPost,sigImage},null,2);const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([d],{type:"application/json"}));a.download="piste_backup.json";a.click();}
+function iBk(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.fleet){fleet=d.fleet;pins=d.pins||{};sigName=d.sigName||"";sigPost=d.sigPost||"";sigImage=d.sigImage||"";if(db){pushAll();db.ref("pins").set(pins);db.ref("config").set({sigName,sigPost,sigImage});}refresh();notif("✓ Import OK");}}catch(err){notif("Erreur","err");}};r.readAsText(f);e.target.value="";}
+
+// Nav
+function pM(){cM--;if(cM<0){cM=11;cY--;}monthTotalSnap=0;refresh();}
+function nM(){cM++;if(cM>11){cM=0;cY++;}monthTotalSnap=0;refresh();}
+function oP(ty,dt){const l=fleet.filter(a=>a.active);let h=`<div class="modal"><h3>Fixer ${tls(ty)} — ${fmt(dt)}</h3><div style="max-height:260px;overflow-y:auto">`;l.forEach(a=>{const k=`${a.immat}|${ty}|${dt}`;const al=pins[k];h+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg3)"><span style="font-weight:700">${a.immat}</span>${al?`<button class="btn btn-dn btn-xs" onclick="rPin('${k}');cP()">Retirer</button>`:`<button class="btn btn-primary btn-xs" onclick="aPin('${k}');cP()">Fixer</button>`}</div>`;});h+=`</div><div style="margin-top:14px;text-align:right"><button class="btn btn-sm" onclick="cP()">Fermer</button></div></div>`;document.getElementById("pinM").innerHTML=h;document.getElementById("pinM").style.display="flex";}
+function cP(){document.getElementById("pinM").style.display="none";}
+function aPin(k){pins[k]=true;if(db)db.ref("pins").set(pins);refresh();}
+function rPin(k){delete pins[k];if(db)db.ref("pins").set(pins);refresh();}
+
+function sv(v){cv=v;["Sch","Flt","Ret","Adm"].forEach(id=>{document.getElementById("v"+id).style.display="none";document.getElementById("b"+id).classList.remove("active");});const m={schedule:"Sch",fleet:"Flt",retards:"Ret",admin:"Adm"};document.getElementById("v"+m[v]).style.display="block";document.getElementById("b"+m[v]).classList.add("active");if(v==="admin")rAdm();}
+function refresh(){genSc();rSt();rFlt();rSch();rRet();}
+function tA(i){fleet[i].active=!fleet[i].active;if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/active").set(fleet[i].active);refresh();}
+function rmA(i){if(!confirm("Supprimer "+fleet[i].immat+" ?"))return;const im=fleet[i].immat;fleet.splice(i,1);if(db)db.ref("fleet/"+fbK(im)).remove();refresh();}
+function addA(){const im=document.getElementById("nI").value.trim().toUpperCase(),ty=document.getElementById("nT").value.trim()||"ULM";if(!im||fleet.find(a=>a.immat===im))return;const ac={immat:im,type:ty,active:true,lastFlight:null,lastLavage:null,lastCorrosion:null,lastPointFixe:null};fleet.push(ac);if(db)db.ref("fleet/"+fbK(im)).set(ac);document.getElementById("aR").style.display="none";document.getElementById("nI").value="";refresh();}
 
 initFB();
 </script>
