@@ -4,124 +4,137 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EMACO — Planning Maintenance Aéronefs</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#0a0e17;--bg2:#0c1019;--bg3:#0f1520;--border:#1a1f2e;--border2:#1e2a3a;
-    --text:#c8d6e5;--text2:#5a6a7e;--white:#e8eef5;
-    --pf-bg:#1a2744;--pf-text:#7eb8ff;--pf-border:#2d4a7a;
-    --lav-bg:#1a3a2a;--lav-text:#7effa8;--lav-border:#2d7a4a;
-    --tc-bg:#3a2a1a;--tc-text:#ffc87e;--tc-border:#7a5a2d;
-    --ok-bg:#0f2e1a;--ok-text:#4ade80;--ok-border:#166534;
-    --wait-bg:#1e1a2e;--wait-text:#a78bfa;--wait-border:#4c3d8f}
+  :root{
+    --bg:#f5f7fa;--bg2:#ffffff;--bg3:#f0f2f5;--border:#e2e8f0;--border2:#cbd5e1;
+    --text:#1e293b;--text2:#64748b;--white:#ffffff;
+    --pf:#2563eb;--pf-bg:#eff6ff;--pf-border:#bfdbfe;
+    --lav:#059669;--lav-bg:#ecfdf5;--lav-border:#a7f3d0;
+    --tc:#d97706;--tc-bg:#fffbeb;--tc-border:#fde68a;
+    --ok:#16a34a;--ok-bg:#f0fdf4;--ok-border:#bbf7d0;
+    --danger:#dc2626;--danger-bg:#fef2f2;--danger-border:#fecaca;
+    --shadow:0 1px 3px rgba(0,0,0,.06);
+    --shadow-md:0 4px 6px rgba(0,0,0,.07);
+  }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;font-size:14px}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased}
   ::-webkit-scrollbar{width:6px;height:6px}
   ::-webkit-scrollbar-track{background:var(--bg)}
   ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 
-  .header{border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;background:var(--bg2);flex-wrap:wrap;gap:12px}
-  .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--pf-bg),var(--pf-border));display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--pf-text)}
-  .title{font-weight:700;font-size:20px;color:var(--white);letter-spacing:-.5px}
-  .subtitle{font-size:12px;color:var(--text2);margin-top:2px}
-  .conn-dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:6px}
-  .conn-dot.on{background:#4ade80}.conn-dot.off{background:#f87171}
+  .header{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;background:var(--white);flex-wrap:wrap;gap:10px;box-shadow:var(--shadow)}
+  .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center}
+  .logo svg{width:22px;height:22px;fill:#fff}
+  .htitle{font-weight:800;font-size:18px;color:var(--text);letter-spacing:-.4px}
+  .hsub{font-size:11px;color:var(--text2);font-weight:500;margin-top:1px}
+  .conn-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px}
+  .conn-dot.on{background:var(--ok)}.conn-dot.off{background:var(--danger)}
 
-  .btn{padding:9px 18px;border-radius:8px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:all .15s}
-  .btn:hover{background:#1a2535;border-color:#2d4a6a}
-  .btn.active{background:var(--pf-bg);border-color:var(--pf-border);color:var(--pf-text)}
-  .btn-primary{background:var(--pf-bg);border-color:var(--pf-border);color:var(--pf-text)}
-  .btn-danger{border-color:#7a2d2d;color:#ff7e7e}.btn-danger:hover{background:#2e0f0f}
+  .btn{padding:8px 16px;border-radius:10px;border:1px solid var(--border);background:var(--white);color:var(--text);cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:all .15s;box-shadow:var(--shadow)}
+  .btn:hover{background:var(--bg3);border-color:var(--border2)}
+  .btn.active{background:var(--pf);border-color:var(--pf);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+  .btn-primary{background:var(--pf);border-color:var(--pf);color:#fff}
+  .btn-danger{border-color:var(--danger-border);color:var(--danger);background:var(--danger-bg)}.btn-danger:hover{background:#fee2e2}
   .btn-sm{padding:5px 12px;font-size:12px}.btn-xs{padding:3px 8px;font-size:11px}
+  .btn-retard{position:relative;border-color:var(--danger-border);color:var(--danger);background:var(--danger-bg)}
+  .badge{background:var(--danger);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:800;margin-left:4px}
 
   .content{padding:20px 24px}
   .stats{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
-  .stat{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px 20px;min-width:120px;flex:1}
-  .stat-label{font-size:11px;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;font-weight:500}
-  .stat-value{font-size:28px;font-weight:700}
+  .stat{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:14px 20px;min-width:120px;flex:1;box-shadow:var(--shadow)}
+  .stat-label{font-size:11px;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+  .stat-value{font-size:26px;font-weight:800;letter-spacing:-.5px}
 
-  .tag{display:inline-block;padding:3px 10px;border-radius:5px;font-size:12px;font-weight:600}
-  input[type="date"],input[type="text"],select{background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:7px 12px;border-radius:6px;font-family:inherit;font-size:13px}
-  input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.7)}
+  .tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:700}
+  input[type="date"],input[type="text"],select{background:var(--white);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:8px;font-family:inherit;font-size:13px;box-shadow:var(--shadow)}
 
   table{width:100%;border-collapse:collapse}
-  th{padding:12px 14px;text-align:left;font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;font-weight:600;border-bottom:1px solid var(--border)}
-  td{padding:10px 14px;border-bottom:1px solid #0f1520;font-size:13px}
+  th{padding:10px 14px;text-align:left;font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;font-weight:700;border-bottom:1px solid var(--border);background:var(--bg3)}
+  td{padding:10px 14px;border-bottom:1px solid var(--bg3);font-size:13px}
 
-  .week-block{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden}
-  .week-header{padding:10px 16px;border-bottom:1px solid var(--border);background:#0a0e14;font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px}
+  .month-nav{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+  .month-nav button{padding:8px 14px;border-radius:10px;border:1px solid var(--border);background:var(--white);cursor:pointer;font-family:inherit;font-size:16px;font-weight:700;color:var(--text);box-shadow:var(--shadow);transition:all .15s}
+  .month-nav button:hover{background:var(--bg3)}
+  .month-label{font-size:18px;font-weight:800;color:var(--text);min-width:200px;text-align:center;text-transform:capitalize}
+
+  .week-block{background:var(--white);border:1px solid var(--border);border-radius:14px;margin-bottom:14px;overflow:hidden;box-shadow:var(--shadow)}
+  .week-header{padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg3);font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.8px}
   .week-grid{display:grid}
-  .day-col{border-right:1px solid #12161f;padding:12px 10px;min-height:150px;transition:all .15s}
-  .day-col:hover{background:#0d1220}
+  .day-col{border-right:1px solid var(--bg3);padding:10px 8px;min-height:130px;transition:all .15s}
+  .day-col:hover{background:var(--bg)}
   .day-col:last-child{border-right:none}
-  .day-col.today{background:#0d1525;border-top:2px solid var(--pf-border)}
-  .day-label{font-size:13px;font-weight:700;margin-bottom:10px}
-  .section-label{font-size:10px;opacity:.6;margin-bottom:3px;letter-spacing:1px;font-weight:600}
-  .ac-tag{border-radius:5px;padding:4px 8px;font-size:12px;font-weight:600;margin-bottom:3px;display:flex;align-items:center;gap:6px}
-  .ac-tag.done{opacity:.6}
-  .ac-tag.overdue{animation:overduePulse 2s infinite}
-  @keyframes overduePulse{0%,100%{opacity:1}50%{opacity:.7}}
-  .overdue-banner{background:#2e0f0f;border:1px solid #7a2d2d;border-radius:12px;padding:16px 20px;margin-bottom:18px}
-  .overdue-banner h3{color:#ff7e7e;font-size:15px;margin-bottom:10px}
-  .overdue-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #3a1515;font-size:13px}
-  .overdue-item:last-child{border-bottom:none}
-  .overdue-badge{background:#5c1a1a;color:#ff7e7e;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700}
-  .ac-tag .status-icon{font-size:13px}
-  .legend{display:flex;gap:8px;flex-wrap:wrap}
+  .day-col.today{background:#eff6ff;border-top:3px solid var(--pf)}
+  .day-col.past{opacity:.65}
+  .day-label{font-size:12px;font-weight:700;margin-bottom:8px}
+  .section-label{font-size:9px;font-weight:700;margin:4px 0 2px;letter-spacing:.8px;text-transform:uppercase}
+  .ac-tag{border-radius:6px;padding:3px 7px;font-size:11px;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:4px}
+  .ac-tag.done{background:var(--ok-bg)!important;color:var(--ok)!important;border-color:var(--ok-border)!important}
+  .ac-tag.missed{background:var(--danger-bg)!important;color:var(--danger)!important;border-color:var(--danger-border)!important;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+  .ac-tag .st{font-size:12px}
+
+  .pin-row{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+  .pin-btn{padding:1px 5px;border-radius:4px;border:1px dashed var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:9px;font-family:inherit;transition:all .15s}
+  .pin-btn:hover{background:var(--bg3);border-style:solid}
+
+  .overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:100}
+  .modal{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-md)}
+  .modal h3{font-size:16px;font-weight:800;color:var(--text);margin-bottom:16px}
+  .modal-row{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;box-shadow:var(--shadow)}
+  .field label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:600}
+  .legend{display:flex;gap:6px;flex-wrap:wrap}
 
   .toggle{width:42px;height:24px;border-radius:12px;cursor:pointer;position:relative;border:none;transition:all .2s}
-  .toggle.on{background:#2d7a4a}.toggle.off{background:#7a2d2d}
-  .toggle::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;transition:all .2s}
+  .toggle.on{background:var(--ok)}.toggle.off{background:var(--danger)}
+  .toggle::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
   .toggle.on::after{left:21px}.toggle.off::after{left:3px}
 
-  .pin-row{display:flex;gap:6px;align-items:center;margin-top:4px;flex-wrap:wrap}
-  .pin-btn{padding:2px 6px;border-radius:4px;border:1px dashed var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-size:10px;font-family:inherit;transition:all .15s}
-  .pin-btn:hover{border-style:solid;background:var(--bg3)}
+  #notif{display:none;position:fixed;top:20px;right:20px;padding:14px 24px;border-radius:12px;font-size:14px;font-weight:700;z-index:200;box-shadow:var(--shadow-md)}
 
-  .overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:100}
-  .modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:480px;width:90%;max-height:80vh;overflow-y:auto}
-  .modal h3{font-size:16px;color:var(--white);margin-bottom:16px}
-  .modal-row{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap}
-  .field label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;font-weight:500}
+  /* Overdue */
+  .overdue-card{background:var(--white);border:1px solid var(--danger-border);border-radius:14px;margin-bottom:16px;overflow:hidden;box-shadow:var(--shadow)}
+  .overdue-head{padding:14px 20px;background:var(--danger-bg);border-bottom:1px solid var(--danger-border);display:flex;align-items:center;justify-content:space-between}
 
-  #notif{display:none;position:fixed;top:20px;right:20px;padding:14px 24px;border-radius:10px;font-size:14px;font-weight:600;z-index:200;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+  /* Signature */
+  .sig-area{margin-top:20px;padding:20px;background:var(--bg3);border-radius:14px;border:1px solid var(--border)}
+  .sig-preview{max-height:80px;margin-top:8px;border-radius:8px}
 
-  .sync-bar{background:#0f1a2e;border-bottom:1px solid var(--pf-border);padding:8px 24px;display:flex;align-items:center;gap:12px;font-size:13px;color:var(--pf-text)}
-  .sync-bar .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--pf-text);border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-
-  .print-header{display:none}
+  /* Print */
+  .print-header,.print-footer{display:none}
   @media print{
-    @page{size:landscape;margin:10mm}
+    @page{size:landscape;margin:8mm}
     *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
-    body{background:#fff!important;color:#222!important;font-size:11px!important;font-family:'Helvetica Neue',Arial,sans-serif!important}
-    .header,.stats,.no-print,.overlay,.pin-row,.pin-btn,.legend,.btn,#notif,.sync-bar{display:none!important}
-    .print-header{display:block!important;text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:3px solid #1a2744}
-    .print-header h1{font-size:17px;color:#1a2744;margin-bottom:4px}
-    .print-header p{font-size:10px;color:#555;margin-top:2px}
-    .print-header .print-legend{display:flex!important;gap:16px;justify-content:center;margin-top:10px}
-    .print-header .print-legend span{padding:3px 12px;border-radius:4px;font-weight:700;font-size:9px;border:1px solid #bbb}
-    .pl-pf{background:#d0e2ff!important;color:#102a5c!important}.pl-lav{background:#c8f7d5!important;color:#0a4d20!important}.pl-tc{background:#ffeacc!important;color:#6b3e00!important}
+    body{background:#fff!important;font-size:9px!important}
+    .header,.stats,.no-print,#notif,.pin-row,.legend,.month-nav button{display:none!important}
+    .print-header{display:block!important;text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:3px solid #1e293b}
+    .print-header h1{font-size:16px;font-weight:800;color:#1e293b;margin-bottom:2px;text-transform:uppercase;letter-spacing:1px}
+    .print-header p{font-size:10px;color:#64748b}
+    .print-header .print-legend{display:flex!important;gap:14px;justify-content:center;margin-top:8px}
+    .print-header .print-legend span{padding:2px 10px;border-radius:4px;font-weight:700;font-size:8px;border:1px solid #ccc}
+    .pl-pf{background:#dbeafe!important;color:#1e40af!important}.pl-lav{background:#d1fae5!important;color:#065f46!important}.pl-tc{background:#fef3c7!important;color:#92400e!important}.pl-done{background:#dcfce7!important;color:#166534!important}
     .content{padding:0!important}
-    .week-block{border:1.5px solid #bbb!important;border-radius:6px!important;margin-bottom:12px!important;break-inside:avoid;background:#fff!important}
-    .week-header{background:#1a2744!important;color:#fff!important;padding:7px 12px!important;font-size:11px!important}
-    .day-col{border-right:1px solid #d0d5dd!important;padding:8px 7px!important;min-height:75px!important;background:#fff!important}
-    .day-col.today{background:#eef4ff!important;border-top:2px solid #3b7ddd!important}
-    .day-label{font-size:11px!important;font-weight:700!important;color:#1a2744!important;margin-bottom:6px!important;padding-bottom:4px;border-bottom:1px solid #e5e9ef}
-    .section-label{font-size:8px!important;font-weight:700!important;opacity:1!important}
-    .ac-tag{font-size:9px!important;padding:2px 6px!important;margin-bottom:2px!important;border-radius:3px!important}
-    .ac-tag[style*="pf-bg"]{background:#d0e2ff!important;color:#102a5c!important;border:1px solid #7aacf0!important}
-    .ac-tag[style*="lav-bg"]{background:#c8f7d5!important;color:#0a4d20!important;border:1px solid #5cc97a!important}
-    .ac-tag[style*="tc-bg"]{background:#ffeacc!important;color:#6b3e00!important;border:1px solid #e0a84c!important}
-    .ac-tag.done{background:#e8fce8!important;color:#166534!important;border:1px solid #86d99e!important}
-    .print-footer{display:block!important;text-align:center;margin-top:12px;font-size:8px;color:#888;border-top:1px solid #ddd;padding-top:8px}
+    .month-label{font-size:0!important}
+    .week-block{border:1px solid #ccc!important;margin-bottom:8px!important;break-inside:avoid}
+    .week-header{background:#f1f5f9!important;font-size:9px!important;padding:6px 10px!important}
+    .day-col{padding:6px 5px!important;min-height:60px!important;border-color:#e2e8f0!important}
+    .day-col.today{background:#eff6ff!important;border-top:2px solid #2563eb!important}
+    .day-col.past{opacity:1!important}
+    .day-label{font-size:9px!important}
+    .section-label{font-size:7px!important}
+    .ac-tag{font-size:8px!important;padding:1px 4px!important}
+    .ac-tag.done{background:#dcfce7!important;color:#166534!important;border:1px solid #86efac!important}
+    .ac-tag.missed{background:#fee2e2!important;color:#991b1b!important;border:1px solid #fca5a5!important}
+    .print-footer{display:block!important;margin-top:14px;page-break-inside:avoid}
+    .sig-print{display:flex;justify-content:flex-end;align-items:flex-end;gap:20px;margin-top:10px}
+    .sig-print img{max-height:60px}
   }
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-  .fade-in{animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .fade-in{animation:fadeIn .25s ease}
 </style>
 </head>
 <body>
 
-<!-- ==================== FIREBASE CONFIG ==================== -->
 <script>
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyAtYDTWrrpHlKRrkJajBU87m1Pbw_mfwOQ",
@@ -136,94 +149,101 @@ const FIREBASE_CONFIG = {
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-<div class="print-header">
-  <h1>EMACO — Programme de Maintenance Aéronefs</h1>
+<div class="print-header" id="printHeader">
+  <h1 id="printTitle">PLANNING DE MAINTENANCE</h1>
   <p id="printSub"></p>
   <div class="print-legend">
     <span class="pl-pf">PF = Point Fixe</span>
     <span class="pl-lav">LAV = Lavage</span>
     <span class="pl-tc">TC = Trait. Corrosion</span>
-    <span style="background:#e8fce8!important;color:#166534!important;border:1px solid #86d99e!important;padding:3px 12px;border-radius:4px;font-weight:700;font-size:9px">✓ = Réalisé</span>
+    <span class="pl-done">✓ = Réalisé</span>
   </div>
 </div>
 
 <div class="header">
-  <div style="display:flex;align-items:center;gap:16px">
-    <div class="logo">✈</div>
-    <div>
-      <div class="title">EMACO — Planning Maintenance</div>
-      <div class="subtitle">Synchronisé en temps réel avec Firebase</div>
-    </div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <div class="logo"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0011.5 2 1.5 1.5 0 0010 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
+    <div><div class="htitle">EMACO — Planning Maintenance</div><div class="hsub">Synchronisé en temps réel</div></div>
   </div>
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-    <span id="connStatus" style="font-size:12px"><span class="conn-dot off"></span>Hors ligne</span>
+    <span id="connStatus" style="font-size:12px;font-weight:600"><span class="conn-dot off"></span>Hors ligne</span>
+    <button class="btn" id="btnSchedule" onclick="showView('schedule')">Planning</button>
     <button class="btn" id="btnFleet" onclick="showView('fleet')">Flotte (<span id="fleetCount">0</span>)</button>
-    <button class="btn active" id="btnSchedule" onclick="showView('schedule')">Planning</button>
-    <button class="btn" id="btnRetards" onclick="showView('retards')" style="position:relative">🔴 Retards <span id="retardsBadge" style="background:#dc2626;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:4px;font-weight:700">0</span></button>
-    <button class="btn" onclick="window.print()">🖨️</button>
+    <button class="btn btn-retard" id="btnRetards" onclick="showView('retards')">Retards <span class="badge" id="retBadge" style="display:none">0</span></button>
+    <button class="btn" id="btnAdmin" onclick="showView('admin')">Admin</button>
+    <button class="btn no-print" onclick="window.print()">
+      <svg style="width:16px;height:16px;vertical-align:middle" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    </button>
   </div>
 </div>
 
-<div id="syncBar" class="sync-bar" style="display:none"><span class="spinner"></span> Synchronisation en cours...</div>
 <div id="notif"></div>
 
 <div class="content">
   <div class="stats" id="statsBar"></div>
-  <div id="fleetView" class="fade-in" style="display:none"></div>
   <div id="scheduleView" class="fade-in"></div>
+  <div id="fleetView" class="fade-in" style="display:none"></div>
   <div id="retardsView" class="fade-in" style="display:none"></div>
-  <div class="print-footer" style="display:none">PF: 7-9j après vol/PF · Lavage: 9-14j · Trait. Corrosion: 9-14j · LAV+TC même jour OK · PF jamais avec LAV/TC</div>
+  <div id="adminView" class="fade-in" style="display:none"></div>
+  <div class="print-footer" id="printFooter">
+    <div style="border-top:1px solid #ccc;padding-top:8px;font-size:8px;color:#64748b;text-align:center">
+      PF: 7-9j après vol/PF · Lavage: 9-14j · Trait. Corrosion: 9-14j · LAV+TC même jour OK · PF jamais avec LAV/TC
+    </div>
+    <div class="sig-print" id="sigPrint"></div>
+  </div>
 </div>
 <div id="pinModal" class="overlay" style="display:none"></div>
 
 <script>
 const WD=["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"];
-const toISO=d=>d.toISOString().slice(0,10);
+const MONTHS=["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+const toISO=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');};
 const addD=(d,n)=>{const r=new Date(d);r.setDate(r.getDate()+n);return r;};
-const dk=d=>new Date(d).toISOString().slice(0,10);
-const isWE=d=>{const x=new Date(d).getDay();return x===0||x===6;};
-const fmt=d=>{if(!d)return"";return new Date(d).toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"});};
-const dAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return toISO(d);};
+const dk=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');};
+const isWE=d=>{const x=new Date(d+'T12:00:00');return x.getDay()===0||x.getDay()===6;};
+const fmt=d=>{if(!d)return"";return new Date(d+'T12:00:00').toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"});};
+const fmtFull=d=>{if(!d)return"";return new Date(d+'T12:00:00').toLocaleDateString("fr-FR",{day:"2-digit",month:"long",year:"numeric"});};
 const today=toISO(new Date());
 function fbKey(im){return im.replace(/[.#$/\[\]]/g,"_");}
 
-function makeAc(im,ty){return{immat:im,type:ty,active:true,lastFlight:dAgo(10),lastLavage:dAgo(15),lastCorrosion:dAgo(15),lastPointFixe:dAgo(30)};}
-const DEF=["TY-43L","TY-44L","TY-45L","TY-46L","TY-47L","TY-48L","TY-49L","TY-50L","TY-51L","TY-52L","TY-53L","TY-54L","TY-55L","TY-56L","TY-60L","TY-61L","TY-62L","TY-63L","TY-64L"].map(i=>makeAc(i,"ULM")).concat([makeAc("TY-27A","Avion"),makeAc("TY-29A","Avion")]);
+let fleet=[],sched={},pins={},overdueList=[],curView="schedule",db=null;
+let sigName="",sigPost="",sigImage="";
+let curMonth=new Date().getMonth(), curYear=new Date().getFullYear();
 
-let fleet=[],sched={},pins={},curView="schedule",db=null;
-let startDate=(()=>{const d=new Date();while(d.getDay()!==1)d.setDate(d.getDate()-1);return toISO(d);})();
+function daysInMonth(m,y){return new Date(y,m+1,0).getDate();}
+function monthStart(){return new Date(curYear,curMonth,1);}
+function monthEnd(){return new Date(curYear,curMonth,daysInMonth(curMonth,curYear));}
 
 // ============ FIREBASE ============
 function initFB(){
   try{
-    if(FIREBASE_CONFIG.apiKey==="VOTRE_API_KEY"){
-      updateConn(false);fleet=JSON.parse(JSON.stringify(DEF));refresh();return;
-    }
     firebase.initializeApp(FIREBASE_CONFIG);db=firebase.database();
-    db.ref(".info/connected").on("value",s=>updateConn(!!s.val()));
-    showSync(true);
-    // Real-time sync
+    db.ref(".info/connected").on("value",s=>{
+      const on=!!s.val();
+      document.getElementById("connStatus").innerHTML=on?'<span class="conn-dot on"></span>Connecté':'<span class="conn-dot off"></span>Hors ligne';
+    });
     db.ref("fleet").on("value",snap=>{
       const d=snap.val();
-      if(d){fleet=Object.values(d);}else{fleet=JSON.parse(JSON.stringify(DEF));pushAll();}
-      showSync(false);refresh();
+      if(d)fleet=Object.values(d);
+      else{fleet=defaultFleet();pushAll();}
+      refresh();
     });
     db.ref("pins").on("value",snap=>{pins=snap.val()||{};refresh();});
-  }catch(e){console.error(e);updateConn(false);fleet=JSON.parse(JSON.stringify(DEF));refresh();}
+    db.ref("config").on("value",snap=>{
+      const c=snap.val()||{};
+      sigName=c.sigName||"";sigPost=c.sigPost||"";sigImage=c.sigImage||"";
+    });
+  }catch(e){console.error(e);fleet=defaultFleet();refresh();}
+}
+function defaultFleet(){
+  const dAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return toISO(d);};
+  const mk=(im,ty)=>({immat:im,type:ty,active:true,lastFlight:dAgo(10),lastLavage:dAgo(15),lastCorrosion:dAgo(15),lastPointFixe:dAgo(30)});
+  return["TY-43L","TY-44L","TY-45L","TY-46L","TY-47L","TY-48L","TY-49L","TY-50L","TY-51L","TY-52L","TY-53L","TY-54L","TY-55L","TY-56L","TY-60L","TY-61L","TY-62L","TY-63L","TY-64L"].map(i=>mk(i,"ULM")).concat([mk("TY-27A","Avion"),mk("TY-29A","Avion")]);
 }
 function pushAll(){if(!db)return;const o={};fleet.forEach(a=>{o[fbKey(a.immat)]=a;});db.ref("fleet").set(o);}
-function updateConn(on){
-  document.getElementById("connStatus").innerHTML=on?'<span class="conn-dot on"></span>Firebase connecté':'<span class="conn-dot off"></span>Hors ligne';
-}
-function showSync(on){document.getElementById("syncBar").style.display=on?"flex":"none";}
-function showNotif(msg,type){
-  const n=document.getElementById("notif");n.textContent=msg;
-  n.style.background=type==="err"?"#5c1a1a":"#1a3a2a";n.style.color=type==="err"?"#ff7e7e":"#7effa8";
-  n.style.display="block";setTimeout(()=>{n.style.display="none";},3000);
-}
+function showNotif(msg,type){const n=document.getElementById("notif");n.textContent=msg;n.style.background=type==="err"?"#fef2f2":"#f0fdf4";n.style.color=type==="err"?"#dc2626":"#16a34a";n.style.border="1px solid "+(type==="err"?"#fecaca":"#bbf7d0");n.style.display="block";setTimeout(()=>{n.style.display="none";},3000);}
 
-// ============ VALIDATION LOGIC ============
-// A task is "done" if the aircraft's last date for that type >= the scheduled date
+// ============ VALIDATION ============
 function isDone(immat,type,schedDate){
   const ac=fleet.find(a=>a.immat===immat);if(!ac)return false;
   let ref=null;
@@ -233,65 +253,56 @@ function isDone(immat,type,schedDate){
   if(!ref)return false;
   return ref>=schedDate;
 }
+function isMissed(immat,type,schedDate){
+  return !isDone(immat,type,schedDate) && schedDate<today;
+}
 
 // ============ SCHEDULE ============
-let overdueList=[];
 function genSched(){
-  const days=35,sd=new Date(startDate),sc={};
-  overdueList=[];
-  for(let i=0;i<days;i++){sc[dk(addD(sd,i))]={pointFixe:[],lavage:[],corrosion:[]};}
+  const sd=monthStart(), numDays=daysInMonth(curMonth,curYear);
+  const sc={};overdueList=[];
+  for(let i=0;i<numDays;i++){sc[dk(addD(sd,i))]={pointFixe:[],lavage:[],corrosion:[]};}
 
-  Object.keys(pins).forEach(key=>{const[im,type,date]=key.split("|");if(sc[date]&&!sc[date][type]?.includes(im))sc[date][type].push(im);});
+  // Pins
+  Object.keys(pins).forEach(key=>{const[im,type,date]=key.split("|");if(sc[date]&&sc[date][type]&&!sc[date][type].includes(im))sc[date][type].push(im);});
 
   const activeFleet=fleet.filter(a=>a.active);
-  const needs=[];
-  const NOW=new Date(today);
+  const needs=[];const NOW=new Date(today);
 
   activeFleet.forEach(ac=>{
     if(!ac.lastFlight)return;
     const lf=new Date(ac.lastFlight);
 
-    // Point fixe
+    // PF: from last flight or last PF, whichever is later
     const pfRef=ac.lastPointFixe?new Date(ac.lastPointFixe):null;
     const pfBase=pfRef&&pfRef>lf?pfRef:lf;
-    const pfDue=addD(pfBase,7);
-    const pfDeadline=addD(pfBase,9);
-    const pfDone=ac.lastPointFixe&&new Date(ac.lastPointFixe)>=pfBase;
+    const pfDue=addD(pfBase,7),pfDead=addD(pfBase,9);
     if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|pointFixe|"))){
-      const isOverdue=!pfDone&&pfDeadline<NOW;
-      if(isOverdue){
-        // Force schedule ASAP (today or next working day)
+      const overdue=pfDead<NOW&&!(ac.lastPointFixe&&new Date(ac.lastPointFixe)>=pfBase);
+      if(overdue){
         needs.push({immat:ac.immat,type:"pointFixe",due:sd,priority:0,overdue:true});
-        overdueList.push({immat:ac.immat,type:"pointFixe",dueDate:dk(pfDue),deadline:dk(pfDeadline),daysLate:Math.floor((NOW-pfDeadline)/86400000)});
-      } else {
-        needs.push({immat:ac.immat,type:"pointFixe",due:pfDue,priority:pfDue.getTime()});
-      }
+        overdueList.push({immat:ac.immat,type:"pointFixe",deadline:dk(pfDead),daysLate:Math.floor((NOW-pfDead)/86400000)});
+      } else needs.push({immat:ac.immat,type:"pointFixe",due:pfDue,priority:pfDue.getTime()});
     }
 
-    // Lavage
+    // LAV
     const lavRef=ac.lastLavage?new Date(ac.lastLavage):lf;
-    const lavDeadline=addD(lavRef,14);
+    const lavDead=addD(lavRef,14);
     if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|lavage|"))){
-      const isOverdue=lavDeadline<NOW;
-      if(isOverdue){
+      if(lavDead<NOW){
         needs.push({immat:ac.immat,type:"lavage",due:sd,priority:1,overdue:true});
-        overdueList.push({immat:ac.immat,type:"lavage",dueDate:dk(addD(lavRef,9)),deadline:dk(lavDeadline),daysLate:Math.floor((NOW-lavDeadline)/86400000)});
-      } else {
-        needs.push({immat:ac.immat,type:"lavage",due:addD(lavRef,9),priority:addD(lavRef,9).getTime()});
-      }
+        overdueList.push({immat:ac.immat,type:"lavage",deadline:dk(lavDead),daysLate:Math.floor((NOW-lavDead)/86400000)});
+      } else needs.push({immat:ac.immat,type:"lavage",due:addD(lavRef,9),priority:addD(lavRef,9).getTime()});
     }
 
-    // Corrosion
+    // TC
     const corRef=ac.lastCorrosion?new Date(ac.lastCorrosion):lf;
-    const corDeadline=addD(corRef,14);
+    const corDead=addD(corRef,14);
     if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|corrosion|"))){
-      const isOverdue=corDeadline<NOW;
-      if(isOverdue){
+      if(corDead<NOW){
         needs.push({immat:ac.immat,type:"corrosion",due:sd,priority:2,overdue:true});
-        overdueList.push({immat:ac.immat,type:"corrosion",dueDate:dk(addD(corRef,9)),deadline:dk(corDeadline),daysLate:Math.floor((NOW-corDeadline)/86400000)});
-      } else {
-        needs.push({immat:ac.immat,type:"corrosion",due:addD(corRef,9),priority:addD(corRef,9).getTime()});
-      }
+        overdueList.push({immat:ac.immat,type:"corrosion",deadline:dk(corDead),daysLate:Math.floor((NOW-corDead)/86400000)});
+      } else needs.push({immat:ac.immat,type:"corrosion",due:addD(corRef,9),priority:addD(corRef,9).getTime()});
     }
   });
   needs.sort((a,b)=>a.priority-b.priority);
@@ -299,7 +310,7 @@ function genSched(){
   for(let ni=0;ni<needs.length;ni++){
     const n=needs[ni],key=`${n.immat}-${n.type}-${n.due.getTime()}`;
     if(assigned.has(key))continue;
-    for(let i=0;i<days;i++){
+    for(let i=0;i<numDays;i++){
       const d=addD(sd,i),ddkk=dk(d);
       if(isWE(d)||d<n.due)continue;
       const slot=sc[ddkk];if(!slot)continue;
@@ -310,24 +321,26 @@ function genSched(){
       if((n.type==="lavage"||n.type==="corrosion")&&slot.pointFixe.includes(n.immat))continue;
       if(slot[n.type].includes(n.immat))continue;
       slot[n.type].push(n.immat);assigned.add(key);
-      if(n.type==="lavage"||n.type==="corrosion"){const next=addD(d,9);if(next<addD(sd,days)){needs.push({immat:n.immat,type:n.type,due:next,priority:next.getTime()});needs.sort((a,b)=>a.priority-b.priority);}}
-      if(n.type==="pointFixe"){const next=addD(d,7);if(next<addD(sd,days)){needs.push({immat:n.immat,type:"pointFixe",due:next,priority:next.getTime()});needs.sort((a,b)=>a.priority-b.priority);}}
+      if(n.type==="lavage"||n.type==="corrosion"){const next=addD(d,9);if(dk(next)<=dk(monthEnd())){needs.push({immat:n.immat,type:n.type,due:next,priority:next.getTime()});needs.sort((a,b)=>a.priority-b.priority);}}
+      if(n.type==="pointFixe"){const next=addD(d,7);if(dk(next)<=dk(monthEnd())){needs.push({immat:n.immat,type:"pointFixe",due:next,priority:next.getTime()});needs.sort((a,b)=>a.priority-b.priority);}}
       break;
     }
   }
   sched=sc;
 }
 
-const typeLabel=t=>t==="pointFixe"?"Point Fixe":t==="lavage"?"Lavage":"Trait. Corrosion";
-const typeBg=t=>t==="pointFixe"?"var(--pf-bg)":t==="lavage"?"var(--lav-bg)":"var(--tc-bg)";
-const typeText=t=>t==="pointFixe"?"var(--pf-text)":t==="lavage"?"var(--lav-text)":"var(--tc-text)";
-const typeBorder=t=>t==="pointFixe"?"var(--pf-border)":t==="lavage"?"var(--lav-border)":"var(--tc-border)";
+const typeLabel=t=>t==="pointFixe"?"POINT FIXE":t==="lavage"?"LAVAGE":"TRAIT. CORROSION";
+const typeLabelShort=t=>t==="pointFixe"?"Point Fixe":t==="lavage"?"Lavage":"Trait. Corrosion";
+const typeColor=t=>t==="pointFixe"?{c:"var(--pf)",bg:"var(--pf-bg)",bd:"var(--pf-border)"}:t==="lavage"?{c:"var(--lav)",bg:"var(--lav-bg)",bd:"var(--lav-border)"}:{c:"var(--tc)",bg:"var(--tc-bg)",bd:"var(--tc-border)"};
 
 function getStats(){
   let pf=0,lav=0,cor=0,done=0,total=0;
   Object.entries(sched).forEach(([date,s])=>{
     ["pointFixe","lavage","corrosion"].forEach(type=>{
-      s[type].forEach(im=>{total++;if(isDone(im,type,date))done++;});
+      s[type].forEach(im=>{
+        total++;
+        if(isDone(im,type,date))done++;
+      });
     });
     pf+=s.pointFixe.length;lav+=s.lavage.length;cor+=s.corrosion.length;
   });
@@ -340,24 +353,134 @@ function renderStats(){
   document.getElementById("fleetCount").textContent=s.fleetSize;
   const pct=s.total?Math.round(s.done/s.total*100):0;
   document.getElementById("statsBar").innerHTML=[
-    {l:"Actifs",v:s.active,c:"var(--pf-text)"},
-    {l:"Points Fixes",v:s.pf,c:"var(--pf-text)"},
-    {l:"Lavages",v:s.lav,c:"var(--lav-text)"},
-    {l:"Trait. Corrosion",v:s.cor,c:"var(--tc-text)"},
-    {l:"Réalisés",v:`${s.done}/${s.total}`,c:"var(--ok-text)"},
-    {l:"En retard",v:s.overdue,c:s.overdue?"#ff7e7e":"var(--ok-text)"},
-    {l:"Progression",v:pct+"%",c:pct>60?"var(--ok-text)":"var(--tc-text)"},
+    {l:"Actifs",v:s.active,c:"var(--pf)"},
+    {l:"Pt Fixes",v:s.pf,c:"var(--pf)"},
+    {l:"Lavages",v:s.lav,c:"var(--lav)"},
+    {l:"Trait. Corrosion",v:s.cor,c:"var(--tc)"},
+    {l:"Réalisés",v:`${s.done}/${s.total}`,c:"var(--ok)"},
+    {l:"Retards",v:s.overdue,c:s.overdue?"var(--danger)":"var(--ok)"},
   ].map(x=>`<div class="stat"><div class="stat-label">${x.l}</div><div class="stat-value" style="color:${x.c}">${x.v}</div></div>`).join("");
-  const sd=new Date(startDate),ed=addD(sd,34);
-  document.getElementById("printSub").innerHTML=`Période du ${fmt(startDate)} au ${fmt(toISO(ed))} · ${s.active} aéronefs · ${new Date().toLocaleDateString("fr-FR")}`;
+  const b=document.getElementById("retBadge");
+  b.textContent=s.overdue;b.style.display=s.overdue?"inline":"none";
+  // Print title
+  const mName=MONTHS[curMonth];
+  document.getElementById("printTitle").textContent=`PLANNING DE MAINTENANCE — ${mName.toUpperCase()} ${curYear}`;
+  document.getElementById("printSub").textContent=`DU 01 ${mName} ${curYear} AU ${daysInMonth(curMonth,curYear)} ${mName} ${curYear} · ${s.active} aéronefs · Généré le ${fmtFull(today)}`;
+  // Sig
+  let sigH="";
+  if(sigName||sigPost||sigImage){
+    sigH+=`<div style="text-align:right;margin-top:20px;padding-top:12px">`;
+    if(sigImage)sigH+=`<img src="${sigImage}" style="max-height:70px;display:block;margin-left:auto;margin-bottom:6px">`;
+    if(sigName)sigH+=`<div style="font-size:11px;font-weight:800;color:#1e293b">${sigName}</div>`;
+    if(sigPost)sigH+=`<div style="font-size:10px;font-weight:600;color:#64748b;margin-top:2px">${sigPost}</div>`;
+    sigH+=`</div>`;
+  }
+  document.getElementById("sigPrint").innerHTML=sigH;
+}
+
+function renderSched(){
+  const numDays=daysInMonth(curMonth,curYear);
+  const sd=monthStart();
+
+  // Build full Mon-Fri weeks covering the month, pad with outside-month days
+  const firstOfMonth=new Date(curYear,curMonth,1);
+  const lastOfMonth=new Date(curYear,curMonth,numDays);
+  // Find Monday of the first week
+  let mon=new Date(firstOfMonth);
+  while(mon.getDay()!==1)mon.setDate(mon.getDate()-1);
+  // Find Friday of the last week
+  let fri=new Date(lastOfMonth);
+  while(fri.getDay()!==5)fri.setDate(fri.getDate()+1);
+
+  const weeks=[];
+  let cursor=new Date(mon);
+  while(cursor<=fri){
+    const week=[];
+    for(let i=0;i<5;i++){
+      const d=dk(cursor);
+      const inMonth=cursor.getMonth()===curMonth&&cursor.getFullYear()===curYear;
+      week.push({date:d,inMonth});
+      cursor.setDate(cursor.getDate()+1);
+    }
+    // Skip Sat+Sun
+    cursor.setDate(cursor.getDate()+2);
+    weeks.push(week);
+  }
+
+  let h=`<div class="month-nav no-print">
+    <button onclick="prevMonth()">◀</button>
+    <div class="month-label">${MONTHS[curMonth]} ${curYear}</div>
+    <button onclick="nextMonth()">▶</button>
+  </div>`;
+
+  // Legend
+  h+=`<div class="legend no-print" style="margin-bottom:14px">
+    <span class="tag" style="background:var(--pf-bg);color:var(--pf);border:1px solid var(--pf-border)">PF</span>
+    <span class="tag" style="background:var(--lav-bg);color:var(--lav);border:1px solid var(--lav-border)">LAV</span>
+    <span class="tag" style="background:var(--tc-bg);color:var(--tc);border:1px solid var(--tc-border)">TC</span>
+    <span class="tag" style="background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-border)">✓ Réalisé</span>
+    <span class="tag" style="background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)">✗ Non réalisé</span>
+  </div>`;
+
+  if(overdueList.length){
+    h+=`<div onclick="showView('retards')" style="background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:10px;padding:10px 18px;margin-bottom:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:700;color:var(--danger)" class="no-print">
+      <span>${overdueList.length} tâche(s) en retard — reprogrammées en priorité</span><span>Voir →</span></div>`;
+  }
+
+  weeks.forEach(week=>{
+    const weekDatesInMonth=week.filter(w=>w.inMonth);
+    const wStart=weekDatesInMonth.length?weekDatesInMonth[0].date:week[0].date;
+    const wEnd=weekDatesInMonth.length?weekDatesInMonth[weekDatesInMonth.length-1].date:week[4].date;
+    h+=`<div class="week-block"><div class="week-header">Semaine du ${fmt(wStart)} au ${fmt(wEnd)}</div>`;
+    h+=`<div class="week-grid" style="grid-template-columns:repeat(5,1fr)">`;
+    week.forEach(({date:d,inMonth})=>{
+      const slot=sched[d]||{pointFixe:[],lavage:[],corrosion:[]};
+      const dt=new Date(d+'T12:00:00');const isT=d===today;const isPast=d<today;
+
+      if(!inMonth){
+        h+=`<div class="day-col" style="background:var(--bg3);opacity:.35;min-height:60px">
+          <div class="day-label" style="color:var(--border2)">${WD[dt.getDay()]} ${dt.getDate()}</div></div>`;
+        return;
+      }
+
+      h+=`<div class="day-col${isT?' today':''}${isPast&&!isT?' past':''}">`;
+      h+=`<div class="day-label" style="color:${isT?'var(--pf)':'var(--text2)'}">${WD[dt.getDay()]} ${dt.getDate()}</div>`;
+
+      {
+        ["pointFixe","lavage","corrosion"].forEach(type=>{
+          if(!slot[type]||!slot[type].length)return;
+          const tc=typeColor(type);
+          h+=`<div style="margin-bottom:6px"><div class="section-label" style="color:${tc.c}">${typeLabel(type)}</div>`;
+          slot[type].forEach(im=>{
+            const done=isDone(im,type,d);
+            const missed=isMissed(im,type,d);
+            const pin=pins[`${im}|${type}|${d}`];
+            let cls="",bg=tc.bg,bd=tc.bd,col=tc.c,icon="○";
+            if(done){cls="done";bg="var(--ok-bg)";bd="var(--ok-border)";col="var(--ok)";icon="✓";}
+            else if(missed){cls="missed";bg="var(--danger-bg)";bd="var(--danger-border)";col="var(--danger)";icon="✗";}
+            h+=`<div class="ac-tag ${cls}" style="background:${bg};border:1px solid ${bd};color:${col}">
+              <span class="st">${icon}</span>${im}${pin?' 📌':''}</div>`;
+          });
+          h+=`</div>`;
+        });
+        if(!slot.pointFixe.length&&!slot.lavage.length&&!slot.corrosion.length)
+          h+=`<div style="font-size:11px;color:var(--border2);margin-top:14px">—</div>`;
+        h+=`<div class="pin-row no-print">
+          <button class="pin-btn" onclick="openPin('pointFixe','${d}')">+PF</button>
+          <button class="pin-btn" onclick="openPin('lavage','${d}')">+LAV</button>
+          <button class="pin-btn" onclick="openPin('corrosion','${d}')">+TC</button></div>`;
+      }
+      h+=`</div>`;
+    });
+    h+=`</div></div>`;
+  });
+  document.getElementById("scheduleView").innerHTML=h;
 }
 
 function renderFleet(){
-  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px">
-    <h2 style="font-size:18px;color:var(--white)">Flotte (lecture depuis Firebase)</h2>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-primary btn-sm" onclick="showAdd()">+ Ajouter</button>
-    </div></div>`;
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+    <h2 style="font-size:18px;font-weight:800">Flotte</h2>
+    <button class="btn btn-primary btn-sm" onclick="showAdd()">+ Ajouter</button></div>`;
   h+=`<div id="addRow" style="display:none" class="modal-row">
     <div class="field"><label>Immatriculation</label><input type="text" id="newImmat" placeholder="TY-XXX" style="text-transform:uppercase"></div>
     <div class="field"><label>Type</label><input type="text" id="newType" value="ULM"></div>
@@ -368,97 +491,124 @@ function renderFleet(){
   h+=`</tr></thead><tbody>`;
   fleet.forEach((ac,i)=>{
     const dim=!ac.active?"opacity:.4":"";
+    const tc=ac.type==="ULM"?"pf-bg":"";
     h+=`<tr style="${dim}">
       <td><button class="toggle ${ac.active?'on':'off'}" onclick="toggleActive(${i})"></button></td>
-      <td style="font-weight:700;color:var(--white)">${ac.immat}</td>
-      <td><span class="tag" style="background:${ac.type==='ULM'?'var(--pf-bg)':'#2a1a44'};color:${ac.type==='ULM'?'var(--pf-text)':'#b87eff'}">${ac.type}</span></td>
+      <td style="font-weight:800;color:var(--text)">${ac.immat}</td>
+      <td><span class="tag" style="background:${ac.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${ac.type==='ULM'?'var(--pf)':'#7c3aed'};border:1px solid ${ac.type==='ULM'?'var(--pf-border)':'#ddd6fe'}">${ac.type}</span></td>
       <td>${ac.lastFlight?fmt(ac.lastFlight):'—'}</td>
       <td>${ac.lastLavage?fmt(ac.lastLavage):'—'}</td>
       <td>${ac.lastCorrosion?fmt(ac.lastCorrosion):'—'}</td>
       <td>${ac.lastPointFixe?fmt(ac.lastPointFixe):'—'}</td>
       <td><button class="btn btn-danger btn-xs" onclick="removeAc(${i})">✕</button></td></tr>`;
   });
-  h+=`</tbody></table></div>
-  <p style="margin-top:14px;font-size:12px;color:var(--text2)">📱 Les dates sont mises à jour depuis l'application mobile de saisie. Le planning se synchronise automatiquement.</p>`;
+  h+=`</tbody></table></div>`;
   document.getElementById("fleetView").innerHTML=h;
 }
 
-function renderSched(){
-  const sortd=Object.keys(sched).sort().filter(d=>!isWE(d));
-  const weeks=[];let cur=[];
-  sortd.forEach(d=>{if(new Date(d).getDay()===1&&cur.length>0){weeks.push(cur);cur=[];}cur.push(d);});
-  if(cur.length)weeks.push(cur);
-
-  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px">
-    <h2 style="font-size:18px;color:var(--white)">Planning Mensuel <span style="font-size:12px;color:var(--text2);font-weight:400">— synchronisé en temps réel</span></h2>
-    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-      <label style="font-size:12px;color:var(--text2)">Début:</label>
-      <input type="date" value="${startDate}" onchange="startDate=this.value;refresh()">
-      <div class="legend no-print">
-        <span class="tag" style="background:var(--pf-bg);color:var(--pf-text);border:1px solid var(--pf-border)">PF</span>
-        <span class="tag" style="background:var(--lav-bg);color:var(--lav-text);border:1px solid var(--lav-border)">LAV</span>
-        <span class="tag" style="background:var(--tc-bg);color:var(--tc-text);border:1px solid var(--tc-border)">TC</span>
-        <span class="tag" style="background:var(--ok-bg);color:var(--ok-text);border:1px solid var(--ok-border)">✓ Réalisé</span>
-      </div>
-    </div></div>`;
-
-  if(!fleet.some(a=>a.active&&a.lastFlight)){
-    h+=`<div style="background:var(--bg2);border:1px dashed var(--border2);border-radius:12px;padding:40px;text-align:center;color:var(--text2)"><div style="font-size:36px;margin-bottom:12px">✈</div><div style="font-size:15px">En attente de données Firebase...</div></div>`;
+function renderRetards(){
+  let h=`<h2 style="font-size:18px;font-weight:800;margin-bottom:16px">Tâches en retard</h2>`;
+  if(!overdueList.length){
+    h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok-border);border-radius:14px;padding:40px;text-align:center">
+      <div style="font-size:36px;margin-bottom:10px">✅</div>
+      <div style="font-size:16px;font-weight:800;color:var(--ok)">Aucun retard</div></div>`;
   } else {
-    if(overdueList.length){
-      h+=`<div onclick="showView('retards')" style="background:#2e0f0f;border:1px solid #7a2d2d;border-radius:10px;padding:12px 20px;margin-bottom:16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .15s" onmouseover="this.style.background='#3a1515'" onmouseout="this.style.background='#2e0f0f'">
-        <span style="color:#ff7e7e;font-weight:700;font-size:14px">🔴 ${overdueList.length} tâche(s) en retard — reprogrammées en priorité</span>
-        <span style="color:#ff7e7e;font-size:13px">Voir détails →</span>
-      </div>`;
-    }
-    weeks.forEach(week=>{
-      h+=`<div class="week-block"><div class="week-header">Semaine du ${fmt(week[0])} au ${fmt(week[week.length-1])}</div>`;
-      h+=`<div class="week-grid" style="grid-template-columns:repeat(${week.length},1fr)">`;
-      week.forEach(d=>{
-        const slot=sched[d]||{pointFixe:[],lavage:[],corrosion:[]};
-        const isT=d===today;const dt=new Date(d);
-        h+=`<div class="day-col${isT?' today':''}">`;
-        h+=`<div class="day-label" style="color:${isT?'var(--pf-text)':'var(--text2)'}">${WD[dt.getDay()]} ${dt.getDate()}/${String(dt.getMonth()+1).padStart(2,'0')}</div>`;
-
-        ["pointFixe","lavage","corrosion"].forEach(type=>{
-          if(!slot[type].length)return;
-          const label=type==="pointFixe"?"POINT FIXE":type==="lavage"?"LAVAGE":"TRAIT. CORROSION";
-          h+=`<div style="margin-bottom:8px"><div class="section-label" style="color:${typeText(type)}">${label}</div>`;
-          slot[type].forEach(im=>{
-            const done=isDone(im,type,d);
-            const pinned=pins[`${im}|${type}|${d}`];
-            if(done){
-              h+=`<div class="ac-tag done" style="background:var(--ok-bg);border:1px solid var(--ok-border);color:var(--ok-text)">
-                <span class="status-icon">✓</span><span>${im}${pinned?' 📌':''}</span></div>`;
-            } else {
-              h+=`<div class="ac-tag" style="background:${typeBg(type)};border:1px solid ${typeBorder(type)};color:${typeText(type)}">
-                <span class="status-icon">○</span><span>${im}${pinned?' 📌':''}</span></div>`;
-            }
-          });
-          h+=`</div>`;
-        });
-
-        if(!slot.pointFixe.length&&!slot.lavage.length&&!slot.corrosion.length)
-          h+=`<div style="font-size:12px;color:#1e2a3a;font-style:italic;margin-top:18px">—</div>`;
-        h+=`<div class="pin-row no-print">
-          <button class="pin-btn" onclick="openPin('pointFixe','${d}')">+PF</button>
-          <button class="pin-btn" onclick="openPin('lavage','${d}')">+LAV</button>
-          <button class="pin-btn" onclick="openPin('corrosion','${d}')">+TC</button></div>`;
-        h+=`</div>`;
+    const groups={pointFixe:[],lavage:[],corrosion:[]};
+    overdueList.forEach(o=>groups[o.type].push(o));
+    [{k:"pointFixe",l:"Points Fixes",r:"7-9j après vol/PF"},{k:"lavage",l:"Lavages",r:"9-14j"},{k:"corrosion",l:"Traitements Corrosion",r:"9-14j"}].forEach(sec=>{
+      if(!groups[sec.k].length)return;
+      const tc=typeColor(sec.k);
+      h+=`<div class="overdue-card"><div class="overdue-head">
+        <span style="font-weight:800;color:var(--danger)">${sec.l} en retard (${groups[sec.k].length})</span>
+        <span style="font-size:11px;color:var(--text2)">Délai: ${sec.r}</span></div>
+        <table><thead><tr><th>Aéronef</th><th>Type</th><th>Échéance</th><th>Retard</th><th>Reprogrammé</th></tr></thead><tbody>`;
+      groups[sec.k].forEach(o=>{
+        const ac=fleet.find(a=>a.immat===o.immat);
+        let reprDate="—";
+        for(const d of Object.keys(sched).sort()){if(sched[d][o.type]?.includes(o.immat)){reprDate=fmt(d);break;}}
+        h+=`<tr><td style="font-weight:800">${o.immat}</td><td>${ac?ac.type:'—'}</td>
+          <td style="color:var(--danger);font-weight:700">${fmt(o.deadline)}</td>
+          <td><span style="background:var(--danger-bg);color:var(--danger);padding:3px 10px;border-radius:6px;font-weight:800;font-size:12px">+${o.daysLate}j</span></td>
+          <td style="color:var(--ok);font-weight:700">${reprDate}</td></tr>`;
       });
-      h+=`</div></div>`;
+      h+=`</tbody></table></div>`;
     });
   }
-  document.getElementById("scheduleView").innerHTML=h;
+  document.getElementById("retardsView").innerHTML=h;
 }
 
+function renderAdmin(){
+  let h=`<h2 style="font-size:18px;font-weight:800;margin-bottom:16px">Administration</h2>`;
+  // Signature
+  h+=`<div class="sig-area">
+    <h3 style="font-size:15px;font-weight:700;margin-bottom:14px">Signature pour l'export PDF</h3>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Apparaît en bas à droite du planning imprimé : signature, puis nom, puis poste.</p>
+    <div class="field" style="margin-bottom:12px"><label>Image de signature (.png, .jpg)</label>
+      <input type="file" accept="image/*" onchange="uploadSig(event)" style="font-size:13px">
+    </div>
+    ${sigImage?`<div style="margin-bottom:14px;padding:12px;background:var(--white);border-radius:10px;border:1px solid var(--border);display:inline-block">
+      <img src="${sigImage}" style="max-height:70px;display:block;border-radius:6px">
+      <button class="btn btn-danger btn-xs" style="margin-top:8px" onclick="removeSig()">Supprimer</button></div>`:''}
+    <div class="field" style="margin-bottom:12px"><label>Nom du signataire</label>
+      <input type="text" id="sigNameInput" value="${sigName}" placeholder="Ex: Cpt Jean DUPONT" style="width:100%;padding:10px 14px" onchange="saveSig()">
+    </div>
+    <div class="field" style="margin-bottom:12px"><label>Poste / Fonction</label>
+      <input type="text" id="sigPostInput" value="${sigPost}" placeholder="Ex: Chef Section Maintenance" style="width:100%;padding:10px 14px" onchange="saveSig()">
+    </div>
+    ${(sigName||sigPost||sigImage)?`<div style="margin-top:16px;padding:16px;background:var(--bg3);border-radius:10px;border:1px dashed var(--border)">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:8px;font-weight:600">APERÇU</div>
+      <div style="text-align:right">
+        ${sigImage?`<img src="${sigImage}" style="max-height:60px;display:block;margin-left:auto;margin-bottom:4px;border-radius:4px">`:'<div style="width:120px;height:40px;border-bottom:1px solid var(--border2);margin-left:auto;margin-bottom:4px"></div>'}
+        ${sigName?`<div style="font-size:13px;font-weight:800;color:var(--text)">${sigName}</div>`:''}
+        ${sigPost?`<div style="font-size:12px;font-weight:600;color:var(--text2)">${sigPost}</div>`:''}
+      </div>
+    </div>`:''}
+  </div>`;
+
+  h+=`<div style="margin-top:20px;padding:20px;background:var(--white);border-radius:14px;border:1px solid var(--border)">
+    <h3 style="font-size:15px;font-weight:700;margin-bottom:12px">Base de données</h3>
+    <button class="btn btn-sm" onclick="exportBackup()">💾 Exporter backup (.json)</button>
+    <button class="btn btn-sm" onclick="document.getElementById('impFile').click()" style="margin-left:8px">📂 Importer backup</button>
+    <input type="file" id="impFile" accept=".json" style="display:none" onchange="importBackup(event)">
+  </div>`;
+  document.getElementById("adminView").innerHTML=h;
+}
+
+function saveSig(){
+  sigName=document.getElementById("sigNameInput").value;
+  sigPost=document.getElementById("sigPostInput").value;
+  if(db){db.ref("config/sigName").set(sigName);db.ref("config/sigPost").set(sigPost);}
+  renderAdmin();
+}
+function uploadSig(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{sigImage=ev.target.result;if(db)db.ref("config/sigImage").set(sigImage);renderAdmin();};
+  r.readAsDataURL(f);
+}
+function removeSig(){sigImage="";if(db)db.ref("config/sigImage").remove();renderAdmin();}
+function exportBackup(){
+  const d=JSON.stringify({fleet,pins,sigName,sigPost,sigImage},null,2);
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([d],{type:"application/json"}));a.download="emaco_backup.json";a.click();
+}
+function importBackup(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=ev=>{
+    try{const d=JSON.parse(ev.target.result);if(d.fleet){fleet=d.fleet;pins=d.pins||{};if(d.sigName)sigName=d.sigName;if(d.sigPost)sigPost=d.sigPost;if(d.sigImage)sigImage=d.sigImage;if(db){pushAll();db.ref("pins").set(pins);db.ref("config").set({sigName,sigPost,sigImage});}refresh();showNotif("✓ Import réussi");}}catch(err){showNotif("Erreur: "+err.message,"err");}
+  };r.readAsText(f);e.target.value="";
+}
+
+// ============ NAV ============
+function prevMonth(){curMonth--;if(curMonth<0){curMonth=11;curYear--;}refresh();}
+function nextMonth(){curMonth++;if(curMonth>11){curMonth=0;curYear++;}refresh();}
+
 function openPin(type,date){
-  const activeAc=fleet.filter(a=>a.active);
-  let h=`<div class="modal"><h3>Fixer ${typeLabel(type)} — ${fmt(date)}</h3><div style="max-height:300px;overflow-y:auto">`;
-  activeAc.forEach(ac=>{
+  const list=fleet.filter(a=>a.active);
+  let h=`<div class="modal"><h3>Fixer ${typeLabelShort(type)} — ${fmt(date)}</h3><div style="max-height:300px;overflow-y:auto">`;
+  list.forEach(ac=>{
     const key=`${ac.immat}|${type}|${date}`;const already=pins[key];
-    h+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
-      <span style="font-weight:600;color:var(--white);font-size:14px">${ac.immat}</span>
+    h+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bg3)">
+      <span style="font-weight:700">${ac.immat} <span style="font-size:12px;color:var(--text2)">${ac.type}</span></span>
       ${already?`<button class="btn btn-danger btn-xs" onclick="removePin('${key}');closePin()">Retirer</button>`:`<button class="btn btn-primary btn-xs" onclick="addPin('${key}');closePin()">Fixer 📌</button>`}
     </div>`;
   });
@@ -471,89 +621,14 @@ function removePin(k){delete pins[k];if(db)db.ref("pins").set(pins);refresh();}
 
 function showView(v){
   curView=v;
-  ["fleet","schedule","retards"].forEach(id=>{
+  ["schedule","fleet","retards","admin"].forEach(id=>{
     document.getElementById(id+"View").style.display=v===id?"block":"none";
+    const btn=document.getElementById("btn"+id.charAt(0).toUpperCase()+id.slice(1));
+    if(btn)btn.className="btn"+(v===id?" active":"")+(id==="retards"?" btn-retard":"");
   });
-  document.getElementById("btnFleet").className="btn"+(v==="fleet"?" active":"");
-  document.getElementById("btnSchedule").className="btn"+(v==="schedule"?" active":"");
-  document.getElementById("btnRetards").className="btn"+(v==="retards"?" active":"");
-  if(v==="retards")document.getElementById("btnRetards").style.background=v==="retards"?"#5c1a1a":"";
+  if(v==="admin")renderAdmin();
 }
 function refresh(){genSched();renderStats();renderFleet();renderSched();renderRetards();}
-
-function renderRetards(){
-  const badge=document.getElementById("retardsBadge");
-  badge.textContent=overdueList.length;
-  badge.style.display=overdueList.length?"inline":"none";
-
-  let h=`<h2 style="font-size:18px;color:var(--white);margin-bottom:18px">Tâches en retard</h2>`;
-
-  if(!overdueList.length){
-    h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok-border);border-radius:14px;padding:40px;text-align:center">
-      <div style="font-size:40px;margin-bottom:12px">✅</div>
-      <div style="font-size:16px;font-weight:700;color:var(--ok-text);margin-bottom:6px">Aucun retard</div>
-      <div style="font-size:13px;color:var(--text2)">Toutes les tâches sont dans les délais</div>
-    </div>`;
-  } else {
-    // Group by type
-    const groups={pointFixe:[],lavage:[],corrosion:[]};
-    overdueList.forEach(o=>groups[o.type].push(o));
-
-    const sections=[
-      {key:"pointFixe",label:"Points Fixes en retard",icon:"🔧",bg:"var(--pf-bg)",text:"var(--pf-text)",border:"var(--pf-border)",rule:"Délai: 7-9 jours après dernier vol ou PF"},
-      {key:"lavage",label:"Lavages en retard",icon:"🚿",bg:"var(--lav-bg)",text:"var(--lav-text)",border:"var(--lav-border)",rule:"Délai: 9-14 jours"},
-      {key:"corrosion",label:"Traitements Corrosion en retard",icon:"🧪",bg:"var(--tc-bg)",text:"var(--tc-text)",border:"var(--tc-border)",rule:"Délai: 9-14 jours"},
-    ];
-
-    sections.forEach(sec=>{
-      const items=groups[sec.key];
-      if(!items.length)return;
-      h+=`<div style="background:var(--bg2);border:1px solid ${sec.border};border-radius:14px;margin-bottom:18px;overflow:hidden">
-        <div style="padding:14px 20px;background:${sec.bg};border-bottom:1px solid ${sec.border};display:flex;align-items:center;justify-content:space-between">
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="font-size:20px">${sec.icon}</span>
-            <span style="font-size:15px;font-weight:700;color:${sec.text}">${sec.label}</span>
-            <span style="background:#5c1a1a;color:#ff7e7e;padding:2px 10px;border-radius:10px;font-size:12px;font-weight:700">${items.length}</span>
-          </div>
-          <span style="font-size:11px;color:var(--text2)">${sec.rule}</span>
-        </div>
-        <div style="padding:4px 0">`;
-
-      // Table
-      h+=`<table style="width:100%"><thead><tr>
-        <th>Aéronef</th><th>Type</th><th>Échéance dépassée</th><th>Retard</th><th>Reprogrammé</th>
-      </tr></thead><tbody>`;
-
-      items.forEach(o=>{
-        const ac=fleet.find(a=>a.immat===o.immat);
-        const acType=ac?ac.type:"—";
-        // Find when it's rescheduled in sched
-        let rescheduled="—";
-        const sortedDays=Object.keys(sched).sort();
-        for(const d of sortedDays){
-          if(sched[d][o.type].includes(o.immat)){rescheduled=fmt(d);break;}
-        }
-        h+=`<tr>
-          <td style="font-weight:700;color:var(--white);font-size:14px">${o.immat}</td>
-          <td><span class="tag" style="background:${acType==='ULM'?'var(--pf-bg)':'#2a1a44'};color:${acType==='ULM'?'var(--pf-text)':'#b87eff'};font-size:11px">${acType}</span></td>
-          <td style="color:#ff7e7e;font-weight:600">${fmt(o.deadline)}</td>
-          <td><span style="background:#5c1a1a;color:#ff7e7e;padding:3px 10px;border-radius:6px;font-size:13px;font-weight:700">+${o.daysLate} jour${o.daysLate>1?'s':''}</span></td>
-          <td style="color:var(--ok-text);font-weight:600">${rescheduled}</td>
-        </tr>`;
-      });
-
-      h+=`</tbody></table></div></div>`;
-    });
-
-    h+=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-top:12px">
-      <p style="font-size:13px;color:var(--text2)">
-        Les tâches en retard sont <strong style="color:var(--white)">automatiquement reprogrammées en priorité</strong> au premier créneau disponible.
-        Mettez à jour les dates via l'application mobile pour valider les tâches réalisées.
-      </p>
-    </div>`;
-  }
-  document.getElementById("retardsView").innerHTML=h;
-}
 function toggleActive(i){fleet[i].active=!fleet[i].active;if(db)db.ref("fleet/"+fbKey(fleet[i].immat)+"/active").set(fleet[i].active);refresh();}
 function removeAc(i){if(!confirm("Supprimer "+fleet[i].immat+" ?"))return;const im=fleet[i].immat;fleet.splice(i,1);if(db)db.ref("fleet/"+fbKey(im)).remove();refresh();}
 function showAdd(){document.getElementById("addRow").style.display="flex";}
