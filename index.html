@@ -74,8 +74,6 @@ td{padding:9px 14px;border-bottom:1px solid var(--bg3);font-size:13px}
 .tp-ico{width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;font-style:normal}
 .tp-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .tp-badge{font-size:8px;font-weight:800;padding:1px 6px;border-radius:4px;white-space:nowrap}
-.pin-row{display:flex;gap:3px;margin-top:6px;opacity:.4;transition:opacity .15s}.dcol:hover .pin-row{opacity:1}
-.pin-btn{padding:2px 6px;border-radius:5px;border:1px dashed var(--border);background:transparent;color:var(--text3);cursor:pointer;font-size:9px;font-family:inherit;font-weight:600}.pin-btn:hover{background:var(--bg3)}
 .legend-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;padding:12px 16px;background:var(--bg2);border-radius:12px;border:1px solid var(--border);box-shadow:var(--sh)}
 .legend-item{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--text2)}
 .ld{width:12px;height:12px;border-radius:4px;border:2px solid}
@@ -97,7 +95,7 @@ td{padding:9px 14px;border-bottom:1px solid var(--bg3);font-size:13px}
 @media print{
 @page{size:landscape;margin:8mm}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
 body{background:#fff!important;font-size:9px!important;color:#000!important}
-.hdr,.stats,.no-print,#notif,.pin-row,.month-nav button,.theme-btn,.legend-bar{display:none!important}
+.hdr,.stats,.no-print,#notif,.month-nav button,.theme-btn,.legend-bar{display:none!important}
 .print-header{display:block!important;text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:3px solid #0f172a}
 .print-header h1{font-size:16px;font-weight:900;text-transform:uppercase;margin-bottom:3px}.print-header p{font-size:9px;color:#555}
 .print-header .pleg{display:flex!important;gap:10px;justify-content:center;margin-top:8px}
@@ -139,7 +137,6 @@ body{background:#fff!important;font-size:9px!important;color:#000!important}
 <div id="vSch"></div><div id="vFlt" style="display:none"></div><div id="vRet" style="display:none"></div><div id="vAdm" style="display:none"></div>
 <div class="print-footer"><div style="border-top:1px solid #ccc;padding-top:6px;font-size:7px;color:#64748b;text-align:center">PF: 7-9j · LAV: 9-14j · TC: 9-14j · INUTILE = intervalle non atteint depuis dernière exécution</div><div id="sigA"></div></div>
 </div>
-<div id="pinM" class="overlay" style="display:none"></div>
 
 <script>
 const WD=["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"],MO=["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
@@ -155,7 +152,7 @@ const dim=(m,y)=>new Date(y,m+1,0).getDate();const mKey=(m,y)=>y+'-'+String(m+1)
 const MIN_INT={pointFixe:7,lavage:9,corrosion:9};
 const TYPE_LABEL={pointFixe:"Pt Fixe",lavage:"Lavage",corrosion:"Trait. Corr."};
 
-let fleet=[],pubSched=null,pins={},cv="schedule",db=null,isDark=false;
+let fleet=[],pubSched=null,cv="schedule",db=null,isDark=false;
 let sigName="",sigPost="",sigImage="";
 let cM=new Date().getMonth(),cY=new Date().getFullYear();
 
@@ -212,16 +209,15 @@ function taskStatus(im,ty,schedDate){
 function generateSchedule(){
   const nd=dim(cM,cY),sd=new Date(cY,cM,1),sc={};
   for(let i=0;i<nd;i++){sc[dk(addD(sd,i))]={pointFixe:[],lavage:[],corrosion:[]};}
-  Object.keys(pins).forEach(k=>{const[im,ty,dt]=k.split("|");if(sc[dt]&&sc[dt][ty]&&!sc[dt][ty].includes(im))sc[dt][ty].push(im);});
   const af=fleet.filter(a=>a.active),needs=[];
   af.forEach(ac=>{
     if(!ac.lastFlight)return;const lf=new Date(ac.lastFlight);
     const pfR=ac.lastPointFixe?new Date(ac.lastPointFixe):null,pfB=pfR&&pfR>lf?pfR:lf;
-    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|pointFixe|")))needs.push({im:ac.immat,ty:"pointFixe",due:addD(pfB,7),pr:addD(pfB,7).getTime()});
+    needs.push({im:ac.immat,ty:"pointFixe",due:addD(pfB,7),pr:addD(pfB,7).getTime()});
     const lR=ac.lastLavage?new Date(ac.lastLavage):lf;
-    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|lavage|")))needs.push({im:ac.immat,ty:"lavage",due:addD(lR,9),pr:addD(lR,9).getTime()});
+    needs.push({im:ac.immat,ty:"lavage",due:addD(lR,9),pr:addD(lR,9).getTime()});
     const cR=ac.lastCorrosion?new Date(ac.lastCorrosion):lf;
-    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|corrosion|")))needs.push({im:ac.immat,ty:"corrosion",due:addD(cR,9),pr:addD(cR,9).getTime()});
+    needs.push({im:ac.immat,ty:"corrosion",due:addD(cR,9),pr:addD(cR,9).getTime()});
   });
   needs.sort((a,b)=>a.pr-b.pr);const used=new Set();
   for(let i=0;i<needs.length;i++){
@@ -249,7 +245,6 @@ function initFB(){try{
     const d=s.val();if(d)fleet=Object.values(d);else{fleet=defFleet();pushAll();}
     loadOrGen();
   });
-  db.ref("pins").on("value",s=>{pins=s.val()||{};render();});
   db.ref("config").on("value",s=>{const c=s.val()||{};sigName=c.sigName||"";sigPost=c.sigPost||"";sigImage=c.sigImage||"";});
 }catch(e){fleet=defFleet();publishSchedule();}}
 
@@ -314,17 +309,17 @@ function rSch(){
         if(!sl[ty]||!sl[ty].length)return;
         h+=`<div class="tsec"><div class="tsec-head ${tH(ty)}">${tl(ty)}</div>`;
         sl[ty].forEach(im=>{
-          const r=taskStatus(im,ty,d);const pin=pins[`${im}|${ty}|${d}`];
+          const r=taskStatus(im,ty,d);
           let cls,ico,bdg="";
           if(r.st==="done"){cls="done";ico="✓";bdg=r.doneDate?`<span class="tp-badge" style="background:var(--ok);color:#fff">FAIT le ${fmt(r.doneDate)}</span>`:`<span class="tp-badge" style="background:var(--ok);color:#fff">FAIT</span>`;}
           else if(r.st==="missed"){cls="missed";ico="✗";bdg=`<span class="tp-badge" style="background:var(--dn);color:#fff">MANQUÉ</span>`;}
           else if(r.st==="skip"){cls="skip";ico="—";bdg=`<span class="tp-badge" style="background:var(--skip);color:#fff">${r.label}</span>`;}
           else{cls=`pending ${tP(ty)}`;ico="○";}
-          h+=`<div class="tp ${cls}"><div class="tp-ico">${ico}</div><span class="tp-name">${im}${pin?' 📌':''}</span>${bdg}</div>`;
+          h+=`<div class="tp ${cls}"><div class="tp-ico">${ico}</div><span class="tp-name">${im}</span>${bdg}</div>`;
         });h+=`</div>`;
       });
       if(!(sl.pointFixe||[]).length&&!(sl.lavage||[]).length&&!(sl.corrosion||[]).length)h+=`<div style="font-size:10px;color:var(--text3);margin-top:16px;text-align:center">—</div>`;
-      h+=`<div class="pin-row no-print"><button class="pin-btn" onclick="oP('pointFixe','${d}')">+PF</button><button class="pin-btn" onclick="oP('lavage','${d}')">+LAV</button><button class="pin-btn" onclick="oP('corrosion','${d}')">+TC</button></div></div>`;
+      h+=`</div>`;
     });h+=`</div></div>`;
   });
   document.getElementById("vSch").innerHTML=h;
@@ -333,7 +328,7 @@ function rSch(){
 function rFlt(){let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:18px;font-weight:900">Flotte</h2><button class="btn btn-primary btn-sm" onclick="document.getElementById('aR').style.display='flex'">+ Ajouter</button></div>`;
 h+=`<div id="aR" style="display:none" class="mrow"><div class="field"><label>Immat</label><input type="text" id="nI" placeholder="TY-XXX" style="text-transform:uppercase"></div><div class="field"><label>Type</label><input type="text" id="nT" value="ULM"></div><button class="btn btn-primary btn-sm" onclick="addA()">OK</button><button class="btn btn-sm" onclick="document.getElementById('aR').style.display='none'">×</button></div>`;
 h+=`<div style="overflow-x:auto;background:var(--bg2);border-radius:14px;border:1px solid var(--border);box-shadow:var(--sh)"><table><thead><tr><th>Actif</th><th>Immat</th><th>Type</th><th>Vol</th><th>Lavage</th><th>Corrosion</th><th>Pt Fixe</th><th></th></tr></thead><tbody>`;
-fleet.forEach((a,i)=>{h+=`<tr style="${!a.active?'opacity:.35':''}"><td><button class="toggle ${a.active?'on':'off'}" onclick="tA(${i})"></button></td><td style="font-weight:800">${a.immat}</td><td><span class="tag" style="background:${a.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${a.type==='ULM'?'var(--pf-dark)':'#7c3aed'}">${a.type}</span></td><td>${a.lastFlight?fmt(a.lastFlight):'—'}</td><td>${a.lastLavage?fmt(a.lastLavage):'—'}</td><td>${a.lastCorrosion?fmt(a.lastCorrosion):'—'}</td><td>${a.lastPointFixe?fmt(a.lastPointFixe):'—'}</td><td><button class="btn btn-dn btn-xs" onclick="rmA(${i})">✕</button></td></tr>`;});
+fleet.forEach((a,i)=>{h+=`<tr style="${!a.active?'opacity:.35':''}"><td><button class="toggle ${a.active?'on':'off'}" onclick="tA(${i})"></button></td><td style="font-weight:800">${a.immat}</td><td><span class="tag" style="background:${a.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${a.type==='ULM'?'var(--pf-dark)':'#7c3aed'}">${a.type}</span></td><td><input type="date" value="${a.lastFlight||''}" onchange="uFld(${i},'lastFlight',this.value)"></td><td><input type="date" value="${a.lastLavage||''}" onchange="uFld(${i},'lastLavage',this.value)"></td><td><input type="date" value="${a.lastCorrosion||''}" onchange="uFld(${i},'lastCorrosion',this.value)"></td><td><input type="date" value="${a.lastPointFixe||''}" onchange="uFld(${i},'lastPointFixe',this.value)"></td><td><button class="btn btn-dn btn-xs" onclick="rmA(${i})">✕</button></td></tr>`;});
 h+=`</tbody></table></div>`;document.getElementById("vFlt").innerHTML=h;}
 
 function rRet(){
@@ -364,17 +359,14 @@ document.getElementById("vAdm").innerHTML=h;}
 function sSig(){sigName=document.getElementById("sN").value;sigPost=document.getElementById("sP").value;if(db){db.ref("config/sigName").set(sigName);db.ref("config/sigPost").set(sigPost);}rAdm();}
 function uSig(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{sigImage=ev.target.result;if(db)db.ref("config/sigImage").set(sigImage);rAdm();};r.readAsDataURL(f);}
 function rSig(){sigImage="";if(db)db.ref("config/sigImage").remove();rAdm();}
-function xBk(){const d=JSON.stringify({fleet,pins,sigName,sigPost,sigImage},null,2);const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([d],{type:"application/json"}));a.download="piste_backup.json";a.click();}
-function iBk(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.fleet){fleet=d.fleet;pins=d.pins||{};sigName=d.sigName||"";sigPost=d.sigPost||"";sigImage=d.sigImage||"";if(db){pushAll();db.ref("pins").set(pins);db.ref("config").set({sigName,sigPost,sigImage});}publishSchedule();}}catch(e){}};r.readAsText(f);e.target.value="";}
+function xBk(){const d=JSON.stringify({fleet,sigName,sigPost,sigImage},null,2);const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([d],{type:"application/json"}));a.download="piste_backup.json";a.click();}
+function iBk(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.fleet){fleet=d.fleet;sigName=d.sigName||"";sigPost=d.sigPost||"";sigImage=d.sigImage||"";if(db){pushAll();db.ref("config").set({sigName,sigPost,sigImage});}publishSchedule();}}catch(e){}};r.readAsText(f);e.target.value="";}
 
 function pM(){cM--;if(cM<0){cM=11;cY--;}pubSched=null;loadOrGen();}
 function nM(){cM++;if(cM>11){cM=0;cY++;}pubSched=null;loadOrGen();}
-function oP(ty,dt){const l=fleet.filter(a=>a.active);let h=`<div class="modal"><h3>Fixer ${tls(ty)} — ${fmt(dt)}</h3><div style="max-height:260px;overflow-y:auto">`;l.forEach(a=>{const k=`${a.immat}|${ty}|${dt}`;const al=pins[k];h+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bg3)"><span style="font-weight:700">${a.immat}</span>${al?`<button class="btn btn-dn btn-xs" onclick="rPin('${k}');cP()">Retirer</button>`:`<button class="btn btn-primary btn-xs" onclick="aPin('${k}');cP()">Fixer</button>`}</div>`;});h+=`</div><div style="margin-top:14px;text-align:right"><button class="btn btn-sm" onclick="cP()">Fermer</button></div></div>`;document.getElementById("pinM").innerHTML=h;document.getElementById("pinM").style.display="flex";}
-function cP(){document.getElementById("pinM").style.display="none";}
-function aPin(k){pins[k]=true;if(db)db.ref("pins").set(pins);publishSchedule();}
-function rPin(k){delete pins[k];if(db)db.ref("pins").set(pins);publishSchedule();}
 function sv(v){cv=v;["Sch","Flt","Ret","Adm"].forEach(id=>{document.getElementById("v"+id).style.display="none";document.getElementById("b"+id).classList.remove("active");});const m={schedule:"Sch",fleet:"Flt",retards:"Ret",admin:"Adm"};document.getElementById("v"+m[v]).style.display="block";document.getElementById("b"+m[v]).classList.add("active");if(v==="admin")rAdm();}
 function render(){rSt();rFlt();rSch();rRet();}
+function uFld(i,field,val){fleet[i][field]=val||null;if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/"+field).set(val||null);render();}
 function tA(i){fleet[i].active=!fleet[i].active;if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/active").set(fleet[i].active);publishSchedule();}
 function rmA(i){if(!confirm("Supprimer "+fleet[i].immat+" ?"))return;const im=fleet[i].immat;fleet.splice(i,1);if(db)db.ref("fleet/"+fbK(im)).remove();publishSchedule();}
 function addA(){const im=document.getElementById("nI").value.trim().toUpperCase(),ty=document.getElementById("nT").value.trim()||"ULM";if(!im||fleet.find(a=>a.immat===im))return;const ac={immat:im,type:ty,active:true,lastFlight:null,lastLavage:null,lastCorrosion:null,lastPointFixe:null};fleet.push(ac);if(db)db.ref("fleet/"+fbK(im)).set(ac);document.getElementById("aR").style.display="none";document.getElementById("nI").value="";render();}
