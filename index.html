@@ -4,88 +4,165 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PISTE — Planning Maintenance Aéronefs</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f5f7fa;--bg2:#fff;--bg3:#f0f2f5;--border:#e2e8f0;--border2:#cbd5e1;--text:#1e293b;--text2:#64748b;--pf:#2563eb;--pf-bg:#eff6ff;--pf-bd:#bfdbfe;--lav:#059669;--lav-bg:#ecfdf5;--lav-bd:#a7f3d0;--tc:#d97706;--tc-bg:#fffbeb;--tc-bd:#fde68a;--ok:#16a34a;--ok-bg:#f0fdf4;--ok-bd:#bbf7d0;--dn:#dc2626;--dn-bg:#fef2f2;--dn-bd:#fecaca;--sh:0 1px 3px rgba(0,0,0,.06)}
-[data-theme="dark"]{--bg:#0a0e17;--bg2:#0f1520;--bg3:#1a2030;--border:#1e2a3a;--border2:#2d3a4a;--text:#e2e8f0;--text2:#7a8a9e;--pf-bg:#172554;--pf-bd:#1e3a5f;--lav-bg:#052e16;--lav-bd:#14532d;--tc-bg:#422006;--tc-bd:#713f12;--ok-bg:#052e16;--ok-bd:#14532d;--dn-bg:#450a0a;--dn-bd:#7f1d1d;--sh:0 1px 3px rgba(0,0,0,.3)}
+:root{--bg:#eef1f6;--bg2:#fff;--bg3:#f6f8fb;--border:#dce3ed;--text:#0f172a;--text2:#64748b;--text3:#94a3b8;
+--pf:#3b82f6;--pf-bg:#dbeafe;--pf-dark:#1d4ed8;
+--lav:#10b981;--lav-bg:#d1fae5;--lav-dark:#047857;
+--tc:#f59e0b;--tc-bg:#fef3c7;--tc-dark:#b45309;
+--ok:#22c55e;--ok-bg:#dcfce7;--ok-dark:#15803d;
+--dn:#ef4444;--dn-bg:#fee2e2;--dn-dark:#b91c1c;
+--rat:#f97316;--rat-bg:#fff7ed;--rat-dark:#c2410c;
+--sh:0 1px 4px rgba(0,0,0,.05),0 0 1px rgba(0,0,0,.08);--sh2:0 4px 12px rgba(0,0,0,.06)}
+[data-theme="dark"]{--bg:#080b12;--bg2:#111827;--bg3:#1a2236;--border:#283348;--text:#f1f5f9;--text2:#8896aa;--text3:#4b5c72;
+--pf-bg:#1e3a5f;--lav-bg:#064e3b;--tc-bg:#78350f;--ok-bg:#14532d;--dn-bg:#7f1d1d;--rat-bg:#7c2d12;
+--sh:0 1px 4px rgba(0,0,0,.3);--sh2:0 4px 12px rgba(0,0,0,.3)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
-::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
-.hdr{border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;background:var(--bg2);flex-wrap:wrap;gap:10px;box-shadow:var(--sh)}
-.logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center}
-.logo svg{width:20px;height:20px;fill:#fff}
-.htitle{font-weight:800;font-size:18px;color:var(--text)}.hsub{font-size:11px;color:var(--text2);font-weight:500}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* Header */
+.hdr{padding:16px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px;box-shadow:var(--sh)}
+.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(59,130,246,.3)}
+.logo svg{width:22px;height:22px;fill:#fff}
+.htitle{font-weight:900;font-size:20px;color:var(--text);letter-spacing:-.5px}
+.hsub{font-size:11px;color:var(--text2);font-weight:500;margin-top:1px}
 .cdot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}.cdot.on{background:var(--ok)}.cdot.off{background:var(--dn)}
-.btn{padding:8px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:all .15s;box-shadow:var(--sh)}
-.btn:hover{background:var(--bg3)}.btn.active{background:var(--pf);border-color:var(--pf);color:#fff}
-.btn-sm{padding:5px 12px;font-size:11px}.btn-xs{padding:3px 8px;font-size:10px}
+.btn{padding:9px 18px;border-radius:12px;border:1px solid var(--border);background:var(--bg2);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;transition:all .15s;box-shadow:var(--sh)}
+.btn:hover{background:var(--bg3);transform:translateY(-1px);box-shadow:var(--sh2)}
+.btn.active{background:var(--pf);border-color:var(--pf);color:#fff;box-shadow:0 4px 12px rgba(59,130,246,.3)}
+.btn-sm{padding:6px 14px;font-size:11px}.btn-xs{padding:3px 10px;font-size:10px}
 .btn-primary{background:var(--pf);border-color:var(--pf);color:#fff}
-.btn-dn{border-color:var(--dn-bd);color:var(--dn);background:var(--dn-bg)}
-.btn-warn{border-color:var(--tc-bd);color:var(--tc);background:var(--tc-bg)}
-.badge{background:var(--dn);color:#fff;font-size:9px;padding:1px 6px;border-radius:10px;font-weight:800;margin-left:3px}
-.theme-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center}
-.theme-btn svg{width:16px;height:16px;stroke:var(--text2);fill:none;stroke-width:2}
-.content{padding:20px 24px}
-.stats{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-.stat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 18px;min-width:100px;flex:1;box-shadow:var(--sh)}
-.stat-label{font-size:10px;color:var(--text2);margin-bottom:3px;text-transform:uppercase;letter-spacing:.7px;font-weight:700}
-.stat-value{font-size:24px;font-weight:800}
-.tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700}
-input[type="date"],input[type="text"]{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:8px;font-family:inherit;font-size:12px}
+.btn-dn{border-color:var(--dn);color:var(--dn);background:var(--dn-bg)}
+.btn-rat{border-color:var(--rat);color:var(--rat);background:var(--rat-bg)}
+.badge{background:var(--dn);color:#fff;font-size:9px;padding:2px 7px;border-radius:12px;font-weight:800;margin-left:4px}
+.theme-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.theme-btn:hover{transform:rotate(30deg)}
+.theme-btn svg{width:18px;height:18px;stroke:var(--text2);fill:none;stroke-width:2}
+
+/* Content */
+.content{padding:24px 28px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:24px}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px 20px;box-shadow:var(--sh);position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
+.stat:nth-child(1)::before{background:var(--pf)}.stat:nth-child(2)::before{background:var(--pf)}
+.stat:nth-child(3)::before{background:var(--lav)}.stat:nth-child(4)::before{background:var(--tc)}
+.stat:nth-child(5)::before{background:var(--ok)}.stat:nth-child(6)::before{background:var(--dn)}
+.stat-label{font-size:10px;color:var(--text2);margin-bottom:4px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.stat-value{font-size:26px;font-weight:900;letter-spacing:-.5px}
+
+/* Table */
+input[type="date"],input[type="text"]{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:10px;font-family:inherit;font-size:12px}
 [data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.7)}
 table{width:100%;border-collapse:collapse}
-th{padding:10px 12px;text-align:left;font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;font-weight:700;border-bottom:1px solid var(--border);background:var(--bg3)}
-td{padding:8px 12px;border-bottom:1px solid var(--bg3);font-size:12px}
-.month-nav{display:flex;align-items:center;gap:10px;margin-bottom:16px}
-.month-nav button{padding:7px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:16px;font-weight:700;color:var(--text);box-shadow:var(--sh)}
-.month-label{font-size:17px;font-weight:800;min-width:180px;text-align:center;text-transform:capitalize}
-.wblock{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:var(--sh)}
-.wheader{padding:8px 14px;border-bottom:1px solid var(--border);background:var(--bg3);font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.7px}
+th{padding:10px 14px;text-align:left;font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:1px;font-weight:700;border-bottom:2px solid var(--border);background:var(--bg3)}
+td{padding:9px 14px;border-bottom:1px solid var(--bg3);font-size:13px}
+
+.month-nav{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.month-nav button{width:40px;height:40px;border-radius:12px;border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:18px;font-weight:700;color:var(--text);box-shadow:var(--sh);display:flex;align-items:center;justify-content:center;transition:all .15s}
+.month-nav button:hover{background:var(--bg3);transform:scale(1.05)}
+.month-label{font-size:20px;font-weight:900;min-width:200px;text-align:center;text-transform:capitalize;letter-spacing:-.3px}
+
+/* Week blocks — NEW DESIGN */
+.wblock{background:var(--bg2);border:1px solid var(--border);border-radius:16px;margin-bottom:16px;overflow:hidden;box-shadow:var(--sh)}
+.wheader{padding:12px 20px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.wheader-label{font-size:12px;font-weight:800;color:var(--text);text-transform:uppercase;letter-spacing:.5px}
+.wprogress{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--text2)}
+.wprog-bar{width:80px;height:6px;border-radius:3px;background:var(--bg);overflow:hidden}
+.wprog-fill{height:100%;border-radius:3px;transition:width .5s ease}
 .wgrid{display:grid;grid-template-columns:repeat(5,1fr)}
-.dcol{border-right:1px solid var(--bg3);padding:10px 8px;min-height:120px;transition:all .15s}
-.dcol:hover{background:var(--bg)}.dcol:last-child{border-right:none}
-.dcol.today{background:var(--pf-bg);border-top:3px solid var(--pf)}
-.dcol.past{opacity:.6}.dcol.outside{background:var(--bg3);opacity:.3;min-height:50px}
-.dlbl{font-size:11px;font-weight:700;margin-bottom:6px}
-.slbl{font-size:8px;font-weight:700;margin:3px 0 1px;letter-spacing:.7px;text-transform:uppercase}
-.atag{border-radius:5px;padding:3px 6px;font-size:10px;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:3px}
-.atag.done{background:var(--ok-bg)!important;color:var(--ok)!important;border-color:var(--ok-bd)!important}
-.atag.missed{background:var(--dn-bg)!important;color:var(--dn)!important;border-color:var(--dn-bd)!important}
-.pin-row{display:flex;gap:3px;margin-top:3px}.pin-btn{padding:1px 4px;border-radius:3px;border:1px dashed var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:8px;font-family:inherit}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:100}
-.modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:480px;width:90%;max-height:80vh;overflow-y:auto}
-.modal h3{font-size:15px;font-weight:800;margin-bottom:14px}
-.mrow{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
-.field label{font-size:11px;color:var(--text2);display:block;margin-bottom:3px;font-weight:600}
+
+/* Day columns — NEW DESIGN */
+.dcol{padding:14px 10px;min-height:140px;border-right:1px solid var(--bg3);position:relative;transition:background .15s}
+.dcol:last-child{border-right:none}
+.dcol:hover{background:var(--bg)}
+.dcol.today{background:rgba(59,130,246,.06)}
+.dcol.today .dhead{background:var(--pf);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3)}
+.dcol.past .dhead{opacity:.5}
+.dcol.outside{opacity:.25;pointer-events:none}
+.dhead{display:flex;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:800;padding:6px 10px;border-radius:10px;margin-bottom:10px;color:var(--text);background:var(--bg3);letter-spacing:-.2px}
+
+/* Task section labels */
+.tsec{margin-bottom:8px}
+.tsec-head{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:1px;padding:3px 8px;border-radius:6px;margin-bottom:4px;display:inline-block}
+.tsec-head.pf-h{background:var(--pf-bg);color:var(--pf-dark)}
+.tsec-head.lav-h{background:var(--lav-bg);color:var(--lav-dark)}
+.tsec-head.tc-h{background:var(--tc-bg);color:var(--tc-dark)}
+
+/* Task pills — NEW DESIGN */
+.tpill{display:flex;align-items:center;gap:4px;padding:5px 8px;border-radius:8px;font-size:11px;font-weight:700;margin-bottom:3px;border-left:3px solid transparent;transition:all .15s}
+/* À faire */
+.tpill.pending{background:var(--bg3);color:var(--text);border-left-color:var(--text3)}
+.tpill.pending-pf{border-left-color:var(--pf)}.tpill.pending-lav{border-left-color:var(--lav)}.tpill.pending-tc{border-left-color:var(--tc)}
+/* FAIT */
+.tpill.done{background:var(--ok-bg);color:var(--ok-dark);border-left-color:var(--ok)}
+.tpill.done .tpill-icon{background:var(--ok);color:#fff;font-weight:900}
+/* MANQUÉ */
+.tpill.missed{background:var(--dn-bg);color:var(--dn-dark);border-left-color:var(--dn);animation:missedPulse 2.5s ease infinite}
+.tpill.missed .tpill-icon{background:var(--dn);color:#fff;font-weight:900}
+@keyframes missedPulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(239,68,68,0)}50%{opacity:.85;box-shadow:0 0 0 4px rgba(239,68,68,.15)}}
+/* RATTRAPAGE */
+.tpill.rattrapage{background:var(--rat-bg);color:var(--rat-dark);border-left-color:var(--rat);border-style:dashed;border-left-style:solid}
+.tpill.rattrapage .tpill-icon{background:var(--rat);color:#fff}
+
+.tpill-icon{width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.tpill-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tpill-badge{font-size:8px;font-weight:800;padding:1px 6px;border-radius:4px;letter-spacing:.3px;white-space:nowrap}
+
+.pin-row{display:flex;gap:3px;margin-top:6px;opacity:.4;transition:opacity .15s}
+.dcol:hover .pin-row{opacity:1}
+.pin-btn{padding:2px 6px;border-radius:5px;border:1px dashed var(--border);background:transparent;color:var(--text3);cursor:pointer;font-size:9px;font-family:inherit;font-weight:600}
+.pin-btn:hover{background:var(--bg3);color:var(--text2)}
+
+/* Legend */
+.legend-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;padding:12px 16px;background:var(--bg2);border-radius:12px;border:1px solid var(--border);box-shadow:var(--sh)}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--text2)}
+.legend-dot{width:12px;height:12px;border-radius:4px;border:2px solid}
+.ld-pending{background:var(--bg3);border-color:var(--text3)}.ld-done{background:var(--ok-bg);border-color:var(--ok)}
+.ld-missed{background:var(--dn-bg);border-color:var(--dn)}.ld-rat{background:var(--rat-bg);border-color:var(--rat)}
+
+/* Other */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px)}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:28px;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:var(--sh2)}
+.modal h3{font-size:16px;font-weight:800;margin-bottom:16px}
+.mrow{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px;display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap}
+.field label{font-size:11px;color:var(--text2);display:block;margin-bottom:3px;font-weight:700}
 .toggle{width:40px;height:22px;border-radius:11px;cursor:pointer;position:relative;border:none}
 .toggle.on{background:var(--ok)}.toggle.off{background:var(--dn)}
-.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:3px;transition:all .2s}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:3px;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .toggle.on::after{left:21px}.toggle.off::after{left:3px}
-#notif{display:none;position:fixed;top:16px;right:16px;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:700;z-index:200}
-.ocard{background:var(--bg2);border:1px solid var(--dn-bd);border-radius:12px;margin-bottom:14px;overflow:hidden}
-.ohead{padding:12px 18px;background:var(--dn-bg);border-bottom:1px solid var(--dn-bd)}
-.sig-area{margin-top:16px;padding:18px;background:var(--bg3);border-radius:12px;border:1px solid var(--border)}
+#notif{display:none;position:fixed;top:16px;right:16px;padding:14px 22px;border-radius:12px;font-size:13px;font-weight:700;z-index:200;box-shadow:var(--sh2)}
+.ocard{background:var(--bg2);border:1px solid var(--dn-bg);border-radius:14px;margin-bottom:14px;overflow:hidden;box-shadow:var(--sh)}
+.ohead{padding:14px 20px;background:var(--dn-bg);border-bottom:1px solid rgba(0,0,0,.05);display:flex;align-items:center;justify-content:space-between}
+.sig-area{margin-top:18px;padding:20px;background:var(--bg3);border-radius:14px;border:1px solid var(--border)}
+
 .print-header,.print-footer{display:none}
 @media print{
 @page{size:landscape;margin:8mm}
 *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
 body{background:#fff!important;font-size:9px!important;color:#000!important}
-.hdr,.stats,.no-print,#notif,.pin-row,.month-nav button,.theme-btn{display:none!important}
-.print-header{display:block!important;text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:3px solid #1e293b}
-.print-header h1{font-size:15px;font-weight:800;text-transform:uppercase;margin-bottom:2px}
+.hdr,.stats,.no-print,#notif,.pin-row,.month-nav button,.theme-btn,.legend-bar{display:none!important}
+.print-header{display:block!important;text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:3px solid #0f172a}
+.print-header h1{font-size:16px;font-weight:900;text-transform:uppercase;margin-bottom:3px;letter-spacing:.5px}
 .print-header p{font-size:9px;color:#555}
-.print-header .pleg{display:flex!important;gap:12px;justify-content:center;margin-top:8px}
-.print-header .pleg span{padding:2px 8px;border-radius:3px;font-weight:700;font-size:7px;border:1px solid #bbb}
-.ppf{background:#dbeafe!important;color:#1e40af!important}.plav{background:#d1fae5!important;color:#065f46!important}.ptc{background:#fef3c7!important;color:#92400e!important}.pok{background:#dcfce7!important;color:#166534!important}
+.print-header .pleg{display:flex!important;gap:10px;justify-content:center;margin-top:8px}
+.print-header .pleg span{padding:2px 10px;border-radius:4px;font-weight:700;font-size:8px;border:1px solid #bbb}
+.ppf{background:#dbeafe!important;color:#1d4ed8!important}.plav{background:#d1fae5!important;color:#047857!important}
+.ptc{background:#fef3c7!important;color:#b45309!important}.pok{background:#dcfce7!important;color:#15803d!important}
+.pdn{background:#fee2e2!important;color:#b91c1c!important}
 .content{padding:0!important}.month-label{font-size:0!important;height:0;overflow:hidden}
-.wblock{border:1px solid #bbb!important;margin-bottom:6px!important;break-inside:avoid;background:#fff!important}
-.wheader{background:#f1f5f9!important;font-size:8px!important;padding:5px 8px!important;color:#000!important}
-.dcol{padding:5px 4px!important;min-height:55px!important;border-color:#ddd!important;background:#fff!important}
-.dcol.today{background:#eff6ff!important;border-top:2px solid #2563eb!important}
-.dcol.past,.dcol.outside{opacity:1!important}
-.dlbl{font-size:8px!important;color:#000!important}.slbl{font-size:6px!important}.atag{font-size:7px!important;padding:1px 3px!important}
-.atag.done{background:#dcfce7!important;color:#166534!important;border:1px solid #86efac!important}
-.atag.missed{background:#fee2e2!important;color:#991b1b!important;border:1px solid #fca5a5!important}
+.wblock{border:1px solid #ccc!important;margin-bottom:6px!important;break-inside:avoid;background:#fff!important}
+.wheader{background:#f1f5f9!important;padding:5px 10px!important}
+.wheader-label{font-size:8px!important;color:#000!important}.wprogress{display:none!important}
+.dcol{padding:5px!important;min-height:55px!important;border-color:#e5e7eb!important;background:#fff!important}
+.dcol.today{background:#eff6ff!important}.dcol.today .dhead{background:#3b82f6!important;color:#fff!important}
+.dhead{font-size:8px!important;padding:3px 6px!important;margin-bottom:4px!important}
+.dcol.past{opacity:1!important}
+.tsec-head{font-size:6px!important;padding:1px 4px!important}
+.tpill{font-size:7px!important;padding:2px 4px!important;margin-bottom:1px!important;border-left-width:2px!important}
+.tpill-icon{width:12px!important;height:12px!important;font-size:7px!important}
+.tpill.done{background:#dcfce7!important;color:#15803d!important}.tpill.missed{background:#fee2e2!important;color:#b91c1c!important;animation:none!important}
+.tpill.rattrapage{background:#fff7ed!important;color:#c2410c!important}
 .print-footer{display:block!important;margin-top:10px;page-break-inside:avoid}
 }
 </style>
@@ -97,31 +174,31 @@ const FC={apiKey:"AIzaSyAtYDTWrrpHlKRrkJajBU87m1Pbw_mfwOQ",authDomain:"planning-
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-<div class="print-header"><h1 id="pT"></h1><p id="pS"></p><div class="pleg"><span class="ppf">PF = Point Fixe</span><span class="plav">LAV = Lavage</span><span class="ptc">TC = Trait. Corrosion</span><span class="pok">✓ = Réalisé</span></div></div>
+<div class="print-header"><h1 id="pT"></h1><p id="pS"></p><div class="pleg"><span class="ppf">PF = Point Fixe</span><span class="plav">LAV = Lavage</span><span class="ptc">TC = Trait. Corrosion</span><span class="pok">✓ FAIT</span><span class="pdn">✗ MANQUÉ</span></div></div>
 
 <div class="hdr">
-<div style="display:flex;align-items:center;gap:12px">
+<div style="display:flex;align-items:center;gap:14px">
 <div class="logo"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0011.5 2 1.5 1.5 0 0010 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
-<div><div class="htitle">PISTE — Planning Maintenance</div><div class="hsub">Temps réel Firebase</div></div>
+<div><div class="htitle">PISTE — Planning Maintenance</div><div class="hsub">Synchronisé en temps réel</div></div>
 </div>
-<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-<span id="cs" style="font-size:11px;font-weight:600"><span class="cdot off"></span>--</span>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+<span id="cs" style="font-size:11px;font-weight:700"><span class="cdot off"></span>--</span>
 <button class="btn active" id="bSch" onclick="sv('schedule')">Planning</button>
 <button class="btn" id="bFlt" onclick="sv('fleet')">Flotte</button>
 <button class="btn btn-dn" id="bRet" onclick="sv('retards')">Retards <span class="badge" id="rb" style="display:none">0</span></button>
 <button class="btn" id="bAdm" onclick="sv('admin')">Admin</button>
-<button class="theme-btn" onclick="tTh()" id="tBtn"><svg id="tIco" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
-<button class="btn no-print" onclick="window.print()"><svg style="width:14px;height:14px;vertical-align:middle" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+<button class="theme-btn" onclick="tTh()"><svg id="tIco" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+<button class="btn no-print" onclick="window.print()" title="Imprimer"><svg style="width:16px;height:16px;vertical-align:middle" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
 </div></div>
 
 <div id="notif"></div>
 <div class="content">
 <div class="stats" id="stBar"></div>
-<div id="vSch" class="fade-in"></div>
+<div id="vSch"></div>
 <div id="vFlt" style="display:none"></div>
 <div id="vRet" style="display:none"></div>
 <div id="vAdm" style="display:none"></div>
-<div class="print-footer"><div style="border-top:1px solid #ccc;padding-top:6px;font-size:7px;color:#64748b;text-align:center">PF: 7-9j · Lavage: 9-14j · Trait. Corrosion: 9-14j</div><div id="sigA"></div></div>
+<div class="print-footer"><div style="border-top:1px solid #ccc;padding-top:6px;font-size:7px;color:#64748b;text-align:center">PF: 7-9j · Lavage: 9-14j · Trait. Corrosion: 9-14j · Rattrapage = tâche reprogrammée après manquement</div><div id="sigA"></div></div>
 </div>
 <div id="pinM" class="overlay" style="display:none"></div>
 
@@ -133,23 +210,20 @@ const dk=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+
 const isWE=d=>{const x=new Date(d+'T12:00:00');return x.getDay()===0||x.getDay()===6;};
 const fmt=d=>{if(!d)return"";return new Date(d+'T12:00:00').toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"});};
 const fmtL=d=>{if(!d)return"";return new Date(d+'T12:00:00').toLocaleDateString("fr-FR",{day:"2-digit",month:"long",year:"numeric"});};
-const today=iso(new Date());
-const fbK=im=>im.replace(/[.#$/\[\]]/g,"_");
-const dim=(m,y)=>new Date(y,m+1,0).getDate();
-const mKey=(m,y)=>y+'-'+String(m+1).padStart(2,'0');
+const today=iso(new Date());const fbK=im=>im.replace(/[.#$/\[\]]/g,"_");
+const dim=(m,y)=>new Date(y,m+1,0).getDate();const mKey=(m,y)=>y+'-'+String(m+1).padStart(2,'0');
 
 let fleet=[],pubSched=null,pins={},OD=[],cv="schedule",db=null,isDark=false;
 let sigName="",sigPost="",sigImage="";
 let cM=new Date().getMonth(),cY=new Date().getFullYear();
 
-// Theme
 function tTh(){isDark=!isDark;document.documentElement.setAttribute("data-theme",isDark?"dark":"");localStorage.setItem("piste_theme",isDark?"dark":"light");document.getElementById("tIco").innerHTML=isDark?'<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>':'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';}
 if(localStorage.getItem("piste_theme")==="dark")tTh();
 
 function defFleet(){const dA=n=>{const d=new Date();d.setDate(d.getDate()-n);return iso(d);};const mk=(i,t)=>({immat:i,type:t,active:true,lastFlight:dA(10),lastLavage:dA(15),lastCorrosion:dA(15),lastPointFixe:dA(30)});return["TY-43L","TY-44L","TY-45L","TY-46L","TY-47L","TY-48L","TY-49L","TY-50L","TY-51L","TY-52L","TY-53L","TY-54L","TY-55L","TY-56L","TY-60L","TY-61L","TY-62L","TY-63L","TY-64L"].map(i=>mk(i,"ULM")).concat([mk("TY-27A","Avion"),mk("TY-29A","Avion")]);}
 function pushAll(){if(!db)return;const o={};fleet.forEach(a=>{o[fbK(a.immat)]=a;});db.ref("fleet").set(o);}
 
-// =================== SCHEDULE GENERATION ===================
+// =================== SCHEDULE ===================
 function generateSchedule(){
   const nd=dim(cM,cY),sd=new Date(cY,cM,1),sc={};OD=[];
   for(let i=0;i<nd;i++){sc[dk(addD(sd,i))]={pointFixe:[],lavage:[],corrosion:[]};}
@@ -157,122 +231,97 @@ function generateSchedule(){
   const af=fleet.filter(a=>a.active),needs=[],NOW=new Date(today+'T12:00:00');
   af.forEach(ac=>{
     if(!ac.lastFlight)return;const lf=new Date(ac.lastFlight);
-    const pfR=ac.lastPointFixe?new Date(ac.lastPointFixe):null,pfB=pfR&&pfR>lf?pfR:lf,pfDue=addD(pfB,7),pfDead=addD(pfB,9);
-    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|pointFixe|"))){
-      if(pfDead<NOW&&!(ac.lastPointFixe&&new Date(ac.lastPointFixe+'T12:00:00')>=pfB)){needs.push({im:ac.immat,ty:"pointFixe",due:sd,pr:0});OD.push({im:ac.immat,ty:"pointFixe",dl:dk(pfDead),late:Math.floor((NOW-pfDead)/864e5)});}
-      else needs.push({im:ac.immat,ty:"pointFixe",due:pfDue,pr:pfDue.getTime()});
-    }
-    const lR=ac.lastLavage?new Date(ac.lastLavage):lf,lD=addD(lR,14);
-    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|lavage|"))){
-      if(lD<NOW){needs.push({im:ac.immat,ty:"lavage",due:sd,pr:1});OD.push({im:ac.immat,ty:"lavage",dl:dk(lD),late:Math.floor((NOW-lD)/864e5)});}
-      else needs.push({im:ac.immat,ty:"lavage",due:addD(lR,9),pr:addD(lR,9).getTime()});
-    }
-    const cR=ac.lastCorrosion?new Date(ac.lastCorrosion):lf,cD=addD(cR,14);
-    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|corrosion|"))){
-      if(cD<NOW){needs.push({im:ac.immat,ty:"corrosion",due:sd,pr:2});OD.push({im:ac.immat,ty:"corrosion",dl:dk(cD),late:Math.floor((NOW-cD)/864e5)});}
-      else needs.push({im:ac.immat,ty:"corrosion",due:addD(cR,9),pr:addD(cR,9).getTime()});
-    }
+    const pfR=ac.lastPointFixe?new Date(ac.lastPointFixe):null,pfB=pfR&&pfR>lf?pfR:lf;
+    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|pointFixe|")))needs.push({im:ac.immat,ty:"pointFixe",due:addD(pfB,7),pr:addD(pfB,7).getTime()});
+    const lR=ac.lastLavage?new Date(ac.lastLavage):lf;
+    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|lavage|")))needs.push({im:ac.immat,ty:"lavage",due:addD(lR,9),pr:addD(lR,9).getTime()});
+    const cR=ac.lastCorrosion?new Date(ac.lastCorrosion):lf;
+    if(!Object.keys(pins).some(k=>k.startsWith(ac.immat+"|corrosion|")))needs.push({im:ac.immat,ty:"corrosion",due:addD(cR,9),pr:addD(cR,9).getTime()});
   });
   needs.sort((a,b)=>a.pr-b.pr);const used=new Set();
   for(let i=0;i<needs.length;i++){
     const n=needs[i],k=`${n.im}-${n.ty}-${n.due.getTime()}`;if(used.has(k))continue;
-    for(let j=0;j<nd;j++){
-      const d=addD(sd,j),d2=dk(d);if(isWE(d2)||d<n.due)continue;const s=sc[d2];if(!s)continue;
+    for(let j=0;j<nd;j++){const d=addD(sd,j),d2=dk(d);if(isWE(d2)||d<n.due)continue;const s=sc[d2];if(!s)continue;
       if(n.ty==="pointFixe"&&s.pointFixe.length>=3)continue;if(n.ty==="lavage"&&s.lavage.length>=3)continue;if(n.ty==="corrosion"&&s.corrosion.length>=1)continue;
       if(n.ty==="pointFixe"&&(s.lavage.includes(n.im)||s.corrosion.includes(n.im)))continue;
       if((n.ty==="lavage"||n.ty==="corrosion")&&s.pointFixe.includes(n.im))continue;
       if(s[n.ty].includes(n.im))continue;
-      s[n.ty].push(n.im);used.add(k);
-      const me=dk(new Date(cY,cM,nd));
+      s[n.ty].push(n.im);used.add(k);const me=dk(new Date(cY,cM,nd));
       if(n.ty!=="pointFixe"){const nx=addD(d,9);if(dk(nx)<=me){needs.push({im:n.im,ty:n.ty,due:nx,pr:nx.getTime()});needs.sort((a,b)=>a.pr-b.pr);}}
-      else{const nx=addD(d,7);if(dk(nx)<=me){needs.push({im:n.im,ty:"pointFixe",due:nx,pr:nx.getTime()});needs.sort((a,b)=>a.pr-b.pr);}}
-      break;
+      else{const nx=addD(d,7);if(dk(nx)<=me){needs.push({im:n.im,ty:"pointFixe",due:nx,pr:nx.getTime()});needs.sort((a,b)=>a.pr-b.pr);}}break;
     }
+  }
+  // Mark rattrapages: find missed tasks in published schedule and add them
+  if(pubSched){
+    Object.entries(pubSched).forEach(([dt,sl])=>{
+      if(dt>=today||!sl)return;
+      ["pointFixe","lavage","corrosion"].forEach(ty=>{
+        if(!sl[ty])return;
+        sl[ty].forEach(im=>{
+          if(!isDone(im,ty,dt)){
+            // This task was missed — find next available slot and add as rattrapage
+            for(let j=0;j<nd;j++){
+              const d=addD(sd,j),d2=dk(d);if(d2<=today||isWE(d2))continue;const s=sc[d2];if(!s)continue;
+              if(ty==="pointFixe"&&s.pointFixe.length>=3)continue;if(ty==="lavage"&&s.lavage.length>=3)continue;if(ty==="corrosion"&&s.corrosion.length>=1)continue;
+              if(!s[ty].includes(im)){
+                s[ty].push(im);
+                if(!sc[d2]._rat)sc[d2]._rat={};if(!sc[d2]._rat[ty])sc[d2]._rat[ty]=[];
+                sc[d2]._rat[ty].push(im);break;
+              }else break; // Already scheduled
+            }
+          }
+        });
+      });
+    });
   }
   return sc;
 }
 
-// Publish schedule to Firebase — the source of truth
 function publishSchedule(){
-  const sc=generateSchedule();
-  pubSched=sc;
-  if(db){
-    db.ref("schedules/"+mKey(cM,cY)).set(sc);
-    // Publish today's tasks for mobile app
-    if(sc[today])db.ref("todaySchedule").set(sc[today]);
-  }
-  render();
+  const sc=generateSchedule();pubSched=sc;
+  if(db){db.ref("schedules/"+mKey(cM,cY)).set(sc);if(sc[today])db.ref("todaySchedule").set(sc[today]);}
+  computeOD();render();
 }
 
-// =================== FIREBASE ===================
+// Firebase
+let prevFlights={};
 function initFB(){try{
   firebase.initializeApp(FC);db=firebase.database();
   db.ref(".info/connected").on("value",s=>{document.getElementById("cs").innerHTML=(s.val()?'<span class="cdot on"></span>Connecté':'<span class="cdot off"></span>Hors ligne');});
-  // Fleet: only re-render (don't regenerate schedule) unless flight changed
-  let prevFlightDates={};
   db.ref("fleet").on("value",s=>{
     const d=s.val();if(d)fleet=Object.values(d);else{fleet=defFleet();pushAll();}
-    // Check if any lastFlight changed
-    let flightChanged=false;
-    fleet.forEach(ac=>{
-      const prev=prevFlightDates[ac.immat];
-      if(prev!==undefined&&prev!==ac.lastFlight)flightChanged=true;
-      prevFlightDates[ac.immat]=ac.lastFlight;
-    });
-    if(flightChanged){
-      // A flight was logged → regenerate the schedule
-      publishSchedule();
-    } else {
-      // Only maintenance dates changed → just re-render with existing schedule
-      loadOrGenerate();
-    }
+    let fc=false;fleet.forEach(a=>{if(prevFlights[a.immat]!==undefined&&prevFlights[a.immat]!==a.lastFlight)fc=true;prevFlights[a.immat]=a.lastFlight;});
+    if(fc)publishSchedule();else loadOrGen();
   });
   db.ref("pins").on("value",s=>{pins=s.val()||{};render();});
   db.ref("config").on("value",s=>{const c=s.val()||{};sigName=c.sigName||"";sigPost=c.sigPost||"";sigImage=c.sigImage||"";});
-}catch(e){console.error(e);fleet=defFleet();publishSchedule();}}
+}catch(e){fleet=defFleet();publishSchedule();}}
 
-function loadOrGenerate(){
-  if(!db){pubSched=generateSchedule();render();return;}
-  db.ref("schedules/"+mKey(cM,cY)).once("value",s=>{
-    const d=s.val();
-    if(d){pubSched=d;computeOverdue();render();}
-    else publishSchedule();
+function loadOrGen(){if(!db){pubSched=generateSchedule();computeOD();render();return;}
+  db.ref("schedules/"+mKey(cM,cY)).once("value",s=>{const d=s.val();if(d){pubSched=d;computeOD();render();}else publishSchedule();});}
+
+function computeOD(){OD=[];const NOW=new Date(today+'T12:00:00');
+  fleet.filter(a=>a.active).forEach(ac=>{if(!ac.lastFlight)return;const lf=new Date(ac.lastFlight);
+    const pfR=ac.lastPointFixe?new Date(ac.lastPointFixe):null,pfB=pfR&&pfR>lf?pfR:lf;
+    if(addD(pfB,9)<NOW&&!(ac.lastPointFixe&&new Date(ac.lastPointFixe+'T12:00:00')>=pfB))OD.push({im:ac.immat,ty:"pointFixe",dl:dk(addD(pfB,9)),late:Math.floor((NOW-addD(pfB,9))/864e5)});
+    const lR=ac.lastLavage?new Date(ac.lastLavage):lf;if(addD(lR,14)<NOW)OD.push({im:ac.immat,ty:"lavage",dl:dk(addD(lR,14)),late:Math.floor((NOW-addD(lR,14))/864e5)});
+    const cR=ac.lastCorrosion?new Date(ac.lastCorrosion):lf;if(addD(cR,14)<NOW)OD.push({im:ac.immat,ty:"corrosion",dl:dk(addD(cR,14)),late:Math.floor((NOW-addD(cR,14))/864e5)});
   });
 }
 
-function computeOverdue(){
-  OD=[];const NOW=new Date(today+'T12:00:00');
-  fleet.filter(a=>a.active).forEach(ac=>{
-    if(!ac.lastFlight)return;const lf=new Date(ac.lastFlight);
-    const pfR=ac.lastPointFixe?new Date(ac.lastPointFixe):null,pfB=pfR&&pfR>lf?pfR:lf,pfDead=addD(pfB,9);
-    if(pfDead<NOW&&!(ac.lastPointFixe&&new Date(ac.lastPointFixe+'T12:00:00')>=pfB))OD.push({im:ac.immat,ty:"pointFixe",dl:dk(pfDead),late:Math.floor((NOW-pfDead)/864e5)});
-    const lR=ac.lastLavage?new Date(ac.lastLavage):lf,lD=addD(lR,14);
-    if(lD<NOW)OD.push({im:ac.immat,ty:"lavage",dl:dk(lD),late:Math.floor((NOW-lD)/864e5)});
-    const cR=ac.lastCorrosion?new Date(ac.lastCorrosion):lf,cD=addD(cR,14);
-    if(cD<NOW)OD.push({im:ac.immat,ty:"corrosion",dl:dk(cD),late:Math.floor((NOW-cD)/864e5)});
-  });
-}
-
-// =================== VALIDATION ===================
 function isDone(im,ty,dt){const ac=fleet.find(a=>a.immat===im);if(!ac)return false;const r=ty==="pointFixe"?ac.lastPointFixe:ty==="lavage"?ac.lastLavage:ac.lastCorrosion;return r&&r>=dt;}
 function isMissed(im,ty,dt){return!isDone(im,ty,dt)&&dt<today;}
+function isRat(dt,ty,im){return pubSched&&pubSched[dt]&&pubSched[dt]._rat&&pubSched[dt]._rat[ty]&&pubSched[dt]._rat[ty].includes(im);}
+
 const tl=t=>t==="pointFixe"?"POINT FIXE":t==="lavage"?"LAVAGE":"TRAIT. CORROSION";
 const tls=t=>t==="pointFixe"?"Point Fixe":t==="lavage"?"Lavage":"Trait. Corrosion";
-const tcol=t=>t==="pointFixe"?{c:"var(--pf)",bg:"var(--pf-bg)",bd:"var(--pf-bd)"}:t==="lavage"?{c:"var(--lav)",bg:"var(--lav-bg)",bd:"var(--lav-bd)"}:{c:"var(--tc)",bg:"var(--tc-bg)",bd:"var(--tc-bd)"};
+const tHead=t=>t==="pointFixe"?"pf-h":t==="lavage"?"lav-h":"tc-h";
+const tPend=t=>t==="pointFixe"?"pending-pf":t==="lavage"?"pending-lav":"pending-tc";
 
-function getSt(){
-  if(!pubSched)return{pf:0,lv:0,co:0,dn:0,total:0,od:0,act:0,sz:fleet.length};
+function getSt(){if(!pubSched)return{pf:0,lv:0,co:0,dn:0,total:0,od:0,act:0,sz:fleet.length};
   let pf=0,lv=0,co=0,dn=0,total=0;
-  Object.entries(pubSched).forEach(([dt,s])=>{
-    if(!s)return;
-    ["pointFixe","lavage","corrosion"].forEach(ty=>{
-      if(!s[ty])return;
-      s[ty].forEach(im=>{total++;if(isDone(im,ty,dt))dn++;});
-    });
-    pf+=(s.pointFixe||[]).length;lv+=(s.lavage||[]).length;co+=(s.corrosion||[]).length;
-  });
-  return{pf,lv,co,dn,total,od:OD.length,act:fleet.filter(a=>a.active&&a.lastFlight).length,sz:fleet.length};
-}
+  Object.entries(pubSched).forEach(([dt,s])=>{if(!s)return;["pointFixe","lavage","corrosion"].forEach(ty=>{if(!s[ty])return;s[ty].forEach(im=>{total++;if(isDone(im,ty,dt))dn++;});});pf+=(s.pointFixe||[]).length;lv+=(s.lavage||[]).length;co+=(s.corrosion||[]).length;});
+  return{pf,lv,co,dn,total,od:OD.length,act:fleet.filter(a=>a.active&&a.lastFlight).length,sz:fleet.length};}
 
 // =================== RENDER ===================
 function rSt(){
@@ -283,97 +332,108 @@ function rSt(){
   ].map(x=>`<div class="stat"><div class="stat-label">${x.l}</div><div class="stat-value" style="color:${x.c}">${x.v}</div></div>`).join("");
   document.getElementById("rb").textContent=s.od;document.getElementById("rb").style.display=s.od?"inline":"none";
   document.getElementById("pT").textContent=`PLANNING DE MAINTENANCE — ${MO[cM].toUpperCase()} ${cY}`;
-  document.getElementById("pS").textContent=`DU 01 ${MO[cM]} ${cY} AU ${dim(cM,cY)} ${MO[cM]} ${cY} · ${s.act} aéronefs · Généré le ${fmtL(today)}`;
-  let sh="";if(sigName||sigPost||sigImage){sh+=`<div style="text-align:right;margin-top:16px">`;if(sigImage)sh+=`<img src="${sigImage}" style="max-height:70px;display:block;margin-left:auto;margin-bottom:4px">`;if(sigName)sh+=`<div style="font-size:11px;font-weight:800;color:#1e293b">${sigName}</div>`;if(sigPost)sh+=`<div style="font-size:9px;font-weight:600;color:#64748b">${sigPost}</div>`;sh+=`</div>`;}
-  document.getElementById("sigA").innerHTML=sh;
-}
+  document.getElementById("pS").textContent=`DU 01 ${MO[cM]} ${cY} AU ${dim(cM,cY)} ${MO[cM]} ${cY} · ${s.act} aéronefs · ${fmtL(today)}`;
+  let sh="";if(sigName||sigPost||sigImage){sh+=`<div style="text-align:right;margin-top:16px">`;if(sigImage)sh+=`<img src="${sigImage}" style="max-height:70px;display:block;margin-left:auto;margin-bottom:4px">`;if(sigName)sh+=`<div style="font-size:11px;font-weight:800;color:#0f172a">${sigName}</div>`;if(sigPost)sh+=`<div style="font-size:9px;color:#64748b">${sigPost}</div>`;sh+=`</div>`;}
+  document.getElementById("sigA").innerHTML=sh;}
 
 function rSch(){
   if(!pubSched){document.getElementById("vSch").innerHTML=`<div style="text-align:center;padding:40px;color:var(--text2)">Chargement...</div>`;return;}
   const nd=dim(cM,cY),sd=new Date(cY,cM,1),le=new Date(cY,cM,nd);
   let mon=new Date(sd);while(mon.getDay()!==1)mon.setDate(mon.getDate()-1);
   let fri=new Date(le);while(fri.getDay()!==5)fri.setDate(fri.getDate()+1);
-  const wks=[];let cur=new Date(mon);
-  while(cur<=fri){const w=[];for(let i=0;i<5;i++){w.push({d:dk(cur),in:cur.getMonth()===cM&&cur.getFullYear()===cY});cur.setDate(cur.getDate()+1);}cur.setDate(cur.getDate()+2);wks.push(w);}
+  const wks=[];let cur=new Date(mon);while(cur<=fri){const w=[];for(let i=0;i<5;i++){w.push({d:dk(cur),in:cur.getMonth()===cM&&cur.getFullYear()===cY});cur.setDate(cur.getDate()+1);}cur.setDate(cur.getDate()+2);wks.push(w);}
 
   let h=`<div class="month-nav no-print"><button onclick="pM()">◀</button><div class="month-label">${MO[cM]} ${cY}</div><button onclick="nM()">▶</button>
-    <button class="btn btn-warn btn-sm no-print" onclick="publishSchedule()" style="margin-left:12px">🔄 Regénérer le planning</button></div>`;
-  h+=`<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px" class="no-print"><span class="tag" style="background:var(--pf-bg);color:var(--pf);border:1px solid var(--pf-bd)">PF</span><span class="tag" style="background:var(--lav-bg);color:var(--lav);border:1px solid var(--lav-bd)">LAV</span><span class="tag" style="background:var(--tc-bg);color:var(--tc);border:1px solid var(--tc-bd)">TC</span><span class="tag" style="background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-bd)">✓ Réalisé</span><span class="tag" style="background:var(--dn-bg);color:var(--dn);border:1px solid var(--dn-bd)">✗ Non réalisé</span></div>`;
-  if(OD.length)h+=`<div onclick="sv('retards')" style="background:var(--dn-bg);border:1px solid var(--dn-bd);border-radius:8px;padding:8px 16px;margin-bottom:12px;cursor:pointer;display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--dn)" class="no-print"><span>${OD.length} retard(s)</span><span>Voir →</span></div>`;
+    <button class="btn btn-rat btn-sm no-print" onclick="publishSchedule()" style="margin-left:auto">🔄 Regénérer</button></div>`;
+  h+=`<div class="legend-bar no-print">
+    <div class="legend-item"><div class="legend-dot ld-pending"></div>À faire</div>
+    <div class="legend-item"><div class="legend-dot ld-done"></div>Fait ✓</div>
+    <div class="legend-item"><div class="legend-dot ld-missed"></div>Manqué ✗</div>
+    <div class="legend-item"><div class="legend-dot ld-rat"></div>Rattrapage ↻</div>
+  </div>`;
+  if(OD.length)h+=`<div onclick="sv('retards')" style="background:var(--dn-bg);border:1px solid var(--dn);border-radius:12px;padding:12px 20px;margin-bottom:16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:800;color:var(--dn);font-size:13px" class="no-print"><span>⚠ ${OD.length} tâche(s) en retard</span><span style="font-size:12px">Détails →</span></div>`;
 
   wks.forEach(w=>{
     const inW=w.filter(x=>x.in);const ws=inW.length?inW[0].d:w[0].d,we=inW.length?inW[inW.length-1].d:w[4].d;
-    h+=`<div class="wblock"><div class="wheader">Sem. ${fmt(ws)} — ${fmt(we)}</div><div class="wgrid">`;
+    // Week progress
+    let wDone=0,wTotal=0;
+    w.forEach(({d,in:inM})=>{if(!inM)return;const sl=pubSched[d];if(!sl)return;["pointFixe","lavage","corrosion"].forEach(ty=>{if(!sl[ty])return;sl[ty].forEach(im=>{wTotal++;if(isDone(im,ty,d))wDone++;});});});
+    const wPct=wTotal?Math.round(wDone/wTotal*100):0;
+    const barCol=wPct>=80?"var(--ok)":wPct>=40?"var(--tc)":"var(--dn)";
+
+    h+=`<div class="wblock"><div class="wheader"><span class="wheader-label">Sem. ${fmt(ws)} — ${fmt(we)}</span>
+      <div class="wprogress">${wDone}/${wTotal}<div class="wprog-bar"><div class="wprog-fill" style="width:${wPct}%;background:${barCol}"></div></div>${wPct}%</div></div><div class="wgrid">`;
+
     w.forEach(({d,in:inM})=>{
       const dt=new Date(d+'T12:00:00'),isT=d===today,isP=d<today;
-      if(!inM){h+=`<div class="dcol outside"><div class="dlbl" style="color:var(--border2)">${WD[dt.getDay()]} ${dt.getDate()}</div></div>`;return;}
+      if(!inM){h+=`<div class="dcol outside"><div class="dhead">${WD[dt.getDay()]} ${dt.getDate()}</div></div>`;return;}
       const sl=pubSched[d]||{pointFixe:[],lavage:[],corrosion:[]};
-      h+=`<div class="dcol${isT?' today':''}${isP&&!isT?' past':''}"><div class="dlbl" style="color:${isT?'var(--pf)':'var(--text2)'}">${WD[dt.getDay()]} ${dt.getDate()}</div>`;
+      h+=`<div class="dcol${isT?' today':''}${isP&&!isT?' past':''}"><div class="dhead">${WD[dt.getDay()]} ${dt.getDate()}</div>`;
+
       ["pointFixe","lavage","corrosion"].forEach(ty=>{
-        if(!sl[ty]||!sl[ty].length)return;const c=tcol(ty);
-        h+=`<div style="margin-bottom:4px"><div class="slbl" style="color:${c.c}">${tl(ty)}</div>`;
+        if(!sl[ty]||!sl[ty].length)return;
+        h+=`<div class="tsec"><div class="tsec-head ${tHead(ty)}">${tl(ty)}</div>`;
         sl[ty].forEach(im=>{
-          const dn=isDone(im,ty,d),ms=isMissed(im,ty,d),pin=pins[`${im}|${ty}|${d}`];
-          let cls="",bg=c.bg,bd=c.bd,col=c.c,ico="○";
-          if(dn){cls="done";bg="var(--ok-bg)";bd="var(--ok-bd)";col="var(--ok)";ico="✓";}
-          else if(ms){cls="missed";bg="var(--dn-bg)";bd="var(--dn-bd)";col="var(--dn)";ico="✗";}
-          h+=`<div class="atag ${cls}" style="background:${bg};border:1px solid ${bd};color:${col}"><span style="font-size:11px">${ico}</span>${im}${pin?' 📌':''}</div>`;
-        });h+=`</div>`;
+          const dn=isDone(im,ty,d),ms=isMissed(im,ty,d),rat=isRat(d,ty,im);
+          const pin=pins[`${im}|${ty}|${d}`];
+          let cls,ico,bdg="";
+          if(dn){cls="done";ico="✓";bdg=`<span class="tpill-badge" style="background:var(--ok);color:#fff">FAIT</span>`;}
+          else if(ms){cls="missed";ico="✗";bdg=`<span class="tpill-badge" style="background:var(--dn);color:#fff">MANQUÉ</span>`;}
+          else if(rat){cls="rattrapage";ico="↻";bdg=`<span class="tpill-badge" style="background:var(--rat);color:#fff">RATTRAPAGE</span>`;}
+          else{cls=`pending ${tPend(ty)}`;ico="○";bdg="";}
+          h+=`<div class="tpill ${cls}"><div class="tpill-icon">${ico}</div><span class="tpill-name">${im}${pin?' 📌':''}</span>${bdg}</div>`;
+        });
+        h+=`</div>`;
       });
-      if(!(sl.pointFixe||[]).length&&!(sl.lavage||[]).length&&!(sl.corrosion||[]).length)h+=`<div style="font-size:10px;color:var(--border2);margin-top:12px">—</div>`;
+
+      if(!(sl.pointFixe||[]).length&&!(sl.lavage||[]).length&&!(sl.corrosion||[]).length)h+=`<div style="font-size:10px;color:var(--text3);margin-top:16px;text-align:center">—</div>`;
       h+=`<div class="pin-row no-print"><button class="pin-btn" onclick="oP('pointFixe','${d}')">+PF</button><button class="pin-btn" onclick="oP('lavage','${d}')">+LAV</button><button class="pin-btn" onclick="oP('corrosion','${d}')">+TC</button></div></div>`;
-    });h+=`</div></div>`;
+    });
+    h+=`</div></div>`;
   });
   document.getElementById("vSch").innerHTML=h;
 }
 
-function rFlt(){
-  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h2 style="font-size:16px;font-weight:800">Flotte</h2><button class="btn btn-primary btn-sm" onclick="document.getElementById('aR').style.display='flex'">+ Ajouter</button></div>`;
-  h+=`<div id="aR" style="display:none" class="mrow"><div class="field"><label>Immat</label><input type="text" id="nI" placeholder="TY-XXX" style="text-transform:uppercase"></div><div class="field"><label>Type</label><input type="text" id="nT" value="ULM"></div><button class="btn btn-primary btn-sm" onclick="addA()">OK</button><button class="btn btn-sm" onclick="document.getElementById('aR').style.display='none'">×</button></div>`;
-  h+=`<div style="overflow-x:auto"><table><thead><tr><th>Actif</th><th>Immat</th><th>Type</th><th>Vol</th><th>Lavage</th><th>Corrosion</th><th>Pt Fixe</th><th></th></tr></thead><tbody>`;
-  fleet.forEach((a,i)=>{h+=`<tr style="${!a.active?'opacity:.4':''}"><td><button class="toggle ${a.active?'on':'off'}" onclick="tA(${i})"></button></td><td style="font-weight:800">${a.immat}</td><td><span class="tag" style="background:${a.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${a.type==='ULM'?'var(--pf)':'#7c3aed'}">${a.type}</span></td><td>${a.lastFlight?fmt(a.lastFlight):'—'}</td><td>${a.lastLavage?fmt(a.lastLavage):'—'}</td><td>${a.lastCorrosion?fmt(a.lastCorrosion):'—'}</td><td>${a.lastPointFixe?fmt(a.lastPointFixe):'—'}</td><td><button class="btn btn-dn btn-xs" onclick="rmA(${i})">✕</button></td></tr>`;});
-  h+=`</tbody></table></div><p style="margin-top:12px;font-size:11px;color:var(--text2)">📱 Dates mises à jour depuis l'app mobile. Le planning ne se regénère que lors d'un nouveau vol ou manuellement.</p>`;
-  document.getElementById("vFlt").innerHTML=h;
-}
+function rFlt(){let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:18px;font-weight:900">Flotte</h2><button class="btn btn-primary btn-sm" onclick="document.getElementById('aR').style.display='flex'">+ Ajouter</button></div>`;
+h+=`<div id="aR" style="display:none" class="mrow"><div class="field"><label>Immat</label><input type="text" id="nI" placeholder="TY-XXX" style="text-transform:uppercase"></div><div class="field"><label>Type</label><input type="text" id="nT" value="ULM"></div><button class="btn btn-primary btn-sm" onclick="addA()">OK</button><button class="btn btn-sm" onclick="document.getElementById('aR').style.display='none'">×</button></div>`;
+h+=`<div style="overflow-x:auto;background:var(--bg2);border-radius:14px;border:1px solid var(--border);box-shadow:var(--sh)"><table><thead><tr><th>Actif</th><th>Immat</th><th>Type</th><th>Vol</th><th>Lavage</th><th>Corrosion</th><th>Pt Fixe</th><th></th></tr></thead><tbody>`;
+fleet.forEach((a,i)=>{h+=`<tr style="${!a.active?'opacity:.35':''}"><td><button class="toggle ${a.active?'on':'off'}" onclick="tA(${i})"></button></td><td style="font-weight:800">${a.immat}</td><td><span class="tag" style="background:${a.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${a.type==='ULM'?'var(--pf-dark)':'#7c3aed'}">${a.type}</span></td><td>${a.lastFlight?fmt(a.lastFlight):'—'}</td><td>${a.lastLavage?fmt(a.lastLavage):'—'}</td><td>${a.lastCorrosion?fmt(a.lastCorrosion):'—'}</td><td>${a.lastPointFixe?fmt(a.lastPointFixe):'—'}</td><td><button class="btn btn-dn btn-xs" onclick="rmA(${i})">✕</button></td></tr>`;});
+h+=`</tbody></table></div>`;document.getElementById("vFlt").innerHTML=h;}
 
-function rRet(){
-  let h=`<h2 style="font-size:16px;font-weight:800;margin-bottom:14px">Retards</h2>`;
-  if(!OD.length){h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:12px;padding:36px;text-align:center"><div style="font-size:32px;margin-bottom:8px">✅</div><div style="font-weight:800;color:var(--ok)">Aucun retard</div></div>`;}
-  else{const g={pointFixe:[],lavage:[],corrosion:[]};OD.forEach(o=>g[o.ty].push(o));
-    [{k:"pointFixe",l:"Points Fixes"},{k:"lavage",l:"Lavages"},{k:"corrosion",l:"Trait. Corrosion"}].forEach(s=>{if(!g[s.k].length)return;
-      h+=`<div class="ocard"><div class="ohead"><span style="font-weight:800;color:var(--dn)">${s.l} (${g[s.k].length})</span></div><table><thead><tr><th>Aéronef</th><th>Échéance</th><th>Retard</th></tr></thead><tbody>`;
-      g[s.k].forEach(o=>{h+=`<tr><td style="font-weight:800">${o.im}</td><td style="color:var(--dn);font-weight:700">${fmt(o.dl)}</td><td><span style="background:var(--dn-bg);color:var(--dn);padding:2px 8px;border-radius:5px;font-weight:800;font-size:11px">+${o.late}j</span></td></tr>`;});
-      h+=`</tbody></table></div>`;});}
-  document.getElementById("vRet").innerHTML=h;
-}
+function rRet(){let h=`<h2 style="font-size:18px;font-weight:900;margin-bottom:16px">Tâches en retard</h2>`;
+if(!OD.length)h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok);border-radius:14px;padding:40px;text-align:center"><div style="font-size:36px;margin-bottom:8px">✅</div><div style="font-weight:900;font-size:16px;color:var(--ok-dark)">Tout est à jour</div></div>`;
+else{const g={pointFixe:[],lavage:[],corrosion:[]};OD.forEach(o=>g[o.ty].push(o));
+[{k:"pointFixe",l:"Points Fixes"},{k:"lavage",l:"Lavages"},{k:"corrosion",l:"Trait. Corrosion"}].forEach(s=>{if(!g[s.k].length)return;
+h+=`<div class="ocard"><div class="ohead"><span style="font-weight:900;color:var(--dn)">${s.l} (${g[s.k].length})</span></div><table><thead><tr><th>Aéronef</th><th>Échéance</th><th>Retard</th></tr></thead><tbody>`;
+g[s.k].forEach(o=>{h+=`<tr><td style="font-weight:800">${o.im}</td><td style="color:var(--dn);font-weight:700">${fmt(o.dl)}</td><td><span style="background:var(--dn-bg);color:var(--dn);padding:3px 10px;border-radius:6px;font-weight:900;font-size:12px">+${o.late}j</span></td></tr>`;});
+h+=`</tbody></table></div>`;});}
+document.getElementById("vRet").innerHTML=h;}
 
-function rAdm(){
-  let h=`<h2 style="font-size:16px;font-weight:800;margin-bottom:14px">Administration</h2>`;
-  h+=`<div class="sig-area"><h3 style="font-size:14px;font-weight:700;margin-bottom:10px">Signature PDF</h3><p style="font-size:11px;color:var(--text2);margin-bottom:12px">Ordre: Signature → Nom → Poste</p>`;
-  h+=`<div class="field" style="margin-bottom:10px"><label>Image signature</label><input type="file" accept="image/*" onchange="uSig(event)" style="font-size:12px"></div>`;
-  if(sigImage)h+=`<div style="margin-bottom:10px"><img src="${sigImage}" style="max-height:60px;border-radius:6px;border:1px solid var(--border)"><br><button class="btn btn-dn btn-xs" style="margin-top:4px" onclick="rSig()">Suppr.</button></div>`;
-  h+=`<div class="field" style="margin-bottom:10px"><label>Nom</label><input type="text" id="sN" value="${sigName}" placeholder="Cpt Jean DUPONT" style="width:100%;padding:8px" onchange="sSig()"></div>`;
-  h+=`<div class="field" style="margin-bottom:10px"><label>Poste</label><input type="text" id="sP" value="${sigPost}" placeholder="Chef Section Maintenance" style="width:100%;padding:8px" onchange="sSig()"></div>`;
-  if(sigName||sigImage)h+=`<div style="margin-top:10px;padding:12px;background:var(--bg);border-radius:8px;border:1px dashed var(--border)"><div style="font-size:9px;color:var(--text2);margin-bottom:4px;font-weight:700">APERÇU</div><div style="text-align:right">${sigImage?`<img src="${sigImage}" style="max-height:50px;display:block;margin-left:auto;margin-bottom:3px">`:''}${sigName?`<div style="font-size:12px;font-weight:800">${sigName}</div>`:''}${sigPost?`<div style="font-size:11px;color:var(--text2)">${sigPost}</div>`:''}</div></div>`;
-  h+=`</div><div style="margin-top:14px;padding:14px;background:var(--bg2);border-radius:12px;border:1px solid var(--border)"><h3 style="font-size:14px;font-weight:700;margin-bottom:8px">Données</h3><button class="btn btn-sm" onclick="xBk()">💾 Backup</button> <button class="btn btn-sm" onclick="document.getElementById('iF').click()">📂 Importer</button><input type="file" id="iF" accept=".json" style="display:none" onchange="iBk(event)"></div>`;
-  document.getElementById("vAdm").innerHTML=h;
-}
+function rAdm(){let h=`<h2 style="font-size:18px;font-weight:900;margin-bottom:16px">Administration</h2>`;
+h+=`<div class="sig-area"><h3 style="font-weight:800;margin-bottom:12px">Signature PDF</h3><p style="font-size:11px;color:var(--text2);margin-bottom:14px">Signature → Nom → Poste (en bas à droite du PDF)</p>`;
+h+=`<div class="field" style="margin-bottom:10px"><label>Image signature</label><input type="file" accept="image/*" onchange="uSig(event)" style="font-size:12px"></div>`;
+if(sigImage)h+=`<div style="margin-bottom:10px"><img src="${sigImage}" style="max-height:60px;border-radius:8px;border:1px solid var(--border)"><br><button class="btn btn-dn btn-xs" style="margin-top:6px" onclick="rSig()">Suppr.</button></div>`;
+h+=`<div class="field" style="margin-bottom:10px"><label>Nom</label><input type="text" id="sN" value="${sigName}" placeholder="Cpt Jean DUPONT" style="width:100%;padding:9px" onchange="sSig()"></div>`;
+h+=`<div class="field" style="margin-bottom:10px"><label>Poste</label><input type="text" id="sP" value="${sigPost}" placeholder="Chef Section Maintenance" style="width:100%;padding:9px" onchange="sSig()"></div>`;
+if(sigName||sigImage)h+=`<div style="margin-top:12px;padding:14px;background:var(--bg);border-radius:10px;border:1px dashed var(--border)"><div style="font-size:9px;color:var(--text3);margin-bottom:4px;font-weight:800">APERÇU</div><div style="text-align:right">${sigImage?`<img src="${sigImage}" style="max-height:50px;display:block;margin-left:auto;margin-bottom:3px">`:''}${sigName?`<div style="font-size:13px;font-weight:800">${sigName}</div>`:''}${sigPost?`<div style="font-size:11px;color:var(--text2)">${sigPost}</div>`:''}</div></div>`;
+h+=`</div><div style="margin-top:16px;padding:18px;background:var(--bg2);border-radius:14px;border:1px solid var(--border);box-shadow:var(--sh)"><h3 style="font-weight:800;margin-bottom:10px">Données</h3><button class="btn btn-sm" onclick="xBk()">💾 Backup</button> <button class="btn btn-sm" onclick="document.getElementById('iF').click()">📂 Importer</button><input type="file" id="iF" accept=".json" style="display:none" onchange="iBk(event)"></div>`;
+document.getElementById("vAdm").innerHTML=h;}
 
 function sSig(){sigName=document.getElementById("sN").value;sigPost=document.getElementById("sP").value;if(db){db.ref("config/sigName").set(sigName);db.ref("config/sigPost").set(sigPost);}rAdm();}
 function uSig(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{sigImage=ev.target.result;if(db)db.ref("config/sigImage").set(sigImage);rAdm();};r.readAsDataURL(f);}
 function rSig(){sigImage="";if(db)db.ref("config/sigImage").remove();rAdm();}
 function xBk(){const d=JSON.stringify({fleet,pins,sigName,sigPost,sigImage},null,2);const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([d],{type:"application/json"}));a.download="piste_backup.json";a.click();}
-function iBk(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.fleet){fleet=d.fleet;pins=d.pins||{};sigName=d.sigName||"";sigPost=d.sigPost||"";sigImage=d.sigImage||"";if(db){pushAll();db.ref("pins").set(pins);db.ref("config").set({sigName,sigPost,sigImage});}publishSchedule();}}catch(err){}};r.readAsText(f);e.target.value="";}
+function iBk(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.fleet){fleet=d.fleet;pins=d.pins||{};sigName=d.sigName||"";sigPost=d.sigPost||"";sigImage=d.sigImage||"";if(db){pushAll();db.ref("pins").set(pins);db.ref("config").set({sigName,sigPost,sigImage});}publishSchedule();}}catch(e){}};r.readAsText(f);e.target.value="";}
 
-function pM(){cM--;if(cM<0){cM=11;cY--;}pubSched=null;loadOrGenerate();}
-function nM(){cM++;if(cM>11){cM=0;cY++;}pubSched=null;loadOrGenerate();}
-function oP(ty,dt){const l=fleet.filter(a=>a.active);let h=`<div class="modal"><h3>Fixer ${tls(ty)} — ${fmt(dt)}</h3><div style="max-height:260px;overflow-y:auto">`;l.forEach(a=>{const k=`${a.immat}|${ty}|${dt}`;const al=pins[k];h+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg3)"><span style="font-weight:700">${a.immat}</span>${al?`<button class="btn btn-dn btn-xs" onclick="rPin('${k}');cP()">Retirer</button>`:`<button class="btn btn-primary btn-xs" onclick="aPin('${k}');cP()">Fixer</button>`}</div>`;});h+=`</div><div style="margin-top:14px;text-align:right"><button class="btn btn-sm" onclick="cP()">Fermer</button></div></div>`;document.getElementById("pinM").innerHTML=h;document.getElementById("pinM").style.display="flex";}
+function pM(){cM--;if(cM<0){cM=11;cY--;}pubSched=null;loadOrGen();}
+function nM(){cM++;if(cM>11){cM=0;cY++;}pubSched=null;loadOrGen();}
+function oP(ty,dt){const l=fleet.filter(a=>a.active);let h=`<div class="modal"><h3>Fixer ${tls(ty)} — ${fmt(dt)}</h3><div style="max-height:260px;overflow-y:auto">`;l.forEach(a=>{const k=`${a.immat}|${ty}|${dt}`;const al=pins[k];h+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bg3)"><span style="font-weight:700">${a.immat}</span>${al?`<button class="btn btn-dn btn-xs" onclick="rPin('${k}');cP()">Retirer</button>`:`<button class="btn btn-primary btn-xs" onclick="aPin('${k}');cP()">Fixer</button>`}</div>`;});h+=`</div><div style="margin-top:14px;text-align:right"><button class="btn btn-sm" onclick="cP()">Fermer</button></div></div>`;document.getElementById("pinM").innerHTML=h;document.getElementById("pinM").style.display="flex";}
 function cP(){document.getElementById("pinM").style.display="none";}
 function aPin(k){pins[k]=true;if(db)db.ref("pins").set(pins);publishSchedule();}
 function rPin(k){delete pins[k];if(db)db.ref("pins").set(pins);publishSchedule();}
 
 function sv(v){cv=v;["Sch","Flt","Ret","Adm"].forEach(id=>{document.getElementById("v"+id).style.display="none";document.getElementById("b"+id).classList.remove("active");});const m={schedule:"Sch",fleet:"Flt",retards:"Ret",admin:"Adm"};document.getElementById("v"+m[v]).style.display="block";document.getElementById("b"+m[v]).classList.add("active");if(v==="admin")rAdm();}
-function render(){computeOverdue();rSt();rFlt();rSch();rRet();}
+function render(){rSt();rFlt();rSch();rRet();}
 function tA(i){fleet[i].active=!fleet[i].active;if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/active").set(fleet[i].active);publishSchedule();}
 function rmA(i){if(!confirm("Supprimer "+fleet[i].immat+" ?"))return;const im=fleet[i].immat;fleet.splice(i,1);if(db)db.ref("fleet/"+fbK(im)).remove();publishSchedule();}
 function addA(){const im=document.getElementById("nI").value.trim().toUpperCase(),ty=document.getElementById("nT").value.trim()||"ULM";if(!im||fleet.find(a=>a.immat===im))return;const ac={immat:im,type:ty,active:true,lastFlight:null,lastLavage:null,lastCorrosion:null,lastPointFixe:null};fleet.push(ac);if(db)db.ref("fleet/"+fbK(im)).set(ac);document.getElementById("aR").style.display="none";document.getElementById("nI").value="";render();}
