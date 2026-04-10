@@ -3,74 +3,79 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>EMACO — Saisie Vols & Maintenance</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>EMACO — Saisie Maintenance</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#0a0e17;--bg2:#0c1019;--bg3:#0f1520;--border:#1a1f2e;--border2:#1e2a3a;
-    --text:#c8d6e5;--text2:#5a6a7e;--white:#e8eef5;
-    --pf-text:#7eb8ff;--pf-bg:#1a2744;--pf-border:#2d4a7a;
-    --lav-text:#7effa8;--lav-bg:#1a3a2a;--lav-border:#2d7a4a;
-    --tc-text:#ffc87e;--tc-bg:#3a2a1a;--tc-border:#7a5a2d;
-    --ok:#4ade80}
+  :root{
+    --bg:#f5f7fa;--bg2:#ffffff;--bg3:#f0f2f5;--border:#e2e8f0;--border2:#cbd5e1;
+    --text:#1e293b;--text2:#64748b;--white:#ffffff;
+    --pf:#2563eb;--pf-bg:#eff6ff;--pf-border:#bfdbfe;
+    --lav:#059669;--lav-bg:#ecfdf5;--lav-border:#a7f3d0;
+    --tc:#d97706;--tc-bg:#fffbeb;--tc-border:#fde68a;
+    --vol:#7c3aed;--vol-bg:#f5f3ff;--vol-border:#ddd6fe;
+    --ok:#16a34a;--danger:#dc2626;
+    --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+    --shadow-md:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.06);
+  }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;font-size:15px;padding-bottom:72px}
+  body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;font-size:15px;padding-bottom:72px;-webkit-font-smoothing:antialiased}
 
-  .header{position:sticky;top:0;z-index:50;background:var(--bg2);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
-  .logo{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#1a2744,#2d4a7a);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--pf-text)}
-  .header h2{font-size:17px;color:var(--white);letter-spacing:-.3px}
-  .header p{font-size:11px;color:var(--text2)}
-  .conn{font-size:11px;padding:4px 10px;border-radius:12px;font-weight:600}
-  .conn.on{background:#0f2e1a;color:var(--ok)}.conn.off{background:#2e0f0f;color:#f87171}
+  .header{position:sticky;top:0;z-index:50;background:var(--white);border-bottom:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow)}
+  .logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center}
+  .logo svg{width:20px;height:20px;fill:#fff}
+  .header h2{font-size:17px;color:var(--text);font-weight:800;letter-spacing:-.3px}
+  .header p{font-size:11px;color:var(--text2);font-weight:500}
+  .conn{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600;border:1px solid}
+  .conn.on{background:#ecfdf5;color:#059669;border-color:#a7f3d0}.conn.off{background:#fef2f2;color:#dc2626;border-color:#fecaca}
 
-  .search-bar{padding:10px 16px;position:sticky;top:65px;z-index:40;background:var(--bg)}
-  .search-bar input{width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg3);color:var(--text);font-family:inherit;font-size:14px}
+  .search-bar{padding:10px 16px;position:sticky;top:67px;z-index:40;background:var(--bg)}
+  .search-bar input{width:100%;padding:11px 14px 11px 40px;border-radius:12px;border:1px solid var(--border);background:var(--white);color:var(--text);font-family:inherit;font-size:14px;box-shadow:var(--shadow)}
   .search-bar input::placeholder{color:var(--text2)}
+  .search-wrap{position:relative}
+  .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;fill:none;stroke:var(--text2);stroke-width:2}
 
   .filter-pills{padding:4px 16px 10px;display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch}
   .filter-pills::-webkit-scrollbar{display:none}
-  .pill{padding:7px 16px;border-radius:20px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:all .15s}
-  .pill.active{background:var(--pf-bg);border-color:var(--pf-border);color:var(--pf-text)}
+  .pill{padding:8px 18px;border-radius:20px;border:1px solid var(--border);background:var(--white);color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:all .15s;box-shadow:var(--shadow)}
+  .pill.active{background:var(--pf);border-color:var(--pf);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.3)}
 
   .ac-list{padding:0 16px}
-
-  .ac-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden}
+  .ac-card{background:var(--white);border:1px solid var(--border);border-radius:16px;margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow);transition:all .2s}
   .ac-head{padding:14px 16px;cursor:pointer;-webkit-tap-highlight-color:transparent}
   .ac-head-top{display:flex;align-items:center;justify-content:space-between}
-  .ac-immat{font-size:18px;font-weight:700;color:var(--white)}
-  .ac-type{font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;background:var(--pf-bg);color:var(--pf-text);margin-left:8px}
-  .chevron{font-size:16px;color:var(--text2);transition:transform .2s}
+  .ac-immat{font-size:18px;font-weight:800;color:var(--text);letter-spacing:-.3px}
+  .ac-type{font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;margin-left:8px;text-transform:uppercase;letter-spacing:.5px}
+  .type-ulm{background:var(--pf-bg);color:var(--pf);border:1px solid var(--pf-border)}
+  .type-avion{background:#f5f3ff;color:#7c3aed;border:1px solid #ddd6fe}
+  .chevron{color:var(--text2);transition:transform .2s}
   .ac-card.open .chevron{transform:rotate(180deg)}
-
-  .ac-dates-summary{margin-top:6px}
-  .date-chip-single{font-size:12px;color:var(--text2);font-weight:500}
-  .date-chip-single strong{color:var(--white);margin:0 2px}
-  .chip-warn{color:#f87171;font-weight:600}
-  .chip-ok{color:var(--ok);font-weight:600}
+  .ac-dates-summary{margin-top:8px}
+  .date-chip-single{font-size:13px;color:var(--text2);font-weight:500}
+  .date-chip-single strong{color:var(--text);margin:0 3px}
+  .chip-warn{color:var(--danger);font-weight:700}
+  .chip-ok{color:var(--ok);font-weight:700}
 
   .ac-body{padding:0 16px 16px;display:none}
   .ac-card.open .ac-body{display:block}
 
-  .field-group{margin-bottom:16px;background:var(--bg3);border-radius:12px;padding:14px}
-  .field-label{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .field-group{margin-bottom:14px;background:var(--bg3);border-radius:14px;padding:14px;border:1px solid var(--border)}
+  .field-label{font-size:12px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .field-label svg{width:16px;height:16px;flex-shrink:0}
   .field-row{display:flex;gap:8px;align-items:center}
-  .field-row input[type="date"]{flex:1;padding:11px 14px;border-radius:10px;border:1px solid var(--border2);background:var(--bg);color:var(--text);font-family:inherit;font-size:15px;-webkit-appearance:none}
-  .field-row input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(.7);font-size:18px}
+  .field-row input[type="date"]{flex:1;padding:12px 14px;border-radius:12px;border:1px solid var(--border);background:var(--white);color:var(--text);font-family:inherit;font-size:15px;-webkit-appearance:none;box-shadow:var(--shadow)}
+  .btn-today{padding:12px 16px;border-radius:12px;border:none;background:var(--pf);color:#fff;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:all .15s;min-width:110px;text-align:center;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+  .btn-today:active{transform:scale(.96);opacity:.9}
+  .field-info{font-size:12px;color:var(--text2);margin-top:8px;display:flex;justify-content:space-between}
+  .field-info .ago{font-weight:700}
+  .field-info .ago.recent{color:var(--ok)}.field-info .ago.mid{color:var(--tc)}.field-info .ago.old{color:var(--danger)}
 
-  .btn-today{padding:11px 14px;border-radius:10px;border:1px solid var(--lav-border);background:var(--lav-bg);color:var(--ok);cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:all .15s;min-width:100px;text-align:center}
-  .btn-today:active{transform:scale(.96);opacity:.8}
+  .saved-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--ok);color:#fff;padding:12px 24px;border-radius:14px;font-weight:700;font-size:14px;z-index:200;display:none;box-shadow:var(--shadow-md)}
 
-  .field-info{font-size:12px;color:var(--text2);margin-top:6px;display:flex;justify-content:space-between}
-  .field-info .ago{font-weight:600}
-  .field-info .ago.recent{color:var(--ok)}
-  .field-info .ago.old{color:#f87171}
-  .field-info .ago.mid{color:var(--tc-text)}
-
-  .saved-toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a3a2a;color:var(--ok);padding:12px 24px;border-radius:12px;font-weight:600;font-size:14px;z-index:200;display:none;box-shadow:0 4px 20px rgba(0,0,0,.5)}
-
-  .tab-bar{position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:1px solid var(--border);display:flex;z-index:50;padding:6px 0;padding-bottom:max(6px,env(safe-area-inset-bottom))}
-  .tab{flex:1;text-align:center;padding:6px;cursor:pointer;color:var(--text2);font-size:10px;font-weight:600;-webkit-tap-highlight-color:transparent;transition:all .15s}
-  .tab.active{color:var(--pf-text)}
-  .tab .tab-icon{font-size:20px;display:block;margin-bottom:1px}
+  .tab-bar{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);display:flex;z-index:50;padding:4px 8px;padding-bottom:max(4px,env(safe-area-inset-bottom));box-shadow:0 -2px 10px rgba(0,0,0,.05)}
+  .tab{flex:1;text-align:center;padding:8px 4px;cursor:pointer;color:var(--text2);font-size:10px;font-weight:600;-webkit-tap-highlight-color:transparent;transition:all .15s;border-radius:12px;margin:2px}
+  .tab.active{color:var(--pf);background:var(--pf-bg)}
+  .tab svg{display:block;margin:0 auto 2px;width:22px;height:22px}
+  .tab.active svg{stroke:var(--pf)}
 
   @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
   .ac-card{animation:fadeUp .25s ease}
@@ -78,7 +83,6 @@
 </head>
 <body>
 
-<!-- ==================== FIREBASE CONFIG ==================== -->
 <script>
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyAtYDTWrrpHlKRrkJajBU87m1Pbw_mfwOQ",
@@ -95,14 +99,17 @@ const FIREBASE_CONFIG = {
 
 <div class="header">
   <div style="display:flex;align-items:center;gap:12px">
-    <div class="logo">✈</div>
-    <div><h2>Saisie EMACO</h2><p>Mise à jour vols & maintenance</p></div>
+    <div class="logo"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0011.5 2 1.5 1.5 0 0010 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
+    <div><h2>Saisie EMACO</h2><p>Mise à jour maintenance</p></div>
   </div>
   <span class="conn off" id="connBadge">Hors ligne</span>
 </div>
 
 <div class="search-bar">
-  <input type="text" id="searchInput" placeholder="🔍 Rechercher un aéronef..." oninput="render()">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="searchInput" placeholder="Rechercher un aéronef..." oninput="render()">
+  </div>
 </div>
 
 <div class="filter-pills">
@@ -112,49 +119,54 @@ const FIREBASE_CONFIG = {
 </div>
 
 <div id="acList" class="ac-list"></div>
-<div class="saved-toast" id="toast">✅ Sauvegardé sur Firebase</div>
+<div class="saved-toast" id="toast">✓ Sauvegardé</div>
 
 <div class="tab-bar">
-  <div class="tab active" data-t="vol" onclick="setTab('vol',this)"><span class="tab-icon">🛫</span>Vols</div>
-  <div class="tab" data-t="lav" onclick="setTab('lav',this)"><span class="tab-icon">🚿</span>Lavage</div>
-  <div class="tab" data-t="pf" onclick="setTab('pf',this)"><span class="tab-icon">🔧</span>Pt Fixe</div>
-  <div class="tab" data-t="tc" onclick="setTab('tc',this)"><span class="tab-icon">🧪</span>Corrosion</div>
+  <div class="tab active" data-t="vol" onclick="setTab('vol',this)">
+    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+    Vols
+  </div>
+  <div class="tab" data-t="lav" onclick="setTab('lav',this)">
+    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 2v6m0 0a4 4 0 014 4v1a2 2 0 01-2 2H10a2 2 0 01-2-2v-1a4 4 0 014-4z"/><path d="M6 22v-4a2 2 0 012-2h8a2 2 0 012 2v4"/><path d="M14 2a2 2 0 00-4 0"/></svg>
+    Lavage
+  </div>
+  <div class="tab" data-t="pf" onclick="setTab('pf',this)">
+    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+    Pt Fixe
+  </div>
+  <div class="tab" data-t="tc" onclick="setTab('tc',this)">
+    <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M10 2v7.527a2 2 0 01-.211.896L4.72 20.55a1 1 0 00.9 1.45h12.76a1 1 0 00.9-1.45l-5.069-10.127A2 2 0 0114 9.527V2"/><path d="M8.5 2h7"/></svg>
+    Corrosion
+  </div>
 </div>
 
 <script>
-const toISO=d=>d.toISOString().slice(0,10);
+const toISO=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');};
 const today=toISO(new Date());
 const dAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return toISO(d);};
-const daysBetween=(a,b)=>{if(!a||!b)return 999;return Math.floor((new Date(b)-new Date(a))/(86400000));};
+const daysBetween=(a,b)=>{if(!a||!b)return 999;return Math.floor((new Date(a+'T12:00:00')-new Date(b+'T12:00:00'))/-86400000);};
 
-let fleet=[], db=null, currentFilter="all", currentTab="vol", openCard=null;
+let fleet=[],db=null,currentFilter="all",currentTab="vol",openCard=null;
 
 function makeAc(im,ty){return{immat:im,type:ty,active:true,lastFlight:dAgo(10),lastLavage:dAgo(15),lastCorrosion:dAgo(15),lastPointFixe:dAgo(30)};}
 const DEF=["TY-43L","TY-44L","TY-45L","TY-46L","TY-47L","TY-48L","TY-49L","TY-50L","TY-51L","TY-52L","TY-53L","TY-54L","TY-55L","TY-56L","TY-60L","TY-61L","TY-62L","TY-63L","TY-64L"].map(i=>makeAc(i,"ULM")).concat([makeAc("TY-27A","Avion"),makeAc("TY-29A","Avion")]);
-
 function fbKey(im){return im.replace(/[.#$/\[\]]/g,"_");}
 
 function initFB(){
   try{
-    if(FIREBASE_CONFIG.apiKey==="VOTRE_API_KEY"){
-      document.getElementById("connBadge").textContent="Non configuré";
-      fleet=JSON.parse(JSON.stringify(DEF));render();return;
-    }
     firebase.initializeApp(FIREBASE_CONFIG);db=firebase.database();
     db.ref(".info/connected").on("value",s=>{
-      const on=!!s.val();
-      const b=document.getElementById("connBadge");
+      const on=!!s.val();const b=document.getElementById("connBadge");
       b.className="conn "+(on?"on":"off");b.textContent=on?"✓ Connecté":"Hors ligne";
     });
     db.ref("fleet").on("value",snap=>{
       const d=snap.val();
       if(d){fleet=Object.values(d).filter(a=>a.active!==false);}
-      else{fleet=JSON.parse(JSON.stringify(DEF));pushAll();}
+      else{fleet=JSON.parse(JSON.stringify(DEF));const o={};fleet.forEach(a=>{o[fbKey(a.immat)]=a;});db.ref("fleet").set(o);}
       render();
     });
   }catch(e){console.error(e);fleet=JSON.parse(JSON.stringify(DEF));render();}
 }
-function pushAll(){if(!db)return;const o={};fleet.forEach(a=>{o[fbKey(a.immat)]=a;});db.ref("fleet").set(o);}
 
 function updateField(immat,field,value){
   const ac=fleet.find(a=>a.immat===immat);if(!ac)return;
@@ -162,27 +174,23 @@ function updateField(immat,field,value){
   if(db)db.ref("fleet/"+fbKey(immat)+"/"+field).set(value||null);
   showToast();render();
 }
-function setToday(immat,field){
-  updateField(immat,field,today);
-  if(navigator.vibrate)navigator.vibrate(50);
-}
+function setToday(immat,field){updateField(immat,field,today);if(navigator.vibrate)navigator.vibrate(50);}
 function showToast(){const t=document.getElementById("toast");t.style.display="block";setTimeout(()=>{t.style.display="none";},1500);}
-
 function setFilter(f,el){currentFilter=f;document.querySelectorAll(".pill").forEach(p=>p.classList.remove("active"));el.classList.add("active");render();}
 function setTab(t,el){currentTab=t;document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));el.classList.add("active");render();}
 function toggleCard(im){openCard=openCard===im?null:im;render();}
 
-function fmtShort(d){if(!d)return"—";const x=new Date(d);return x.toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"});}
-function fmtFull(d){if(!d)return"Non renseigné";return new Date(d).toLocaleDateString("fr-FR",{weekday:"short",day:"2-digit",month:"short",year:"numeric"});}
-function fmtAgo(d){
-  if(!d)return"";const days=daysBetween(d,today);
-  if(days===0)return"Aujourd'hui";if(days===1)return"Hier";if(days<0)return"Dans "+(-days)+"j";
-  return"Il y a "+days+"j";
-}
-function agoClass(d,warnAt,critAt){
-  if(!d)return"old";const days=daysBetween(d,today);
-  if(days<=warnAt)return"recent";if(days<=critAt)return"mid";return"old";
-}
+function fmtShort(d){if(!d)return"—";return new Date(d+'T12:00:00').toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit"});}
+function fmtFull(d){if(!d)return"Non renseigné";return new Date(d+'T12:00:00').toLocaleDateString("fr-FR",{weekday:"short",day:"2-digit",month:"short",year:"numeric"});}
+function fmtAgo(d){if(!d)return"";const days=daysBetween(d,today);if(days===0)return"Aujourd'hui";if(days===1)return"Hier";if(days<0)return"Dans "+(-days)+"j";return"Il y a "+days+"j";}
+function agoClass(d,w,c){if(!d)return"old";const days=daysBetween(d,today);if(days<=w)return"recent";if(days<=c)return"mid";return"old";}
+
+const svgIcons={
+  vol:'<svg fill="none" stroke="#7c3aed" stroke-width="2" viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>',
+  lav:'<svg fill="none" stroke="#059669" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v6m0 0a4 4 0 014 4v1a2 2 0 01-2 2H10a2 2 0 01-2-2v-1a4 4 0 014-4z"/><path d="M6 22v-4a2 2 0 012-2h8a2 2 0 012 2v4"/></svg>',
+  pf:'<svg fill="none" stroke="#2563eb" stroke-width="2" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',
+  tc:'<svg fill="none" stroke="#d97706" stroke-width="2" viewBox="0 0 24 24"><path d="M10 2v7.527a2 2 0 01-.211.896L4.72 20.55a1 1 0 00.9 1.45h12.76a1 1 0 00.9-1.45l-5.069-10.127A2 2 0 0114 9.527V2"/><path d="M8.5 2h7"/></svg>'
+};
 
 function render(){
   const q=document.getElementById("searchInput").value.trim().toUpperCase();
@@ -194,7 +202,7 @@ function render(){
   list.sort((a,b)=>a.immat.localeCompare(b.immat));
 
   if(!list.length){
-    document.getElementById("acList").innerHTML=`<div style="text-align:center;padding:40px;color:var(--text2)"><div style="font-size:32px;margin-bottom:10px">🔍</div>Aucun aéronef trouvé</div>`;
+    document.getElementById("acList").innerHTML=`<div style="text-align:center;padding:40px;color:var(--text2);font-size:14px"><div style="font-size:32px;margin-bottom:10px">🔍</div>Aucun aéronef trouvé</div>`;
     return;
   }
 
@@ -206,57 +214,48 @@ function render(){
     const lpD=daysBetween(ac.lastPointFixe,today);
     const lcD=daysBetween(ac.lastCorrosion,today);
 
-    h+=`<div class="ac-card${isOpen?' open':''}">`;
-    // HEADER - show only the date relevant to current tab
-    let summaryDate, summaryDays, summaryLabel;
-    if(currentTab==="vol"){summaryDate=ac.lastFlight;summaryDays=lfD;summaryLabel="Dern. vol";}
-    else if(currentTab==="lav"){summaryDate=ac.lastLavage;summaryDays=llD;summaryLabel="Dern. lavage";}
-    else if(currentTab==="pf"){summaryDate=ac.lastPointFixe;summaryDays=lpD;summaryLabel="Dern. Pt fixe";}
-    else{summaryDate=ac.lastCorrosion;summaryDays=lcD;summaryLabel="Dern. trait. corrosion";}
-    const summaryClass=!summaryDate?"chip-warn":summaryDays<=5?"chip-ok":summaryDays<=9?"":"chip-warn";
+    let sDate,sDays,sLabel;
+    if(currentTab==="vol"){sDate=ac.lastFlight;sDays=lfD;sLabel="Dernier vol";}
+    else if(currentTab==="lav"){sDate=ac.lastLavage;sDays=llD;sLabel="Dernier lavage";}
+    else if(currentTab==="pf"){sDate=ac.lastPointFixe;sDays=lpD;sLabel="Dernier pt fixe";}
+    else{sDate=ac.lastCorrosion;sDays=lcD;sLabel="Dern. trait. corrosion";}
+    const sClass=!sDate?"chip-warn":sDays<=5?"chip-ok":sDays<=9?"":"chip-warn";
 
+    const typeClass=ac.type==="ULM"?"type-ulm":"type-avion";
+
+    h+=`<div class="ac-card${isOpen?' open':''}">`;
     h+=`<div class="ac-head" onclick="toggleCard('${ac.immat}')">
       <div class="ac-head-top">
-        <div style="display:flex;align-items:center">
-          <span class="ac-immat">${ac.immat}</span>
-          <span class="ac-type" style="${ac.type!=='ULM'?'background:#2a1a44;color:#b87eff':''}">${ac.type}</span>
-        </div>
-        <span class="chevron">▼</span>
+        <div style="display:flex;align-items:center"><span class="ac-immat">${ac.immat}</span><span class="ac-type ${typeClass}">${ac.type}</span></div>
+        <span class="chevron">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
       </div>
       <div class="ac-dates-summary">
-        <span class="date-chip-single">${summaryLabel}: <strong>${fmtShort(summaryDate)||'—'}</strong> <span class="${summaryClass}">${fmtAgo(summaryDate)}</span></span>
+        <span class="date-chip-single">${sLabel}: <strong>${fmtShort(sDate)||'—'}</strong> <span class="${sClass}">${fmtAgo(sDate)}</span></span>
       </div>
     </div>`;
 
-    // BODY
     h+=`<div class="ac-body">`;
-
     const fields=[];
-    if(currentTab==="vol")fields.push({key:"lastFlight",icon:"🛫",label:"Dernier Vol",warn:5,crit:7},{key:"lastLavage",icon:"🚿",label:"Dernier Lavage",warn:9,crit:14});
-    if(currentTab==="lav")fields.push({key:"lastLavage",icon:"🚿",label:"Dernier Lavage",warn:9,crit:14});
-    if(currentTab==="pf")fields.push({key:"lastPointFixe",icon:"🔧",label:"Dernier Point Fixe",warn:7,crit:9});
-    if(currentTab==="tc")fields.push({key:"lastCorrosion",icon:"🧪",label:"Dernier Traitement Corrosion",warn:9,crit:14});
+    if(currentTab==="vol")fields.push({key:"lastFlight",svg:svgIcons.vol,label:"Dernier Vol",warn:5,crit:7});
+    if(currentTab==="lav")fields.push({key:"lastLavage",svg:svgIcons.lav,label:"Dernier Lavage",warn:9,crit:14});
+    if(currentTab==="pf")fields.push({key:"lastPointFixe",svg:svgIcons.pf,label:"Dernier Point Fixe",warn:7,crit:9});
+    if(currentTab==="tc")fields.push({key:"lastCorrosion",svg:svgIcons.tc,label:"Dernier Traitement Corrosion",warn:9,crit:14});
 
     fields.forEach(f=>{
-      const val=ac[f.key];
-      const ago=fmtAgo(val);
-      const cls=agoClass(val,f.warn,f.crit);
+      const val=ac[f.key];const ago=fmtAgo(val);const cls=agoClass(val,f.warn,f.crit);
       h+=`<div class="field-group">
-        <div class="field-label">${f.icon} ${f.label}</div>
+        <div class="field-label">${f.svg} ${f.label}</div>
         <div class="field-row">
           <input type="date" value="${val||''}" onchange="updateField('${ac.immat}','${f.key}',this.value)">
-          <button class="btn-today" onclick="event.stopPropagation();setToday('${ac.immat}','${f.key}')">📅 Aujourd'hui</button>
+          <button class="btn-today" onclick="event.stopPropagation();setToday('${ac.immat}','${f.key}')">Aujourd'hui</button>
         </div>
-        <div class="field-info">
-          <span>${fmtFull(val)}</span>
-          <span class="ago ${cls}">${ago}</span>
-        </div>
+        <div class="field-info"><span>${fmtFull(val)}</span><span class="ago ${cls}">${ago}</span></div>
       </div>`;
     });
-
     h+=`</div></div>`;
   });
-
   document.getElementById("acList").innerHTML=h;
 }
 
