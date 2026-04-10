@@ -296,14 +296,17 @@ function rSch(){
 
 function rFlt(){let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h2 style="font-size:16px;font-weight:900">Flotte</h2><button class="btn btn-primary btn-sm" onclick="document.getElementById('aR').style.display='flex'">+ Ajouter</button></div>`;
   h+=`<div id="aR" style="display:none" class="mrow"><div class="field"><label>Immat</label><input type="text" id="nI" placeholder="TY-XXX" style="text-transform:uppercase"></div><div class="field"><label>Type</label><input type="text" id="nT" value="ULM"></div><button class="btn btn-primary btn-sm" onclick="addA()">OK</button><button class="btn btn-sm" onclick="document.getElementById('aR').style.display='none'">×</button></div>`;
-  // Bulk edit
-  h+=`<div class="bulk-area"><h3>📝 Modification groupée</h3><div class="bulk-row">
+  h+=`<div class="bulk-area"><h3>📝 Modification groupée</h3>
+    <p style="font-size:11px;color:var(--text2);margin-bottom:12px">Cochez les appareils dans le tableau, puis choisissez le champ et la date à appliquer.</p>
+    <div class="bulk-row">
     <div class="field"><label>Champ</label><select id="bulkField"><option value="lastFlight">Dernier Vol</option><option value="lastLavage">Dernier Lavage</option><option value="lastCorrosion">Dernier Trait. Corrosion</option><option value="lastPointFixe">Dernier Point Fixe</option></select></div>
     <div class="field"><label>Date</label><input type="date" id="bulkDate"></div>
-    <div class="field"><label>Appliquer à</label><select id="bulkTarget"><option value="all">Tous les actifs</option><option value="ulm">ULM seulement</option><option value="avion">Avions seulement</option></select></div>
-    <button class="btn btn-primary btn-sm" onclick="bulkEdit()">Appliquer</button></div></div>`;
-  h+=`<div style="overflow-x:auto;background:var(--bg2);border-radius:12px;border:1px solid var(--border);box-shadow:var(--sh)"><table><thead><tr><th>Actif</th><th>Immat</th><th>Type</th><th>Vol</th><th>Lavage</th><th>Corrosion</th><th>Pt Fixe</th><th></th></tr></thead><tbody>`;
-  fleet.forEach((a,i)=>{h+=`<tr style="${!a.active?'opacity:.35':''}"><td><button class="toggle ${a.active?'on':'off'}" onclick="tA(${i})"></button></td><td style="font-weight:800">${a.immat}</td><td><span class="tag" style="background:${a.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${a.type==='ULM'?'var(--pf-dark)':'#7c3aed'}">${a.type}</span></td><td><input type="date" value="${a.lastFlight||''}" onchange="uFld(${i},'lastFlight',this.value)" style="width:130px"></td><td><input type="date" value="${a.lastLavage||''}" onchange="uFld(${i},'lastLavage',this.value)" style="width:130px"></td><td><input type="date" value="${a.lastCorrosion||''}" onchange="uFld(${i},'lastCorrosion',this.value)" style="width:130px"></td><td><input type="date" value="${a.lastPointFixe||''}" onchange="uFld(${i},'lastPointFixe',this.value)" style="width:130px"></td><td><button class="btn btn-dn btn-xs" onclick="rmA(${i})">✕</button></td></tr>`;});
+    <button class="btn btn-primary btn-sm" onclick="bulkEdit()">Appliquer aux sélectionnés</button>
+    <button class="btn btn-sm" onclick="bulkSelectAll()">Tout cocher</button>
+    <button class="btn btn-sm" onclick="bulkSelectNone()">Tout décocher</button>
+    </div></div>`;
+  h+=`<div style="overflow-x:auto;background:var(--bg2);border-radius:12px;border:1px solid var(--border);box-shadow:var(--sh)"><table><thead><tr><th style="width:40px"><input type="checkbox" id="checkAll" onchange="bulkToggleAll(this.checked)" style="width:16px;height:16px;cursor:pointer"></th><th>Actif</th><th>Immat</th><th>Type</th><th>Vol</th><th>Lavage</th><th>Corrosion</th><th>Pt Fixe</th><th></th></tr></thead><tbody>`;
+  fleet.forEach((a,i)=>{h+=`<tr style="${!a.active?'opacity:.35':''}"><td><input type="checkbox" class="ac-check" data-immat="${a.immat}" style="width:16px;height:16px;cursor:pointer"></td><td><button class="toggle ${a.active?'on':'off'}" onclick="tA(${i})"></button></td><td style="font-weight:800">${a.immat}</td><td><span class="tag" style="background:${a.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${a.type==='ULM'?'var(--pf-dark)':'#7c3aed'}">${a.type}</span></td><td><input type="date" value="${a.lastFlight||''}" onchange="uFld(${i},'lastFlight',this.value)" style="width:130px"></td><td><input type="date" value="${a.lastLavage||''}" onchange="uFld(${i},'lastLavage',this.value)" style="width:130px"></td><td><input type="date" value="${a.lastCorrosion||''}" onchange="uFld(${i},'lastCorrosion',this.value)" style="width:130px"></td><td><input type="date" value="${a.lastPointFixe||''}" onchange="uFld(${i},'lastPointFixe',this.value)" style="width:130px"></td><td><button class="btn btn-dn btn-xs" onclick="rmA(${i})">✕</button></td></tr>`;});
   h+=`</tbody></table></div>`;document.getElementById("vFlt").innerHTML=h;}
 
 function rVal(){
@@ -358,17 +361,19 @@ function nM(){cM++;if(cM>11){cM=0;cY++;}pubSched=null;loadOrGen();}
 function bulkEdit(){
   const field=document.getElementById("bulkField").value;
   const date=document.getElementById("bulkDate").value;
-  const target=document.getElementById("bulkTarget").value;
   if(!date){alert("Sélectionnez une date");return;}
-  if(!confirm(`Appliquer ${FIELD_LABELS[field]} = ${fmt(date)} à ${target==='all'?'tous les actifs':target==='ulm'?'tous les ULM':'tous les Avions'} ?`))return;
-  fleet.forEach(ac=>{
-    if(!ac.active)return;
-    if(target==="ulm"&&ac.type!=="ULM")return;
-    if(target==="avion"&&ac.type!=="Avion")return;
+  const checked=[...document.querySelectorAll(".ac-check:checked")].map(c=>c.dataset.immat);
+  if(!checked.length){alert("Cochez au moins un aéronef");return;}
+  if(!confirm(`Appliquer ${FIELD_LABELS[field]} = ${fmt(date)} à ${checked.length} aéronef(s) ?\n\n${checked.join(", ")}`))return;
+  checked.forEach(im=>{
+    const ac=fleet.find(a=>a.immat===im);if(!ac)return;
     ac[field]=date;
-    if(db)db.ref("fleet/"+fbK(ac.immat)+"/"+field).set(date);
+    if(db)db.ref("fleet/"+fbK(im)+"/"+field).set(date);
   });render();
 }
+function bulkToggleAll(v){document.querySelectorAll(".ac-check").forEach(c=>{c.checked=v;});}
+function bulkSelectAll(){document.querySelectorAll(".ac-check").forEach(c=>{c.checked=true;});const ca=document.getElementById("checkAll");if(ca)ca.checked=true;}
+function bulkSelectNone(){document.querySelectorAll(".ac-check").forEach(c=>{c.checked=false;});const ca=document.getElementById("checkAll");if(ca)ca.checked=false;}
 function sv(v){cv=v;["Sch","Flt","Ret","Val","Adm"].forEach(id=>{document.getElementById("v"+id).style.display="none";const b=document.getElementById("b"+id);if(b)b.classList.remove("active");});const m={schedule:"Sch",fleet:"Flt",retards:"Ret",validation:"Val",admin:"Adm"};document.getElementById("v"+m[v]).style.display="block";const b2=document.getElementById("b"+m[v]);if(b2)b2.classList.add("active");if(v==="admin")rAdm();if(v==="validation")rVal();}
 function render(){rSt();rFlt();rSch();rRet();rVal();}
 function uFld(i,field,val){fleet[i][field]=val||null;if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/"+field).set(val||null);render();}
