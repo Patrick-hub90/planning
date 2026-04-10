@@ -282,7 +282,8 @@ function rSch(){
   let fri=new Date(le);while(fri.getDay()!==5)fri.setDate(fri.getDate()+1);
   const wks=[];let cur=new Date(mon);while(cur<=fri){const w=[];for(let i=0;i<5;i++){w.push({d:dk(cur),in:cur.getMonth()===cM&&cur.getFullYear()===cY});cur.setDate(cur.getDate()+1);}cur.setDate(cur.getDate()+2);wks.push(w);}
 
-  let h=`<div class="month-nav no-print"><button onclick="pM()">◀</button><div class="month-label">${MO[cM]} ${cY}</div><button onclick="nM()">▶</button></div>`;
+  let h=`<div class="month-nav no-print"><button onclick="pM()">◀</button><div class="month-label">${MO[cM]} ${cY}</div><button onclick="nM()">▶</button>
+    <button class="btn btn-sm no-print" onclick="if(confirm('Regénérer le planning ?\\nLes tâches seront recalculées selon les dates actuelles.'))publishSchedule()" style="margin-left:auto;color:var(--pf);border-color:var(--pf)">🔄 Regénérer</button></div>`;
   h+=`<div class="legend-bar no-print">
     <div class="legend-item"><div class="ld ld-p"></div>À faire</div>
     <div class="legend-item"><div class="ld ld-d"></div>✓ Fait</div>
