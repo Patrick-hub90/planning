@@ -244,6 +244,8 @@ function initFB(){try{
   db.ref("admins").on("value",s=>{
     admins=s.val()||{};
     if(!admins.admin){db.ref("admins/admin").set({name:"Administrateur",password:"admin",role:"super"});admins.admin={name:"Administrateur",password:"admin",role:"super"};}
+    // Force super role on admin account if missing
+    if(admins.admin&&admins.admin.role!=="super"){db.ref("admins/admin/role").set("super");admins.admin.role="super";}
     // Auto-login from session
     const saved=sessionStorage.getItem("piste_admin");
     if(saved&&admins[saved]){curAdmin=admins[saved];curAdmin.id=saved;isSuper=curAdmin.role==="super";document.getElementById("loginScreen").style.display="none";document.getElementById("appWrap").style.display="block";document.getElementById("adminName").textContent=(curAdmin.name||saved)+(isSuper?" (Admin)":" (Lecture)");document.getElementById("superBtns").style.display=isSuper?"inline":"none";}
@@ -437,9 +439,16 @@ function rAdm(){if(!isSuper){document.getElementById("vAdm").innerHTML=`<div sty
   <p style="font-size:10px;color:var(--text2);margin-bottom:10px">Admin = lecture + écriture · Lecture = consultation uniquement</p>`;
   Object.entries(admins).forEach(([id,a])=>{
     const role=a.role==="super"?"Admin":"Lecture";const roleCol=a.role==="super"?"var(--pf)":"var(--text3)";
-    h+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg3)">
-      <div><span style="font-weight:800">${a.name||id}</span> <span style="font-size:9px;color:var(--text3)">ID: ${id}</span> <span class="tag" style="font-size:9px;background:var(--bg3);color:${roleCol}">${role}</span></div>
-      <div style="display:flex;gap:5px">${id!=='admin'?`<button class="btn btn-dn btn-xs" onclick="rmAdmin('${id}')">Suppr.</button>`:''}</div></div>`;
+    h+=`<div style="padding:10px 0;border-bottom:1px solid var(--bg3)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div><span style="font-weight:800">${a.name||id}</span> <span style="font-size:9px;color:var(--text3)">ID: ${id}</span> <span class="tag" style="font-size:9px;background:var(--bg3);color:${roleCol}">${role}</span></div>
+        ${id!=='admin'?`<button class="btn btn-dn btn-xs" onclick="rmAdmin('${id}')">Suppr.</button>`:''}
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="password" id="pwd_${id}" placeholder="Nouveau mot de passe" style="flex:1;padding:6px 10px;font-size:11px">
+        <button class="btn btn-sm" onclick="changePwd('${id}')">Modifier MDP</button>
+      </div>
+    </div>`;
   });
   h+=`<div class="mrow" style="margin-top:10px"><div class="field"><label>ID</label><input type="text" id="naId" placeholder="identifiant"></div><div class="field"><label>Nom</label><input type="text" id="naName" placeholder="Nom complet"></div><div class="field"><label>Mot de passe</label><input type="text" id="naPwd" placeholder="mot de passe"></div><button class="btn btn-primary btn-sm" onclick="addAdmin()">Créer (lecture)</button></div></div>`;
   // Signature
@@ -462,7 +471,8 @@ function rLog(){
 
 // Admin account management
 function addAdmin(){const id=document.getElementById("naId").value.trim().toLowerCase();const name=document.getElementById("naName").value.trim();const pwd=document.getElementById("naPwd").value;if(!id||!pwd)return;if(db)db.ref("admins/"+id).set({name:name||id,password:pwd,role:"reader"});addLog("Créé compte lecture: "+id);document.getElementById("naId").value="";document.getElementById("naName").value="";document.getElementById("naPwd").value="";rAdm();}
-function rmAdmin(id){if(!confirm("Supprimer le compte "+id+" ?"))return;if(db)db.ref("admins/"+id).remove();addLog("Supprimé compte admin: "+id);}
+function rmAdmin(id){if(!confirm("Supprimer le compte "+id+" ?"))return;if(db)db.ref("admins/"+id).remove();addLog("Supprimé compte: "+id);}
+function changePwd(id){const el=document.getElementById("pwd_"+id);if(!el)return;const pwd=el.value.trim();if(!pwd){alert("Saisissez un mot de passe");return;}if(db)db.ref("admins/"+id+"/password").set(pwd);addLog("MDP modifié pour: "+id);el.value="";rAdm();}
 
 // Weekly password
 function newPwd(){const p=generateWeeklyPwd();if(db){db.ref("weeklyPassword").set(p);db.ref("weeklyPasswordDate").set(today);}addLog("Nouveau MDP hebdo généré");rAdm();}
