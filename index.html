@@ -110,24 +110,35 @@ td{padding:7px 10px;border-bottom:1px solid var(--bg3);font-size:11px}
 .pwd-display{font-size:28px;font-weight:900;letter-spacing:6px;color:var(--text);text-align:center;padding:14px;background:var(--bg3);border-radius:10px;margin:10px 0;font-family:monospace}
 .print-header,.print-footer{display:none}
 @media print{
-@page{size:landscape;margin:8mm}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
-body{background:#fff!important;font-size:8px!important;color:#000!important}
-.hdr,.stats,.no-print,#notif,.month-nav button,.theme-btn,.legend-bar,.login-screen{display:none!important}
+@page{size:landscape;margin:10mm}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+body{background:#fff!important;font-size:11px!important;color:#000!important}
+.hdr,.stats,.no-print,#notif,.month-nav,.legend-bar,.login-screen{display:none!important}
 .app-wrap{display:block!important}
-.print-header{display:block!important;text-align:center;margin-bottom:8px;padding-bottom:6px;border-bottom:3px solid #0f172a}
-.print-header h1{font-size:13px;font-weight:900;text-transform:uppercase;margin-bottom:2px}.print-header p{font-size:8px;color:#555}
-.print-header .pleg{display:flex!important;gap:6px;justify-content:center;margin-top:5px}
-.print-header .pleg span{padding:1px 6px;border-radius:3px;font-weight:700;font-size:6px;border:1px solid #bbb}
-.content{padding:0!important}.month-label{font-size:0!important;height:0;overflow:hidden}
-.wblock{border:1px solid #ccc!important;margin-bottom:4px!important;break-inside:avoid;background:#fff!important}
-.wheader{padding:3px 6px!important;background:#f1f5f9!important}.wprog{display:none!important}
-.dcol{padding:3px!important;min-height:40px!important;border-color:#e5e7eb!important;background:#fff!important}
-.dcol.today{background:#eff6ff!important}.dcol.today .dhead{background:#3b82f6!important;color:#fff!important}
-.dhead{font-size:7px!important;padding:2px 4px!important;margin-bottom:2px!important}
-.tsec-head{font-size:5px!important;padding:1px 2px!important}.tp{font-size:6px!important;padding:1px 2px!important;margin-bottom:1px!important}
-.tp-ico{width:8px!important;height:8px!important;font-size:5px!important}.tp-badge{font-size:4px!important}
-.tp.done{background:#dcfce7!important;color:#15803d!important}.tp.missed{background:#fee2e2!important;color:#b91c1c!important;animation:none!important}
-.print-footer{display:block!important;margin-top:6px;page-break-inside:avoid}
+.print-header{display:block!important;text-align:center;margin-bottom:14px;padding-bottom:10px;border-bottom:3px solid #0f172a}
+.print-header h1{font-size:18px;font-weight:900;text-transform:uppercase;margin-bottom:4px;letter-spacing:.5px}
+.print-header p{font-size:11px;color:#333;margin-top:2px}
+.content{padding:0!important}
+.wblock{border:1.5px solid #999!important;margin-bottom:10px!important;break-inside:avoid;background:#fff!important;border-radius:6px!important}
+.wheader{padding:8px 14px!important;background:#e8ecf0!important;border-bottom:1.5px solid #999!important}
+.wheader-label{font-size:12px!important;color:#000!important;font-weight:900!important}
+.wprog{font-size:11px!important;font-weight:800!important}
+.wprog-bar{width:60px!important;height:6px!important}
+.dcol{padding:8px 6px!important;min-height:70px!important;border-color:#ccc!important;background:#fff!important}
+.dcol.today{background:#e8f0fe!important;border-top:3px solid #2563eb!important}
+.dcol.outside{opacity:.15!important}
+.dhead{font-size:12px!important;padding:5px 8px!important;margin-bottom:6px!important;font-weight:900!important;background:#f0f2f5!important;border-radius:5px!important}
+.dcol.today .dhead{background:#2563eb!important;color:#fff!important}
+.tsec{margin-bottom:5px!important}
+.tsec-head{font-size:9px!important;padding:2px 6px!important;font-weight:900!important;border-radius:4px!important}
+.tp{font-size:10px!important;padding:3px 6px!important;margin-bottom:2px!important;border-left-width:3px!important;border-radius:4px!important}
+.tp-ico{width:14px!important;height:14px!important;font-size:9px!important;border-radius:3px!important}
+.tp-name{font-size:10px!important}
+.tp-badge{font-size:7px!important;padding:1px 5px!important}
+.tp.done{background:#dcfce7!important;color:#15803d!important;border-left-color:#22c55e!important}
+.tp.missed{background:#fee2e2!important;color:#b91c1c!important;border-left-color:#ef4444!important;animation:none!important}
+.tp.skip{background:#f1f5f9!important;color:#64748b!important;opacity:.5!important}
+.tp.pending{background:#f8fafc!important}
+.print-footer{display:block!important;margin-top:16px;page-break-inside:avoid}
 }
 </style>
 </head>
@@ -136,7 +147,7 @@ body{background:#fff!important;font-size:8px!important;color:#000!important}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-<div class="print-header"><h1 id="pT"></h1><p id="pS"></p><div class="pleg"><span style="background:#dbeafe;color:#1d4ed8">PF</span><span style="background:#d1fae5;color:#047857">LAV</span><span style="background:#fef3c7;color:#b45309">TC</span><span style="background:#fdf2f8;color:#be185d">LC</span><span style="background:#dcfce7;color:#15803d">✓FAIT</span><span style="background:#fee2e2;color:#b91c1c">✗MANQUÉ</span></div></div>
+<div class="print-header"><h1 id="pT"></h1><p id="pS"></p></div>
 
 <!-- LOGIN -->
 <div class="login-screen" id="loginScreen">
@@ -168,7 +179,8 @@ body{background:#fff!important;font-size:8px!important;color:#000!important}
 </span>
 <button class="btn" id="bLog" onclick="sv('logs')">Logs</button>
 <button class="theme-btn" onclick="tTh()"><svg id="tIco" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
-<button class="btn no-print" onclick="window.print()"><svg style="width:13px;height:13px;vertical-align:middle" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+<select id="printScope" class="btn no-print" style="font-size:10px;padding:5px 8px"><option value="all">Mois complet</option></select>
+<button class="btn no-print" onclick="doPrint()" title="Imprimer"><svg style="width:13px;height:13px;vertical-align:middle" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
 <button class="btn btn-dn btn-sm" onclick="doLogout()">Déconnexion</button>
 </div></div>
 
@@ -176,7 +188,7 @@ body{background:#fff!important;font-size:8px!important;color:#000!important}
 <div class="content">
 <div class="stats" id="stBar"></div>
 <div id="vSch"></div><div id="vFlt" style="display:none"></div><div id="vRet" style="display:none"></div><div id="vVal" style="display:none"></div><div id="vAdm" style="display:none"></div><div id="vLog" style="display:none"></div>
-<div class="print-footer"><div style="border-top:1px solid #ccc;padding-top:4px;font-size:6px;color:#64748b;text-align:center">PF:7-9j · LAV:9-14j · TC:9-14j · LC:7j</div><div id="sigA"></div></div>
+<div class="print-footer"><div id="sigA"></div></div>
 </div></div>
 
 <script>
@@ -344,6 +356,7 @@ function rSch(){
   const pc=Object.keys(pendingSubs).length;
   if(pc&&isSuper)h+=`<div onclick="sv('validation')" style="background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:8px;padding:8px 14px;margin-bottom:10px;cursor:pointer;display:flex;justify-content:space-between;font-weight:800;font-size:12px;color:var(--warn)" class="no-print"><span>📋 ${pc} saisie(s) en attente</span><span>→</span></div>`;
 
+  let weekIdx=0;const weeksInfo=[];
   // Filter weeks with content
   wks.forEach(w=>{
     const inW=w.filter(x=>x.in);
@@ -358,7 +371,9 @@ function rSch(){
     let wDone=0,wTotal=0;
     w.forEach(({d,in:inM})=>{if(!inM)return;const sl=pubSched[d];if(!sl)return;TASK_TYPES.forEach(ty=>{if(!sl[ty])return;sl[ty].forEach(im=>{const r=taskStatus(im,ty,d);if(r.st!=="skip"){wTotal++;if(r.st==="done")wDone++;}});});});
     const wPct=wTotal?Math.round(wDone/wTotal*100):0;const bc=wPct>=80?"var(--ok)":wPct>=40?"var(--tc)":"var(--dn)";
-    h+=`<div class="wblock"><div class="wheader"><span class="wheader-label">Sem. ${fmt(ws)} — ${fmt(we)}</span><div class="wprog">${wDone}/${wTotal}<div class="wprog-bar"><div class="wprog-fill" style="width:${wPct}%;background:${bc}"></div></div>${wPct}%</div></div><div class="wgrid">`;
+    weeksInfo.push({idx:weekIdx,label:`Sem. ${fmt(ws)} — ${fmt(we)}`,ws,we});
+    h+=`<div class="wblock" data-week="${weekIdx}"><div class="wheader"><span class="wheader-label">Sem. ${fmt(ws)} — ${fmt(we)}</span><div class="wprog">${wDone}/${wTotal}<div class="wprog-bar"><div class="wprog-fill" style="width:${wPct}%;background:${bc}"></div></div>${wPct}%</div></div><div class="wgrid">`;
+    // ... day columns rendered below
     w.forEach(({d,in:inM})=>{
       const dt=new Date(d+'T12:00:00'),isT=d===today,isP=d<today;
       if(!inM){h+=`<div class="dcol outside"><div class="dhead">${WD[dt.getDay()]} ${dt.getDate()}</div></div>`;return;}
@@ -381,9 +396,12 @@ function rSch(){
       });
       if(!hasTasks)h+=`<div style="font-size:8px;color:var(--text3);margin-top:12px;text-align:center">—</div>`;
       h+=`</div>`;
-    });h+=`</div></div>`;
+    });h+=`</div></div>`;weekIdx++;
   });
-  document.getElementById("vSch").innerHTML=h;}
+  document.getElementById("vSch").innerHTML=h;
+  // Populate print scope dropdown
+  const sel=document.getElementById("printScope");if(sel){sel.innerHTML=`<option value="all">Mois complet</option>`;weeksInfo.forEach(w=>{sel.innerHTML+=`<option value="${w.idx}">${w.label}</option>`;});}
+}
 
 function rFlt(){let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h2 style="font-size:15px;font-weight:900">Flotte</h2>${isSuper?`<button class="btn btn-primary btn-sm" onclick="document.getElementById('aR').style.display='flex'">+ Ajouter</button>`:''}</div>`;
   if(isSuper){
@@ -486,6 +504,27 @@ function xBk(){const d=JSON.stringify({fleet,sigName,sigPost,sigImage},null,2);c
 function iBk(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.fleet){fleet=d.fleet;sigName=d.sigName||"";sigPost=d.sigPost||"";sigImage=d.sigImage||"";if(db){const o={};fleet.forEach(a=>{o[fbK(a.immat)]=a;});db.ref("fleet").set(o);db.ref("config").set({sigName,sigPost,sigImage});}addLog("Import backup");publishSchedule();}}catch(e){}};r.readAsText(f);e.target.value="";}
 
 // Nav
+function doPrint(){
+  const scope=document.getElementById("printScope").value;
+  const blocks=document.querySelectorAll(".wblock[data-week]");
+  // Update title for week scope
+  const pTitle=document.getElementById("pT");
+  const pSub=document.getElementById("pS");
+  const baseTitle=`PLANNING DE LAVAGE - POINT FIXE - TRAITEMENT CORROSION`;
+  if(scope==="all"){
+    blocks.forEach(b=>{b.style.display="";});
+    pTitle.textContent=`${baseTitle} — ${MO[cM].toUpperCase()} ${cY}`;
+    pSub.textContent=`DU 01/${String(cM+1).padStart(2,'0')}/${cY} AU ${dim(cM,cY)}/${String(cM+1).padStart(2,'0')}/${cY} · ${fleet.filter(a=>a.active).length} aéronefs · ${fmtL(today)}`;
+  } else {
+    blocks.forEach(b=>{b.style.display=b.dataset.week===scope?"":"none";});
+    const sel=document.getElementById("printScope");const label=sel.options[sel.selectedIndex].text;
+    pTitle.textContent=`${baseTitle}`;
+    pSub.textContent=`${label.toUpperCase()} — ${MO[cM]} ${cY} · ${fleet.filter(a=>a.active).length} aéronefs · ${fmtL(today)}`;
+  }
+  // Force schedule view
+  sv("schedule");
+  setTimeout(()=>{window.print();blocks.forEach(b=>{b.style.display="";});},200);
+}
 function pM(){cM--;if(cM<0){cM=11;cY--;}pubSched=null;loadOrGen();}
 function nM(){cM++;if(cM>11){cM=0;cY++;}pubSched=null;loadOrGen();}
 function sv(v){if((v==="admin"||v==="validation")&&!isSuper){v="schedule";}cv=v;["Sch","Flt","Ret","Val","Adm","Log"].forEach(id=>{document.getElementById("v"+id).style.display="none";const b=document.getElementById("b"+id);if(b)b.classList.remove("active");});const m={schedule:"Sch",fleet:"Flt",retards:"Ret",validation:"Val",admin:"Adm",logs:"Log"};document.getElementById("v"+m[v]).style.display="block";const b2=document.getElementById("b"+m[v]);if(b2)b2.classList.add("active");if(v==="admin")rAdm();if(v==="validation")rVal();if(v==="logs")rLog();}
