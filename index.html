@@ -210,6 +210,7 @@ const TASK_TYPES=["pointFixe","lavage","corrosion","lavComp"];
 let fleet=[],pubSched=null,pendingSubs={},admins={},auditLogs=[],weeklyPwd="",curAdmin=null,isSuper=false,cv="schedule",db=null,isDark=false;
 let sigName="",sigPost="",sigImage="";
 let pFonts={title:18,subtitle:11,weekHeader:12,dayHeader:12,sectionLabel:9,taskName:10,taskBadge:7,signature:11};
+let maxDay={pointFixe:1,lavage:1,corrosion:1,lavComp:1};
 let cM=new Date().getMonth(),cY=new Date().getFullYear();
 
 function tTh(){isDark=!isDark;document.documentElement.setAttribute("data-theme",isDark?"dark":"");localStorage.setItem("piste_theme",isDark?"dark":"light");document.getElementById("tIco").innerHTML=isDark?'<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>':'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';}
@@ -268,7 +269,7 @@ function initFB(){try{
   db.ref("fleet").on("value",s=>{const d=s.val();if(d)fleet=Object.values(d);else fleet=[];loadOrGen();});
   db.ref("pendingSubmissions").on("value",s=>{pendingSubs=s.val()||{};render();});
   db.ref("auditLog").limitToLast(100).on("value",s=>{const d=s.val();auditLogs=d?Object.values(d).reverse():[];if(cv==="logs")rLog();});
-  db.ref("config").on("value",s=>{const c=s.val()||{};sigName=c.sigName||"";sigPost=c.sigPost||"";sigImage=c.sigImage||"";if(c.pFonts)pFonts={...pFonts,...c.pFonts};applyPrintFonts();});
+  db.ref("config").on("value",s=>{const c=s.val()||{};sigName=c.sigName||"";sigPost=c.sigPost||"";sigImage=c.sigImage||"";if(c.pFonts)pFonts={...pFonts,...c.pFonts};if(c.maxDay)maxDay={...maxDay,...c.maxDay};applyPrintFonts();});
 }catch(e){console.error(e);}}
 
 // ===== TASK STATUS =====
@@ -298,7 +299,7 @@ function generateSchedule(){
   needs.sort((a,b)=>a.pr-b.pr);const used=new Set();
   for(let i=0;i<needs.length;i++){const n=needs[i],k=`${n.im}-${n.ty}-${n.due.getTime()}`;if(used.has(k))continue;
     for(let j=0;j<nd;j++){const d=addD(sd,j),d2=dk(d);if(d2<today||isWE(d2)||d<n.due)continue;const s=sc[d2];if(!s)continue;
-      if(n.ty==="pointFixe"&&s.pointFixe.length>=3)continue;if(n.ty==="lavage"&&s.lavage.length>=3)continue;if(n.ty==="corrosion"&&s.corrosion.length>=1)continue;if(n.ty==="lavComp"&&s.lavComp.length>=1)continue;
+      if(n.ty==="pointFixe"&&s.pointFixe.length>=maxDay.pointFixe)continue;if(n.ty==="lavage"&&s.lavage.length>=maxDay.lavage)continue;if(n.ty==="corrosion"&&s.corrosion.length>=maxDay.corrosion)continue;if(n.ty==="lavComp"&&s.lavComp.length>=maxDay.lavComp)continue;
       if(n.ty==="pointFixe"&&(s.lavage.includes(n.im)||s.corrosion.includes(n.im)||s.lavComp.includes(n.im)))continue;
       if((n.ty==="lavage"||n.ty==="corrosion"||n.ty==="lavComp")&&s.pointFixe.includes(n.im))continue;
       if(s[n.ty].includes(n.im))continue;
@@ -476,6 +477,15 @@ function rAdm(){if(!isSuper){document.getElementById("vAdm").innerHTML=`<div sty
     <div class="field" style="margin-bottom:6px"><label>Nom</label><input type="text" id="sN" value="${sigName}" style="width:100%;padding:7px" onchange="sSig()"></div>
     <div class="field" style="margin-bottom:6px"><label>Poste</label><input type="text" id="sP" value="${sigPost}" style="width:100%;padding:7px" onchange="sSig()"></div></div>`;
   // Print fonts
+  h+=`<div style="margin-top:14px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);box-shadow:var(--sh)"><h3 style="font-size:13px;font-weight:800;margin-bottom:10px">📋 Max tâches par jour</h3>
+  <p style="font-size:10px;color:var(--text2);margin-bottom:10px">Nombre maximum de chaque type de tâche pouvant être programmé sur un même jour</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
+  <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">Point Fixe</label><input type="number" id="md_pointFixe" value="${maxDay.pointFixe}" min="1" max="10" style="width:100%;padding:6px 8px"></div>
+  <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">Lavage</label><input type="number" id="md_lavage" value="${maxDay.lavage}" min="1" max="10" style="width:100%;padding:6px 8px"></div>
+  <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">Trait. Corrosion</label><input type="number" id="md_corrosion" value="${maxDay.corrosion}" min="1" max="10" style="width:100%;padding:6px 8px"></div>
+  <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">Lav. Compresseur</label><input type="number" id="md_lavComp" value="${maxDay.lavComp}" min="1" max="10" style="width:100%;padding:6px 8px"></div>
+  </div><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="saveMaxDay()">Enregistrer</button></div>`;
+  // Print fonts
   const pfl=[{k:"title",l:"Titre"},{k:"subtitle",l:"Sous-titre"},{k:"weekHeader",l:"En-tête semaine"},{k:"dayHeader",l:"En-tête jour"},{k:"sectionLabel",l:"Label tâche (PF/LAV/TC)"},{k:"taskName",l:"Nom aéronef"},{k:"taskBadge",l:"Badge statut"},{k:"signature",l:"Signature"}];
   h+=`<div style="margin-top:14px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);box-shadow:var(--sh)"><h3 style="font-size:13px;font-weight:800;margin-bottom:10px">🖨 Polices Export PDF (px)</h3>
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px">`;
@@ -524,6 +534,11 @@ function applyPrintFonts(){
     #sigA,#sigA *{font-size:${pFonts.signature}px!important}
     #sigA div[style*="font-weight:800"]{font-size:${pFonts.signature}px!important}
   }`;
+}
+function saveMaxDay(){
+  ["pointFixe","lavage","corrosion","lavComp"].forEach(k=>{const el=document.getElementById("md_"+k);if(el)maxDay[k]=Math.max(1,parseInt(el.value)||1);});
+  if(db)db.ref("config/maxDay").set(maxDay);
+  addLog("Max tâches/jour modifié: PF="+maxDay.pointFixe+" LAV="+maxDay.lavage+" TC="+maxDay.corrosion+" LC="+maxDay.lavComp);
 }
 function savePFonts(){
   const fields=["title","subtitle","weekHeader","dayHeader","sectionLabel","taskName","taskBadge","signature"];
