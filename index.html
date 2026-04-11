@@ -142,8 +142,8 @@ body{background:#fff!important;font-size:8px!important;color:#000!important}
 <div class="login-screen" id="loginScreen">
 <div class="login-box">
 <div class="logo-big"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0011.5 2 1.5 1.5 0 0010 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
-<h1>PISTE — Administration</h1>
-<p>Connectez-vous avec votre compte admin</p>
+<h1>PISTE — Connexion</h1>
+<p>Admin principal: lecture + écriture · Autres comptes: lecture seule</p>
 <input type="text" id="loginUser" placeholder="Identifiant">
 <input type="password" id="loginPwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')doLogin()">
 <button onclick="doLogin()">Connexion</button>
@@ -162,8 +162,10 @@ body{background:#fff!important;font-size:8px!important;color:#000!important}
 <button class="btn active" id="bSch" onclick="sv('schedule')">Planning</button>
 <button class="btn" id="bFlt" onclick="sv('fleet')">Flotte</button>
 <button class="btn btn-dn" id="bRet" onclick="sv('retards')">Retards<span class="badge" id="rb" style="display:none">0</span></button>
+<span id="superBtns">
 <button class="btn btn-warn" id="bVal" onclick="sv('validation')">Valid.<span class="badge-warn" id="vb" style="display:none">0</span></button>
 <button class="btn" id="bAdm" onclick="sv('admin')">Admin</button>
+</span>
 <button class="btn" id="bLog" onclick="sv('logs')">Logs</button>
 <button class="theme-btn" onclick="tTh()"><svg id="tIco" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
 <button class="btn no-print" onclick="window.print()"><svg style="width:13px;height:13px;vertical-align:middle" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
@@ -193,7 +195,7 @@ const TLABEL={pointFixe:"Pt Fixe",lavage:"Lavage",corrosion:"Trait. Corr.",lavCo
 const FLABEL={lastFlight:"Dernier Vol",lastLavage:"Dernier Lavage",lastPointFixe:"Dernier Pt Fixe",lastCorrosion:"Dernier Trait. Corrosion",lastLavComp:"Dernier Lav. Compresseur"};
 const TASK_TYPES=["pointFixe","lavage","corrosion","lavComp"];
 
-let fleet=[],pubSched=null,pendingSubs={},admins={},auditLogs=[],weeklyPwd="",curAdmin=null,cv="schedule",db=null,isDark=false;
+let fleet=[],pubSched=null,pendingSubs={},admins={},auditLogs=[],weeklyPwd="",curAdmin=null,isSuper=false,cv="schedule",db=null,isDark=false;
 let sigName="",sigPost="",sigImage="";
 let cM=new Date().getMonth(),cY=new Date().getFullYear();
 
@@ -206,12 +208,13 @@ function doLogin(){
   const p=document.getElementById("loginPwd").value;
   const admin=admins[u];
   if(admin&&admin.password===p){
-    curAdmin=admin;curAdmin.id=u;
+    curAdmin=admin;curAdmin.id=u;isSuper=admin.role==="super";
     document.getElementById("loginScreen").style.display="none";
     document.getElementById("appWrap").style.display="block";
-    document.getElementById("adminName").textContent=admin.name||u;
+    document.getElementById("adminName").textContent=(admin.name||u)+(isSuper?" (Admin)":"  (Lecture)");
+    document.getElementById("superBtns").style.display=isSuper?"inline":"none";
     sessionStorage.setItem("piste_admin",u);
-    addLog("Connexion");
+    addLog("Connexion");render();
   } else document.getElementById("loginError").style.display="block";
 }
 function doLogout(){curAdmin=null;sessionStorage.removeItem("piste_admin");document.getElementById("appWrap").style.display="none";document.getElementById("loginScreen").style.display="flex";document.getElementById("loginPwd").value="";document.getElementById("loginUser").value="";}
@@ -240,10 +243,10 @@ function initFB(){try{
   // Load admins first for login
   db.ref("admins").on("value",s=>{
     admins=s.val()||{};
-    if(!admins.admin){db.ref("admins/admin").set({name:"Administrateur",password:"admin"});admins.admin={name:"Administrateur",password:"admin"};}
+    if(!admins.admin){db.ref("admins/admin").set({name:"Administrateur",password:"admin",role:"super"});admins.admin={name:"Administrateur",password:"admin",role:"super"};}
     // Auto-login from session
     const saved=sessionStorage.getItem("piste_admin");
-    if(saved&&admins[saved]){curAdmin=admins[saved];curAdmin.id=saved;document.getElementById("loginScreen").style.display="none";document.getElementById("appWrap").style.display="block";document.getElementById("adminName").textContent=curAdmin.name||saved;}
+    if(saved&&admins[saved]){curAdmin=admins[saved];curAdmin.id=saved;isSuper=curAdmin.role==="super";document.getElementById("loginScreen").style.display="none";document.getElementById("appWrap").style.display="block";document.getElementById("adminName").textContent=(curAdmin.name||saved)+(isSuper?" (Admin)":" (Lecture)");document.getElementById("superBtns").style.display=isSuper?"inline":"none";}
   });
   db.ref("weeklyPassword").on("value",s=>{weeklyPwd=s.val()||"piste";});
   checkAndRotatePwd();
@@ -280,7 +283,7 @@ function generateSchedule(){
   needs.sort((a,b)=>a.pr-b.pr);const used=new Set();
   for(let i=0;i<needs.length;i++){const n=needs[i],k=`${n.im}-${n.ty}-${n.due.getTime()}`;if(used.has(k))continue;
     for(let j=0;j<nd;j++){const d=addD(sd,j),d2=dk(d);if(d2<today||isWE(d2)||d<n.due)continue;const s=sc[d2];if(!s)continue;
-      if(n.ty==="pointFixe"&&s.pointFixe.length>=3)continue;if(n.ty==="lavage"&&s.lavage.length>=3)continue;if(n.ty==="corrosion"&&s.corrosion.length>=1)continue;if(n.ty==="lavComp"&&s.lavComp.length>=3)continue;
+      if(n.ty==="pointFixe"&&s.pointFixe.length>=3)continue;if(n.ty==="lavage"&&s.lavage.length>=3)continue;if(n.ty==="corrosion"&&s.corrosion.length>=1)continue;if(n.ty==="lavComp"&&s.lavComp.length>=1)continue;
       if(n.ty==="pointFixe"&&(s.lavage.includes(n.im)||s.corrosion.includes(n.im)||s.lavComp.includes(n.im)))continue;
       if((n.ty==="lavage"||n.ty==="corrosion"||n.ty==="lavComp")&&s.pointFixe.includes(n.im))continue;
       if(s[n.ty].includes(n.im))continue;
@@ -333,11 +336,11 @@ function rSch(){
   const wks=[];let cur=new Date(mon);while(cur<=fri){const w=[];for(let i=0;i<5;i++){w.push({d:dk(cur),in:cur.getMonth()===cM&&cur.getFullYear()===cY});cur.setDate(cur.getDate()+1);}cur.setDate(cur.getDate()+2);wks.push(w);}
 
   let h=`<div class="month-nav no-print"><button onclick="pM()">◀</button><div class="month-label">${MO[cM]} ${cY}</div><button onclick="nM()">▶</button>
-    <button onclick="if(confirm('Recalculer?'))publishSchedule()" style="margin-left:auto;padding:8px 18px;border-radius:10px;border:none;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;cursor:pointer;font-size:11px;font-weight:800;box-shadow:0 4px 12px rgba(59,130,246,.3);display:flex;align-items:center;gap:5px" class="no-print">
-      <svg style="width:13px;height:13px" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Regénérer</button></div>`;
+    ${isSuper?`<button onclick="if(confirm('Recalculer?'))publishSchedule()" style="margin-left:auto;padding:8px 18px;border-radius:10px;border:none;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;cursor:pointer;font-size:11px;font-weight:800;box-shadow:0 4px 12px rgba(59,130,246,.3);display:flex;align-items:center;gap:5px" class="no-print">
+      <svg style="width:13px;height:13px" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Regénérer</button>`:''}</div>`;
   h+=`<div class="legend-bar no-print"><div class="legend-item"><div class="ld ld-p"></div>À faire</div><div class="legend-item"><div class="ld ld-d"></div>✓Fait</div><div class="legend-item"><div class="ld ld-m"></div>✗Manqué</div><div class="legend-item"><div class="ld ld-s"></div>Inutile</div></div>`;
   const pc=Object.keys(pendingSubs).length;
-  if(pc)h+=`<div onclick="sv('validation')" style="background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:8px;padding:8px 14px;margin-bottom:10px;cursor:pointer;display:flex;justify-content:space-between;font-weight:800;font-size:12px;color:var(--warn)" class="no-print"><span>📋 ${pc} saisie(s) en attente</span><span>→</span></div>`;
+  if(pc&&isSuper)h+=`<div onclick="sv('validation')" style="background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:8px;padding:8px 14px;margin-bottom:10px;cursor:pointer;display:flex;justify-content:space-between;font-weight:800;font-size:12px;color:var(--warn)" class="no-print"><span>📋 ${pc} saisie(s) en attente</span><span>→</span></div>`;
 
   // Filter weeks with content
   wks.forEach(w=>{
@@ -380,25 +383,32 @@ function rSch(){
   });
   document.getElementById("vSch").innerHTML=h;}
 
-function rFlt(){let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h2 style="font-size:15px;font-weight:900">Flotte</h2><button class="btn btn-primary btn-sm" onclick="document.getElementById('aR').style.display='flex'">+ Ajouter</button></div>`;
+function rFlt(){let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h2 style="font-size:15px;font-weight:900">Flotte</h2>${isSuper?`<button class="btn btn-primary btn-sm" onclick="document.getElementById('aR').style.display='flex'">+ Ajouter</button>`:''}</div>`;
+  if(isSuper){
   h+=`<div id="aR" style="display:none" class="mrow"><div class="field"><label>Immat</label><input type="text" id="nI" placeholder="TY-XXX" style="text-transform:uppercase"></div><div class="field"><label>Type</label><input type="text" id="nT" value="ULM"></div><div class="field"><label>Lav.Comp.</label><input type="checkbox" id="nLC" style="width:16px;height:16px"></div><button class="btn btn-primary btn-sm" onclick="addA()">OK</button><button class="btn btn-sm" onclick="document.getElementById('aR').style.display='none'">×</button></div>`;
   h+=`<div class="bulk-area"><h3>📝 Modification groupée</h3><p style="font-size:10px;color:var(--text2);margin-bottom:8px">Cochez dans le tableau, choisissez champ + date</p><div class="bulk-row">
     <div class="field"><label>Champ</label><select id="bF"><option value="lastFlight">Vol</option><option value="lastLavage">Lavage</option><option value="lastCorrosion">Corrosion</option><option value="lastPointFixe">Pt Fixe</option><option value="lastLavComp">Lav.Comp.</option></select></div>
     <div class="field"><label>Date</label><input type="date" id="bD"></div>
     <button class="btn btn-primary btn-sm" onclick="bulkEdit()">Appliquer</button>
-    <button class="btn btn-sm" onclick="bkAll(true)">✓ Tout</button><button class="btn btn-sm" onclick="bkAll(false)">✕ Rien</button></div></div>`;
-  h+=`<div style="overflow-x:auto;background:var(--bg2);border-radius:10px;border:1px solid var(--border);box-shadow:var(--sh)"><table><thead><tr><th style="width:30px"><input type="checkbox" onchange="bkAll(this.checked)" style="width:14px;height:14px;cursor:pointer"></th><th>Actif</th><th>Immat</th><th>Type</th><th>LC</th><th>Vol</th><th>Lavage</th><th>Corrosion</th><th>Pt Fixe</th><th>Lav.Comp</th><th></th></tr></thead><tbody>`;
-  fleet.forEach((a,i)=>{h+=`<tr style="${!a.active?'opacity:.35':''}"><td><input type="checkbox" class="bk-c" data-im="${a.immat}" style="width:14px;height:14px;cursor:pointer"></td><td><button class="toggle ${a.active?'on':'off'}" onclick="tA(${i})"></button></td><td style="font-weight:800">${a.immat}</td><td><span class="tag" style="background:${a.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${a.type==='ULM'?'var(--pf-dark)':'#7c3aed'}">${a.type}</span></td><td><input type="checkbox" ${a.hasLavComp?'checked':''} onchange="tLC(${i},this.checked)" style="width:14px;height:14px;cursor:pointer"></td><td><input type="date" value="${a.lastFlight||''}" onchange="uFld(${i},'lastFlight',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastLavage||''}" onchange="uFld(${i},'lastLavage',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastCorrosion||''}" onchange="uFld(${i},'lastCorrosion',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastPointFixe||''}" onchange="uFld(${i},'lastPointFixe',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastLavComp||''}" onchange="uFld(${i},'lastLavComp',this.value)" style="width:115px"></td><td><button class="btn btn-dn btn-xs" onclick="rmA(${i})">✕</button></td></tr>`;});
+    <button class="btn btn-sm" onclick="bkAll(true)">✓ Tout</button><button class="btn btn-sm" onclick="bkAll(false)">✕ Rien</button></div></div>`;}
+  h+=`<div style="overflow-x:auto;background:var(--bg2);border-radius:10px;border:1px solid var(--border);box-shadow:var(--sh)"><table><thead><tr>${isSuper?'<th style="width:30px"><input type="checkbox" onchange="bkAll(this.checked)" style="width:14px;height:14px;cursor:pointer"></th>':''}<th>Actif</th><th>Immat</th><th>Type</th><th>LC</th><th>Vol</th><th>Lavage</th><th>Corrosion</th><th>Pt Fixe</th><th>Lav.Comp</th>${isSuper?'<th></th>':''}</tr></thead><tbody>`;
+  fleet.forEach((a,i)=>{
+    if(isSuper){
+      h+=`<tr style="${!a.active?'opacity:.35':''}"><td><input type="checkbox" class="bk-c" data-im="${a.immat}" style="width:14px;height:14px;cursor:pointer"></td><td><button class="toggle ${a.active?'on':'off'}" onclick="tA(${i})"></button></td><td style="font-weight:800">${a.immat}</td><td><span class="tag" style="background:${a.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${a.type==='ULM'?'var(--pf-dark)':'#7c3aed'}">${a.type}</span></td><td><input type="checkbox" ${a.hasLavComp?'checked':''} onchange="tLC(${i},this.checked)" style="width:14px;height:14px;cursor:pointer"></td><td><input type="date" value="${a.lastFlight||''}" onchange="uFld(${i},'lastFlight',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastLavage||''}" onchange="uFld(${i},'lastLavage',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastCorrosion||''}" onchange="uFld(${i},'lastCorrosion',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastPointFixe||''}" onchange="uFld(${i},'lastPointFixe',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastLavComp||''}" onchange="uFld(${i},'lastLavComp',this.value)" style="width:115px"></td><td><button class="btn btn-dn btn-xs" onclick="rmA(${i})">✕</button></td></tr>`;
+    } else {
+      h+=`<tr style="${!a.active?'opacity:.35':''}"><td>${a.active?'✓':'✕'}</td><td style="font-weight:800">${a.immat}</td><td><span class="tag" style="background:${a.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${a.type==='ULM'?'var(--pf-dark)':'#7c3aed'}">${a.type}</span></td><td>${a.hasLavComp?'✓':'—'}</td><td>${a.lastFlight?fmt(a.lastFlight):'—'}</td><td>${a.lastLavage?fmt(a.lastLavage):'—'}</td><td>${a.lastCorrosion?fmt(a.lastCorrosion):'—'}</td><td>${a.lastPointFixe?fmt(a.lastPointFixe):'—'}</td><td>${a.lastLavComp?fmt(a.lastLavComp):'—'}</td></tr>`;
+    }
+  });
   h+=`</tbody></table></div>`;document.getElementById("vFlt").innerHTML=h;}
 
 function rVal(){const entries=Object.entries(pendingSubs);
   let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h2 style="font-size:15px;font-weight:900">Validations (${entries.length})</h2>`;
-  if(entries.length)h+=`<button class="btn btn-ok btn-sm" onclick="approveAll()">✓ Tout valider</button>`;
+  if(entries.length&&isSuper)h+=`<button class="btn btn-ok btn-sm" onclick="approveAll()">✓ Tout valider</button>`;
   h+=`</div>`;
   if(!entries.length)h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:10px;padding:30px;text-align:center"><div style="font-size:28px;margin-bottom:6px">✅</div><div style="font-weight:900;color:var(--ok-dark)">Aucune saisie en attente</div></div>`;
   else entries.sort((a,b)=>(b[1].submittedAt||"").localeCompare(a[1].submittedAt||"")).forEach(([id,p])=>{
     h+=`<div class="pend-card"><div style="display:flex;align-items:center;gap:10px"><span style="font-weight:900;font-size:14px">${p.immat}</span><span class="tag" style="background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd)">${p.label||p.field}</span><span style="font-weight:800">${fmt(p.value)}</span><span style="font-size:10px;color:var(--text3)">${p.submittedAt?new Date(p.submittedAt).toLocaleString("fr-FR"):''}</span></div>
-    <div style="display:flex;gap:5px"><button class="btn btn-ok btn-sm" onclick="approveSub('${id}')">✓</button><button class="btn btn-dn btn-sm" onclick="rejectSub('${id}')">✕</button></div></div>`;
+    ${isSuper?`<div style="display:flex;gap:5px"><button class="btn btn-ok btn-sm" onclick="approveSub('${id}')">✓</button><button class="btn btn-dn btn-sm" onclick="rejectSub('${id}')">✕</button></div>`:'<span style="font-size:10px;color:var(--text3)">En attente</span>'}</div>`;
   });
   document.getElementById("vVal").innerHTML=h;}
 
@@ -413,7 +423,8 @@ function rRet(){let missed=[];
       h+=`</tbody></table></div>`;});}
   document.getElementById("vRet").innerHTML=h;}
 
-function rAdm(){let h=`<h2 style="font-size:15px;font-weight:900;margin-bottom:14px">Administration</h2>`;
+function rAdm(){if(!isSuper){document.getElementById("vAdm").innerHTML=`<div style="text-align:center;padding:30px;color:var(--text2)"><div style="font-size:28px;margin-bottom:8px">🔒</div><div style="font-weight:800">Accès réservé à l'administrateur principal</div></div>`;return;}
+  let h=`<h2 style="font-size:15px;font-weight:900;margin-bottom:14px">Administration</h2>`;
   // Weekly password
   h+=`<div class="pwd-card"><h3>🔑 Mot de passe hebdomadaire (mobile)</h3>
     <p style="font-size:11px;color:var(--text2)">Généré automatiquement chaque lundi. À communiquer au personnel de permanence.</p>
@@ -422,13 +433,15 @@ function rAdm(){let h=`<h2 style="font-size:15px;font-weight:900;margin-bottom:1
     <input type="text" id="customPwd" placeholder="Ou saisir manuellement" style="flex:1;padding:7px">
     <button class="btn btn-sm" onclick="setPwd()">Appliquer</button></div></div>`;
   // Admin accounts
-  h+=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)"><h3 style="font-size:13px;font-weight:800;margin-bottom:10px">👤 Comptes Admin</h3>`;
+  h+=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)"><h3 style="font-size:13px;font-weight:800;margin-bottom:10px">👤 Comptes</h3>
+  <p style="font-size:10px;color:var(--text2);margin-bottom:10px">Admin = lecture + écriture · Lecture = consultation uniquement</p>`;
   Object.entries(admins).forEach(([id,a])=>{
+    const role=a.role==="super"?"Admin":"Lecture";const roleCol=a.role==="super"?"var(--pf)":"var(--text3)";
     h+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg3)">
-      <div><span style="font-weight:800">${a.name||id}</span> <span style="font-size:10px;color:var(--text3)">ID: ${id}</span></div>
+      <div><span style="font-weight:800">${a.name||id}</span> <span style="font-size:9px;color:var(--text3)">ID: ${id}</span> <span class="tag" style="font-size:9px;background:var(--bg3);color:${roleCol}">${role}</span></div>
       <div style="display:flex;gap:5px">${id!=='admin'?`<button class="btn btn-dn btn-xs" onclick="rmAdmin('${id}')">Suppr.</button>`:''}</div></div>`;
   });
-  h+=`<div class="mrow" style="margin-top:10px"><div class="field"><label>ID</label><input type="text" id="naId" placeholder="identifiant"></div><div class="field"><label>Nom</label><input type="text" id="naName" placeholder="Nom complet"></div><div class="field"><label>Mot de passe</label><input type="text" id="naPwd" placeholder="mot de passe"></div><button class="btn btn-primary btn-sm" onclick="addAdmin()">Créer</button></div></div>`;
+  h+=`<div class="mrow" style="margin-top:10px"><div class="field"><label>ID</label><input type="text" id="naId" placeholder="identifiant"></div><div class="field"><label>Nom</label><input type="text" id="naName" placeholder="Nom complet"></div><div class="field"><label>Mot de passe</label><input type="text" id="naPwd" placeholder="mot de passe"></div><button class="btn btn-primary btn-sm" onclick="addAdmin()">Créer (lecture)</button></div></div>`;
   // Signature
   h+=`<div class="sig-area"><h3 style="font-size:13px;font-weight:800;margin-bottom:8px">Signature PDF</h3>
     <div class="field" style="margin-bottom:6px"><label>Image</label><input type="file" accept="image/*" onchange="uSig(event)" style="font-size:11px"></div>
@@ -448,7 +461,7 @@ function rLog(){
   document.getElementById("vLog").innerHTML=h;}
 
 // Admin account management
-function addAdmin(){const id=document.getElementById("naId").value.trim().toLowerCase();const name=document.getElementById("naName").value.trim();const pwd=document.getElementById("naPwd").value;if(!id||!pwd)return;if(db)db.ref("admins/"+id).set({name:name||id,password:pwd});addLog("Créé compte admin: "+id);document.getElementById("naId").value="";document.getElementById("naName").value="";document.getElementById("naPwd").value="";rAdm();}
+function addAdmin(){const id=document.getElementById("naId").value.trim().toLowerCase();const name=document.getElementById("naName").value.trim();const pwd=document.getElementById("naPwd").value;if(!id||!pwd)return;if(db)db.ref("admins/"+id).set({name:name||id,password:pwd,role:"reader"});addLog("Créé compte lecture: "+id);document.getElementById("naId").value="";document.getElementById("naName").value="";document.getElementById("naPwd").value="";rAdm();}
 function rmAdmin(id){if(!confirm("Supprimer le compte "+id+" ?"))return;if(db)db.ref("admins/"+id).remove();addLog("Supprimé compte admin: "+id);}
 
 // Weekly password
@@ -465,7 +478,7 @@ function iBk(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();
 // Nav
 function pM(){cM--;if(cM<0){cM=11;cY--;}pubSched=null;loadOrGen();}
 function nM(){cM++;if(cM>11){cM=0;cY++;}pubSched=null;loadOrGen();}
-function sv(v){cv=v;["Sch","Flt","Ret","Val","Adm","Log"].forEach(id=>{document.getElementById("v"+id).style.display="none";const b=document.getElementById("b"+id);if(b)b.classList.remove("active");});const m={schedule:"Sch",fleet:"Flt",retards:"Ret",validation:"Val",admin:"Adm",logs:"Log"};document.getElementById("v"+m[v]).style.display="block";const b2=document.getElementById("b"+m[v]);if(b2)b2.classList.add("active");if(v==="admin")rAdm();if(v==="validation")rVal();if(v==="logs")rLog();}
+function sv(v){if((v==="admin"||v==="validation")&&!isSuper){v="schedule";}cv=v;["Sch","Flt","Ret","Val","Adm","Log"].forEach(id=>{document.getElementById("v"+id).style.display="none";const b=document.getElementById("b"+id);if(b)b.classList.remove("active");});const m={schedule:"Sch",fleet:"Flt",retards:"Ret",validation:"Val",admin:"Adm",logs:"Log"};document.getElementById("v"+m[v]).style.display="block";const b2=document.getElementById("b"+m[v]);if(b2)b2.classList.add("active");if(v==="admin")rAdm();if(v==="validation")rVal();if(v==="logs")rLog();}
 function render(){rSt();rFlt();rSch();rRet();rVal();}
 
 // Fleet ops
