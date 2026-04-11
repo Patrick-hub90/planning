@@ -209,6 +209,7 @@ const TASK_TYPES=["pointFixe","lavage","corrosion","lavComp"];
 
 let fleet=[],pubSched=null,pendingSubs={},admins={},auditLogs=[],weeklyPwd="",curAdmin=null,isSuper=false,cv="schedule",db=null,isDark=false;
 let sigName="",sigPost="",sigImage="";
+let pFonts={title:18,subtitle:11,weekHeader:12,dayHeader:12,sectionLabel:9,taskName:10,taskBadge:7,signature:11};
 let cM=new Date().getMonth(),cY=new Date().getFullYear();
 
 function tTh(){isDark=!isDark;document.documentElement.setAttribute("data-theme",isDark?"dark":"");localStorage.setItem("piste_theme",isDark?"dark":"light");document.getElementById("tIco").innerHTML=isDark?'<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>':'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';}
@@ -267,7 +268,7 @@ function initFB(){try{
   db.ref("fleet").on("value",s=>{const d=s.val();if(d)fleet=Object.values(d);else fleet=[];loadOrGen();});
   db.ref("pendingSubmissions").on("value",s=>{pendingSubs=s.val()||{};render();});
   db.ref("auditLog").limitToLast(100).on("value",s=>{const d=s.val();auditLogs=d?Object.values(d).reverse():[];if(cv==="logs")rLog();});
-  db.ref("config").on("value",s=>{const c=s.val()||{};sigName=c.sigName||"";sigPost=c.sigPost||"";sigImage=c.sigImage||"";});
+  db.ref("config").on("value",s=>{const c=s.val()||{};sigName=c.sigName||"";sigPost=c.sigPost||"";sigImage=c.sigImage||"";if(c.pFonts)pFonts={...pFonts,...c.pFonts};applyPrintFonts();});
 }catch(e){console.error(e);}}
 
 // ===== TASK STATUS =====
@@ -475,6 +476,12 @@ function rAdm(){if(!isSuper){document.getElementById("vAdm").innerHTML=`<div sty
     ${sigImage?`<div style="margin-bottom:6px"><img src="${sigImage}" style="max-height:50px;border-radius:6px;border:1px solid var(--border)"><br><button class="btn btn-dn btn-xs" style="margin-top:3px" onclick="rSig()">Suppr.</button></div>`:''}
     <div class="field" style="margin-bottom:6px"><label>Nom</label><input type="text" id="sN" value="${sigName}" style="width:100%;padding:7px" onchange="sSig()"></div>
     <div class="field" style="margin-bottom:6px"><label>Poste</label><input type="text" id="sP" value="${sigPost}" style="width:100%;padding:7px" onchange="sSig()"></div></div>`;
+  // Print fonts
+  const pfl=[{k:"title",l:"Titre"},{k:"subtitle",l:"Sous-titre"},{k:"weekHeader",l:"En-tête semaine"},{k:"dayHeader",l:"En-tête jour"},{k:"sectionLabel",l:"Label tâche (PF/LAV/TC)"},{k:"taskName",l:"Nom aéronef"},{k:"taskBadge",l:"Badge statut"},{k:"signature",l:"Signature"}];
+  h+=`<div style="margin-top:14px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);box-shadow:var(--sh)"><h3 style="font-size:13px;font-weight:800;margin-bottom:10px">🖨 Polices Export PDF (px)</h3>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px">`;
+  pfl.forEach(f=>{h+=`<div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">${f.l}</label><input type="number" id="pf_${f.k}" value="${pFonts[f.k]}" min="4" max="40" style="width:100%;padding:6px 8px"></div>`;});
+  h+=`</div><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="savePFonts()">Enregistrer les polices</button></div>`;
   // Backup
   h+=`<div style="margin-top:12px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)"><button class="btn btn-sm" onclick="xBk()">💾 Backup</button> <button class="btn btn-sm" onclick="document.getElementById('iF').click()">📂 Importer</button><input type="file" id="iF" accept=".json" style="display:none" onchange="iBk(event)"></div>`;
   document.getElementById("vAdm").innerHTML=h;}
@@ -503,6 +510,28 @@ function rSig(){sigImage="";if(db)db.ref("config/sigImage").remove();rAdm();}
 function xBk(){const d=JSON.stringify({fleet,sigName,sigPost,sigImage},null,2);const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([d],{type:"application/json"}));a.download="piste_backup.json";a.click();}
 function iBk(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.fleet){fleet=d.fleet;sigName=d.sigName||"";sigPost=d.sigPost||"";sigImage=d.sigImage||"";if(db){const o={};fleet.forEach(a=>{o[fbK(a.immat)]=a;});db.ref("fleet").set(o);db.ref("config").set({sigName,sigPost,sigImage});}addLog("Import backup");publishSchedule();}}catch(e){}};r.readAsText(f);e.target.value="";}
 
+// Print fonts
+function applyPrintFonts(){
+  let s=document.getElementById("dynPrintStyle");
+  if(!s){s=document.createElement("style");s.id="dynPrintStyle";document.head.appendChild(s);}
+  s.textContent=`@media print{
+    .print-header h1{font-size:${pFonts.title}px!important}
+    .print-header p{font-size:${pFonts.subtitle}px!important}
+    .wheader-label{font-size:${pFonts.weekHeader}px!important}
+    .dhead{font-size:${pFonts.dayHeader}px!important}
+    .tsec-head{font-size:${pFonts.sectionLabel}px!important}
+    .tp,.tp-name{font-size:${pFonts.taskName}px!important}
+    .tp-badge{font-size:${pFonts.taskBadge}px!important}
+    #sigA,#sigA *{font-size:${pFonts.signature}px!important}
+    #sigA div[style*="font-weight:800"]{font-size:${pFonts.signature}px!important}
+  }`;
+}
+function savePFonts(){
+  const fields=["title","subtitle","weekHeader","dayHeader","sectionLabel","taskName","taskBadge","signature"];
+  fields.forEach(f=>{const el=document.getElementById("pf_"+f);if(el)pFonts[f]=parseInt(el.value)||pFonts[f];});
+  if(db)db.ref("config/pFonts").set(pFonts);
+  applyPrintFonts();addLog("Polices export modifiées");
+}
 // Nav
 function doPrint(){
   const scope=document.getElementById("printScope").value;
@@ -539,7 +568,7 @@ function addA(){const im=document.getElementById("nI").value.trim().toUpperCase(
 function bulkEdit(){const f=document.getElementById("bF").value,d=document.getElementById("bD").value;if(!d){alert("Date?");return;}const sel=[...document.querySelectorAll(".bk-c:checked")].map(c=>c.dataset.im);if(!sel.length){alert("Cochez des aéronefs");return;}if(!confirm(`Appliquer ${FLABEL[f]||f}=${fmt(d)} à ${sel.length} aéronef(s)?`))return;sel.forEach(im=>{const ac=fleet.find(a=>a.immat===im);if(ac){ac[f]=d;if(db)db.ref("fleet/"+fbK(im)+"/"+f).set(d);}});addLog(`Modif groupée: ${FLABEL[f]||f}=${fmt(d)} sur ${sel.length} aéronefs`);render();}
 function bkAll(v){document.querySelectorAll(".bk-c").forEach(c=>{c.checked=v;});}
 
-initFB();
+initFB();applyPrintFonts();
 </script>
 </body>
 </html>
