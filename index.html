@@ -8,110 +8,126 @@
 <style>
 :root{--bg:#eef1f6;--bg2:#fff;--bg3:#f6f8fb;--border:#dce3ed;--text:#0f172a;--text2:#64748b;--text3:#94a3b8;
 --pf:#3b82f6;--pf-bg:#dbeafe;--pf-bd:#bfdbfe;--pf-dark:#1d4ed8;--lav:#10b981;--lav-bg:#d1fae5;--lav-bd:#a7f3d0;--lav-dark:#047857;
---tc:#f59e0b;--tc-bg:#fef3c7;--tc-bd:#fde68a;--tc-dark:#b45309;--ok:#22c55e;--ok-bg:#dcfce7;--ok-bd:#bbf7d0;--ok-dark:#15803d;
---dn:#ef4444;--dn-bg:#fee2e2;--dn-bd:#fecaca;--dn-dark:#b91c1c;--skip:#94a3b8;--skip-bg:#f1f5f9;--skip-dark:#475569;
+--tc:#f59e0b;--tc-bg:#fef3c7;--tc-bd:#fde68a;--tc-dark:#b45309;--lc:#ec4899;--lc-bg:#fdf2f8;--lc-bd:#fbcfe8;--lc-dark:#be185d;
+--ok:#22c55e;--ok-bg:#dcfce7;--ok-bd:#bbf7d0;--ok-dark:#15803d;
+--dn:#ef4444;--dn-bg:#fee2e2;--dn-bd:#fecaca;--skip:#94a3b8;--skip-bg:#f1f5f9;--skip-dark:#475569;
 --warn:#f97316;--warn-bg:#fff7ed;--warn-bd:#fed7aa;
 --sh:0 1px 4px rgba(0,0,0,.05);--sh2:0 4px 12px rgba(0,0,0,.06)}
 [data-theme="dark"]{--bg:#080b12;--bg2:#111827;--bg3:#1a2236;--border:#283348;--text:#f1f5f9;--text2:#8896aa;--text3:#4b5c72;
---pf-bg:#172554;--pf-bd:#1e3a5f;--lav-bg:#064e3b;--lav-bd:#14532d;--tc-bg:#422006;--tc-bd:#713f12;--ok-bg:#14532d;--ok-bd:#166534;
---dn-bg:#7f1d1d;--dn-bd:#991b1b;--skip-bg:#1e293b;--skip-dark:#94a3b8;--warn-bg:#7c2d12;--warn-bd:#9a3412;
+--pf-bg:#172554;--pf-bd:#1e3a5f;--lav-bg:#064e3b;--lav-bd:#14532d;--tc-bg:#422006;--tc-bd:#713f12;--lc-bg:#831843;--lc-bd:#9d174d;
+--ok-bg:#14532d;--ok-bd:#166534;--dn-bg:#7f1d1d;--dn-bd:#991b1b;--skip-bg:#1e293b;--warn-bg:#7c2d12;--warn-bd:#9a3412;
 --sh:0 1px 4px rgba(0,0,0,.3);--sh2:0 4px 12px rgba(0,0,0,.3)}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-.hdr{padding:14px 28px;display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px;box-shadow:var(--sh)}
-.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(59,130,246,.3)}
-.logo svg{width:22px;height:22px;fill:#fff}
-.htitle{font-weight:900;font-size:16px}.hsub{font-size:10px;color:var(--text2);font-weight:500;margin-top:1px}
-.cdot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}.cdot.on{background:var(--ok)}.cdot.off{background:var(--dn)}
-.btn{padding:8px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--text);cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;transition:all .15s;box-shadow:var(--sh)}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+/* Login */
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:40px 32px;max-width:380px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.1)}
+.login-box .logo-big{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.login-box .logo-big svg{width:28px;height:28px;fill:#fff}
+.login-box h1{font-size:18px;font-weight:900;margin-bottom:4px}.login-box p{font-size:12px;color:var(--text2);margin-bottom:20px}
+.login-box input{width:100%;padding:12px 16px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:inherit;font-size:14px;margin-bottom:12px}
+.login-box button{width:100%;padding:12px;border-radius:12px;border:none;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.login-box .error{color:var(--dn);font-size:11px;font-weight:700;margin-top:8px;display:none}
+/* App */
+.app-wrap{display:none}
+.hdr{padding:12px 24px;display:flex;align-items:center;justify-content:space-between;background:var(--bg2);border-bottom:1px solid var(--border);flex-wrap:wrap;gap:8px;box-shadow:var(--sh)}
+.logo{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(59,130,246,.3)}
+.logo svg{width:20px;height:20px;fill:#fff}
+.htitle{font-weight:900;font-size:15px}.hsub{font-size:10px;color:var(--text2)}
+.cdot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px}.cdot.on{background:var(--ok)}.cdot.off{background:var(--dn)}
+.btn{padding:7px 14px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--text);cursor:pointer;font-family:inherit;font-size:11px;font-weight:700;box-shadow:var(--sh);transition:all .15s}
 .btn:hover{background:var(--bg3)}.btn.active{background:var(--pf);border-color:var(--pf);color:#fff}
-.btn-sm{padding:5px 12px;font-size:11px}.btn-xs{padding:3px 10px;font-size:10px}
+.btn-sm{padding:5px 12px;font-size:10px}.btn-xs{padding:3px 8px;font-size:9px}
 .btn-primary{background:var(--pf);border-color:var(--pf);color:#fff}
 .btn-ok{background:var(--ok);border-color:var(--ok);color:#fff}
 .btn-dn{border-color:var(--dn-bd);color:var(--dn);background:var(--dn-bg)}
 .btn-warn{border-color:var(--warn-bd);color:var(--warn);background:var(--warn-bg)}
-.badge{background:var(--dn);color:#fff;font-size:9px;padding:2px 7px;border-radius:12px;font-weight:800;margin-left:4px}
-.badge-warn{background:var(--warn);color:#fff;font-size:9px;padding:2px 7px;border-radius:12px;font-weight:800;margin-left:4px}
-.theme-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center}
-.theme-btn svg{width:18px;height:18px;stroke:var(--text2);fill:none;stroke-width:2}
-.content{padding:20px 28px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:20px}
-.stat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:14px 18px;box-shadow:var(--sh);position:relative;overflow:hidden}
-.stat::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
-.stat:nth-child(1)::before{background:var(--pf)}.stat:nth-child(2)::before{background:var(--pf)}.stat:nth-child(3)::before{background:var(--lav)}.stat:nth-child(4)::before{background:var(--tc)}.stat:nth-child(5)::before{background:var(--ok)}.stat:nth-child(6)::before{background:var(--dn)}
-.stat-label{font-size:10px;color:var(--text2);margin-bottom:3px;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
-.stat-value{font-size:24px;font-weight:900}
-.tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:700}
-input[type="date"],input[type="text"],select{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:7px 12px;border-radius:8px;font-family:inherit;font-size:12px;box-shadow:var(--sh)}
+.badge{background:var(--dn);color:#fff;font-size:8px;padding:1px 6px;border-radius:10px;font-weight:800;margin-left:3px}
+.badge-warn{background:var(--warn);color:#fff;font-size:8px;padding:1px 6px;border-radius:10px;font-weight:800;margin-left:3px}
+.theme-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.theme-btn svg{width:16px;height:16px;stroke:var(--text2);fill:none;stroke-width:2}
+.content{padding:18px 24px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:18px}
+.stat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 16px;box-shadow:var(--sh);position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;bottom:0;width:3px}
+.stat:nth-child(1)::before{background:var(--pf)}.stat:nth-child(2)::before{background:var(--lav)}.stat:nth-child(3)::before{background:var(--tc)}.stat:nth-child(4)::before{background:var(--lc)}.stat:nth-child(5)::before{background:var(--ok)}.stat:nth-child(6)::before{background:var(--dn)}
+.stat-label{font-size:9px;color:var(--text2);margin-bottom:3px;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
+.stat-value{font-size:22px;font-weight:900}
+.tag{display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700}
+input[type="date"],input[type="text"],input[type="password"],select{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:8px;font-family:inherit;font-size:11px;box-shadow:var(--sh)}
 [data-theme="dark"] input::-webkit-calendar-picker-indicator{filter:invert(.7)}
-table{width:100%;border-collapse:collapse}th{padding:8px 12px;text-align:left;font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;font-weight:700;border-bottom:2px solid var(--border);background:var(--bg3)}
-td{padding:8px 12px;border-bottom:1px solid var(--bg3);font-size:12px}
-.month-nav{display:flex;align-items:center;gap:12px;margin-bottom:18px}
-.month-nav button{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:16px;font-weight:700;color:var(--text);box-shadow:var(--sh);display:flex;align-items:center;justify-content:center}
-.month-label{font-size:18px;font-weight:900;min-width:180px;text-align:center;text-transform:capitalize}
-.wblock{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:14px;overflow:hidden;box-shadow:var(--sh)}
-.wheader{padding:10px 18px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.wheader-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
-.wprog{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:700;color:var(--text2)}
-.wprog-bar{width:80px;height:6px;border-radius:3px;background:var(--bg);overflow:hidden}.wprog-fill{height:100%;border-radius:3px;transition:width .5s}
+table{width:100%;border-collapse:collapse}th{padding:8px 10px;text-align:left;font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.7px;font-weight:700;border-bottom:2px solid var(--border);background:var(--bg3)}
+td{padding:7px 10px;border-bottom:1px solid var(--bg3);font-size:11px}
+.month-nav{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.month-nav button{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);cursor:pointer;font-size:14px;font-weight:700;color:var(--text);box-shadow:var(--sh);display:flex;align-items:center;justify-content:center}
+.month-label{font-size:16px;font-weight:900;min-width:160px;text-align:center;text-transform:capitalize}
+.wblock{background:var(--bg2);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:var(--sh)}
+.wheader{padding:8px 16px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.wheader-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+.wprog{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;color:var(--text2)}
+.wprog-bar{width:60px;height:5px;border-radius:3px;background:var(--bg);overflow:hidden}.wprog-fill{height:100%;border-radius:3px}
 .wgrid{display:grid;grid-template-columns:repeat(5,1fr)}
-.dcol{padding:12px 8px;min-height:130px;border-right:1px solid var(--bg3);transition:background .15s}
-.dcol:last-child{border-right:none}.dcol:hover{background:var(--bg)}
-.dcol.today{background:rgba(59,130,246,.06)}.dcol.today .dhead{background:var(--pf);color:#fff;box-shadow:0 2px 8px rgba(59,130,246,.3)}
-.dcol.past .dhead{opacity:.4}.dcol.outside{opacity:.25;pointer-events:none}
-.dhead{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;padding:5px 8px;border-radius:8px;margin-bottom:8px;background:var(--bg3)}
-.tsec{margin-bottom:6px}.tsec-head{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;padding:2px 6px;border-radius:5px;margin-bottom:3px;display:inline-block}
-.tsec-head.pf-h{background:var(--pf-bg);color:var(--pf-dark)}.tsec-head.lav-h{background:var(--lav-bg);color:var(--lav-dark)}.tsec-head.tc-h{background:var(--tc-bg);color:var(--tc-dark)}
-.tp{display:flex;align-items:center;gap:4px;padding:4px 7px;border-radius:7px;font-size:10px;font-weight:700;margin-bottom:2px;border-left:3px solid transparent}
-.tp.pending{background:var(--bg3);color:var(--text)}.tp.pending-pf{border-left-color:var(--pf)}.tp.pending-lav{border-left-color:var(--lav)}.tp.pending-tc{border-left-color:var(--tc)}
+.dcol{padding:10px 7px;min-height:110px;border-right:1px solid var(--bg3)}.dcol:last-child{border-right:none}.dcol:hover{background:var(--bg)}
+.dcol.today{background:rgba(59,130,246,.06)}.dcol.today .dhead{background:var(--pf);color:#fff}
+.dcol.outside{opacity:.2;pointer-events:none}
+.dhead{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;padding:4px 7px;border-radius:7px;margin-bottom:7px;background:var(--bg3)}
+.tsec{margin-bottom:5px}.tsec-head{font-size:7px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;padding:2px 5px;border-radius:4px;margin-bottom:2px;display:inline-block}
+.tsec-head.pf-h{background:var(--pf-bg);color:var(--pf-dark)}.tsec-head.lav-h{background:var(--lav-bg);color:var(--lav-dark)}.tsec-head.tc-h{background:var(--tc-bg);color:var(--tc-dark)}.tsec-head.lc-h{background:var(--lc-bg);color:var(--lc-dark)}
+.tp{display:flex;align-items:center;gap:3px;padding:3px 5px;border-radius:5px;font-size:9px;font-weight:700;margin-bottom:2px;border-left:2px solid transparent}
+.tp.pending{background:var(--bg3)}.tp.pending-pf{border-left-color:var(--pf)}.tp.pending-lav{border-left-color:var(--lav)}.tp.pending-tc{border-left-color:var(--tc)}.tp.pending-lc{border-left-color:var(--lc)}
 .tp.done{background:var(--ok-bg);color:var(--ok-dark);border-left-color:var(--ok)}.tp.done .tp-ico{background:var(--ok);color:#fff}
-.tp.missed{background:var(--dn-bg);color:var(--dn-dark);border-left-color:var(--dn);animation:pulse 2.5s infinite}.tp.missed .tp-ico{background:var(--dn);color:#fff}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+.tp.missed{background:var(--dn-bg);color:var(--dn);border-left-color:var(--dn)}.tp.missed .tp-ico{background:var(--dn);color:#fff}
 .tp.skip{background:var(--skip-bg);color:var(--skip-dark);border-left-color:var(--skip);opacity:.5;font-style:italic}.tp.skip .tp-ico{background:var(--skip);color:#fff}
-.tp-ico{width:16px;height:16px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;font-style:normal}
+.tp-ico{width:14px;height:14px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0;font-style:normal}
 .tp-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.tp-badge{font-size:7px;font-weight:800;padding:1px 5px;border-radius:3px;white-space:nowrap}
-.legend-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;padding:10px 14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);box-shadow:var(--sh)}
-.legend-item{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--text2)}
-.ld{width:10px;height:10px;border-radius:3px;border:2px solid}
+.tp-badge{font-size:6px;font-weight:800;padding:1px 4px;border-radius:3px;white-space:nowrap}
+.legend-bar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;padding:8px 12px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);font-size:10px}
+.legend-item{display:flex;align-items:center;gap:3px;font-weight:600;color:var(--text2)}
+.ld{width:9px;height:9px;border-radius:3px;border:2px solid}
 .ld-p{background:var(--bg3);border-color:var(--text3)}.ld-d{background:var(--ok-bg);border-color:var(--ok)}.ld-m{background:var(--dn-bg);border-color:var(--dn)}.ld-s{background:var(--skip-bg);border-color:var(--skip)}
-.toggle{width:38px;height:20px;border-radius:10px;cursor:pointer;position:relative;border:none}.toggle.on{background:var(--ok)}.toggle.off{background:var(--dn)}
-.toggle::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;top:3px;transition:all .2s;box-shadow:0 1px 2px rgba(0,0,0,.2)}.toggle.on::after{left:21px}.toggle.off::after{left:3px}
-#notif{display:none;position:fixed;top:16px;right:16px;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:700;z-index:200;box-shadow:var(--sh2)}
-/* Pending card */
-.pend-card{background:var(--bg2);border:1px solid var(--warn-bd);border-radius:12px;padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;box-shadow:var(--sh)}
-.pend-info{display:flex;align-items:center;gap:12px}.pend-immat{font-weight:900;font-size:15px}.pend-detail{font-size:12px;color:var(--text2)}
-.pend-actions{display:flex;gap:6px}
-/* Bulk */
-.bulk-area{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:18px;box-shadow:var(--sh)}
-.bulk-area h3{font-size:14px;font-weight:800;margin-bottom:12px}
-.bulk-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
-.bulk-row .field{flex:1;min-width:120px}
-.bulk-row .field label{font-size:11px;color:var(--text2);display:block;margin-bottom:3px;font-weight:700}
-.bulk-row .field select,.bulk-row .field input{width:100%;padding:8px 10px}
-.sig-area{margin-top:16px;padding:18px;background:var(--bg3);border-radius:12px;border:1px solid var(--border)}
-.ocard{background:var(--bg2);border:1px solid var(--dn-bd);border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:var(--sh)}
-.ohead{padding:12px 16px;background:var(--dn-bg);border-bottom:1px solid rgba(0,0,0,.05)}
-.mrow{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
-.field label{font-size:11px;color:var(--text2);display:block;margin-bottom:3px;font-weight:700}
+.toggle{width:36px;height:18px;border-radius:9px;cursor:pointer;position:relative;border:none}.toggle.on{background:var(--ok)}.toggle.off{background:var(--dn)}
+.toggle::after{content:'';position:absolute;width:12px;height:12px;border-radius:50%;background:#fff;top:3px;transition:all .2s}.toggle.on::after{left:21px}.toggle.off::after{left:3px}
+#notif{display:none;position:fixed;top:14px;right:14px;padding:10px 18px;border-radius:10px;font-size:12px;font-weight:700;z-index:200;box-shadow:var(--sh2)}
+.pend-card{background:var(--bg2);border:1px solid var(--warn-bd);border-radius:10px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;box-shadow:var(--sh)}
+.bulk-area{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:var(--sh)}
+.bulk-area h3{font-size:13px;font-weight:800;margin-bottom:10px}
+.bulk-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap}
+.bulk-row .field{flex:1;min-width:100px}.bulk-row .field label{font-size:10px;color:var(--text2);display:block;margin-bottom:2px;font-weight:700}.bulk-row .field select,.bulk-row .field input{width:100%;padding:7px}
+.ocard{background:var(--bg2);border:1px solid var(--dn-bd);border-radius:10px;margin-bottom:10px;overflow:hidden;box-shadow:var(--sh)}
+.ohead{padding:10px 14px;background:var(--dn-bg);border-bottom:1px solid rgba(0,0,0,.05)}
+.sig-area{margin-top:14px;padding:16px;background:var(--bg3);border-radius:10px;border:1px solid var(--border)}
+.mrow{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.field label{font-size:10px;color:var(--text2);display:block;margin-bottom:2px;font-weight:700}
+/* Audit log */
+.log-entry{padding:8px 12px;border-bottom:1px solid var(--bg3);font-size:11px;display:flex;gap:10px;align-items:center}
+.log-entry:last-child{border-bottom:none}
+.log-who{font-weight:800;color:var(--pf);min-width:80px}
+.log-when{color:var(--text3);font-size:10px;min-width:120px}
+.log-what{flex:1;color:var(--text)}
+/* Weekly password section */
+.pwd-card{background:var(--bg2);border:1px solid var(--pf-bd);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:var(--sh)}
+.pwd-card h3{font-size:14px;font-weight:800;margin-bottom:8px;color:var(--pf)}
+.pwd-display{font-size:28px;font-weight:900;letter-spacing:6px;color:var(--text);text-align:center;padding:14px;background:var(--bg3);border-radius:10px;margin:10px 0;font-family:monospace}
 .print-header,.print-footer{display:none}
 @media print{
 @page{size:landscape;margin:8mm}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
-body{background:#fff!important;font-size:9px!important;color:#000!important}
-.hdr,.stats,.no-print,#notif,.month-nav button,.theme-btn,.legend-bar{display:none!important}
-.print-header{display:block!important;text-align:center;margin-bottom:10px;padding-bottom:8px;border-bottom:3px solid #0f172a}
-.print-header h1{font-size:14px;font-weight:900;text-transform:uppercase;margin-bottom:2px}.print-header p{font-size:9px;color:#555}
-.print-header .pleg{display:flex!important;gap:8px;justify-content:center;margin-top:6px}
-.print-header .pleg span{padding:2px 8px;border-radius:3px;font-weight:700;font-size:7px;border:1px solid #bbb}
-.ppf{background:#dbeafe!important;color:#1d4ed8!important}.plav{background:#d1fae5!important;color:#047857!important}.ptc{background:#fef3c7!important;color:#b45309!important}.pok{background:#dcfce7!important;color:#15803d!important}.pdn{background:#fee2e2!important;color:#b91c1c!important}
+body{background:#fff!important;font-size:8px!important;color:#000!important}
+.hdr,.stats,.no-print,#notif,.month-nav button,.theme-btn,.legend-bar,.login-screen{display:none!important}
+.app-wrap{display:block!important}
+.print-header{display:block!important;text-align:center;margin-bottom:8px;padding-bottom:6px;border-bottom:3px solid #0f172a}
+.print-header h1{font-size:13px;font-weight:900;text-transform:uppercase;margin-bottom:2px}.print-header p{font-size:8px;color:#555}
+.print-header .pleg{display:flex!important;gap:6px;justify-content:center;margin-top:5px}
+.print-header .pleg span{padding:1px 6px;border-radius:3px;font-weight:700;font-size:6px;border:1px solid #bbb}
 .content{padding:0!important}.month-label{font-size:0!important;height:0;overflow:hidden}
-.wblock{border:1px solid #ccc!important;margin-bottom:5px!important;break-inside:avoid;background:#fff!important}.wheader{background:#f1f5f9!important;padding:4px 8px!important}.wprog{display:none!important}
-.dcol{padding:4px!important;min-height:50px!important;border-color:#e5e7eb!important;background:#fff!important}.dcol.today{background:#eff6ff!important}.dcol.today .dhead{background:#3b82f6!important;color:#fff!important}
-.dhead{font-size:7px!important;padding:2px 5px!important;margin-bottom:3px!important}.dcol.past{opacity:1!important}
-.tsec-head{font-size:5px!important;padding:1px 3px!important}.tp{font-size:7px!important;padding:1px 3px!important;margin-bottom:1px!important;border-left-width:2px!important}.tp-ico{width:10px!important;height:10px!important;font-size:6px!important}.tp-badge{font-size:5px!important}
+.wblock{border:1px solid #ccc!important;margin-bottom:4px!important;break-inside:avoid;background:#fff!important}
+.wheader{padding:3px 6px!important;background:#f1f5f9!important}.wprog{display:none!important}
+.dcol{padding:3px!important;min-height:40px!important;border-color:#e5e7eb!important;background:#fff!important}
+.dcol.today{background:#eff6ff!important}.dcol.today .dhead{background:#3b82f6!important;color:#fff!important}
+.dhead{font-size:7px!important;padding:2px 4px!important;margin-bottom:2px!important}
+.tsec-head{font-size:5px!important;padding:1px 2px!important}.tp{font-size:6px!important;padding:1px 2px!important;margin-bottom:1px!important}
+.tp-ico{width:8px!important;height:8px!important;font-size:5px!important}.tp-badge{font-size:4px!important}
 .tp.done{background:#dcfce7!important;color:#15803d!important}.tp.missed{background:#fee2e2!important;color:#b91c1c!important;animation:none!important}
-.print-footer{display:block!important;margin-top:8px;page-break-inside:avoid}
+.print-footer{display:block!important;margin-top:6px;page-break-inside:avoid}
 }
 </style>
 </head>
@@ -120,28 +136,46 @@ body{background:#fff!important;font-size:9px!important;color:#000!important}
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-<div class="print-header"><h1 id="pT"></h1><p id="pS"></p><div class="pleg"><span class="ppf">PF</span><span class="plav">LAV</span><span class="ptc">TC</span><span class="pok">✓ FAIT</span><span class="pdn">✗ MANQUÉ</span></div></div>
+<div class="print-header"><h1 id="pT"></h1><p id="pS"></p><div class="pleg"><span style="background:#dbeafe;color:#1d4ed8">PF</span><span style="background:#d1fae5;color:#047857">LAV</span><span style="background:#fef3c7;color:#b45309">TC</span><span style="background:#fdf2f8;color:#be185d">LC</span><span style="background:#dcfce7;color:#15803d">✓FAIT</span><span style="background:#fee2e2;color:#b91c1c">✗MANQUÉ</span></div></div>
 
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+<div class="login-box">
+<div class="logo-big"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0011.5 2 1.5 1.5 0 0010 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
+<h1>PISTE — Administration</h1>
+<p>Connectez-vous avec votre compte admin</p>
+<input type="text" id="loginUser" placeholder="Identifiant">
+<input type="password" id="loginPwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')doLogin()">
+<button onclick="doLogin()">Connexion</button>
+<div class="error" id="loginError">Identifiant ou mot de passe incorrect</div>
+</div></div>
+
+<!-- APP -->
+<div class="app-wrap" id="appWrap">
 <div class="hdr">
-<div style="display:flex;align-items:center;gap:12px"><div class="logo"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0011.5 2 1.5 1.5 0 0010 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
-<div><div class="htitle">PLANNING DE LAVAGE · POINT FIXE · TRAIT. CORROSION</div><div class="hsub">Synchronisé en temps réel</div></div></div>
-<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-<span id="cs" style="font-size:11px;font-weight:700"><span class="cdot off"></span>--</span>
+<div style="display:flex;align-items:center;gap:10px">
+<div class="logo"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0011.5 2 1.5 1.5 0 0010 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
+<div><div class="htitle">PLANNING LAVAGE · PT FIXE · TRAIT. CORROSION</div><div class="hsub">Connecté: <span id="adminName">—</span></div></div>
+</div>
+<div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
+<span id="cs" style="font-size:10px;font-weight:700"><span class="cdot off"></span>--</span>
 <button class="btn active" id="bSch" onclick="sv('schedule')">Planning</button>
 <button class="btn" id="bFlt" onclick="sv('fleet')">Flotte</button>
-<button class="btn btn-dn" id="bRet" onclick="sv('retards')">Retards <span class="badge" id="rb" style="display:none">0</span></button>
-<button class="btn btn-warn" id="bVal" onclick="sv('validation')">Validations <span class="badge-warn" id="vb" style="display:none">0</span></button>
+<button class="btn btn-dn" id="bRet" onclick="sv('retards')">Retards<span class="badge" id="rb" style="display:none">0</span></button>
+<button class="btn btn-warn" id="bVal" onclick="sv('validation')">Valid.<span class="badge-warn" id="vb" style="display:none">0</span></button>
 <button class="btn" id="bAdm" onclick="sv('admin')">Admin</button>
+<button class="btn" id="bLog" onclick="sv('logs')">Logs</button>
 <button class="theme-btn" onclick="tTh()"><svg id="tIco" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
-<button class="btn no-print" onclick="window.print()"><svg style="width:14px;height:14px;vertical-align:middle" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+<button class="btn no-print" onclick="window.print()"><svg style="width:13px;height:13px;vertical-align:middle" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+<button class="btn btn-dn btn-sm" onclick="doLogout()">Déconnexion</button>
 </div></div>
 
 <div id="notif"></div>
 <div class="content">
 <div class="stats" id="stBar"></div>
-<div id="vSch"></div><div id="vFlt" style="display:none"></div><div id="vRet" style="display:none"></div><div id="vVal" style="display:none"></div><div id="vAdm" style="display:none"></div>
-<div class="print-footer"><div style="border-top:1px solid #ccc;padding-top:6px;font-size:7px;color:#64748b;text-align:center">PF: 7-9j · LAV: 9-14j · TC: 9-14j</div><div id="sigA"></div></div>
-</div>
+<div id="vSch"></div><div id="vFlt" style="display:none"></div><div id="vRet" style="display:none"></div><div id="vVal" style="display:none"></div><div id="vAdm" style="display:none"></div><div id="vLog" style="display:none"></div>
+<div class="print-footer"><div style="border-top:1px solid #ccc;padding-top:4px;font-size:6px;color:#64748b;text-align:center">PF:7-9j · LAV:9-14j · TC:9-14j · LC:7j</div><div id="sigA"></div></div>
+</div></div>
 
 <script>
 const WD=["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"],MO=["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
@@ -154,28 +188,79 @@ const fmtL=d=>{if(!d)return"";return new Date(d+'T12:00:00').toLocaleDateString(
 const daysBetween=(a,b)=>{if(!a||!b)return 999;return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/86400000);};
 const today=iso(new Date());const fbK=im=>im.replace(/[.#$/\[\]]/g,"_");
 const dim=(m,y)=>new Date(y,m+1,0).getDate();const mKey=(m,y)=>y+'-'+String(m+1).padStart(2,'0');
-const MIN_INT={pointFixe:7,lavage:9,corrosion:9};
-const TYPE_LABEL={pointFixe:"Pt Fixe",lavage:"Lavage",corrosion:"Trait. Corr."};
-const FIELD_LABELS={lastFlight:"Dernier Vol",lastLavage:"Dernier Lavage",lastPointFixe:"Dernier Point Fixe",lastCorrosion:"Dernier Trait. Corrosion"};
+const MIN_INT={pointFixe:7,lavage:9,corrosion:9,lavComp:7};
+const TLABEL={pointFixe:"Pt Fixe",lavage:"Lavage",corrosion:"Trait. Corr.",lavComp:"Lav. Compr."};
+const FLABEL={lastFlight:"Dernier Vol",lastLavage:"Dernier Lavage",lastPointFixe:"Dernier Pt Fixe",lastCorrosion:"Dernier Trait. Corrosion",lastLavComp:"Dernier Lav. Compresseur"};
+const TASK_TYPES=["pointFixe","lavage","corrosion","lavComp"];
 
-let fleet=[],pubSched=null,pendingSubs={},cv="schedule",db=null,isDark=false;
+let fleet=[],pubSched=null,pendingSubs={},admins={},auditLogs=[],weeklyPwd="",curAdmin=null,cv="schedule",db=null,isDark=false;
 let sigName="",sigPost="",sigImage="";
 let cM=new Date().getMonth(),cY=new Date().getFullYear();
 
 function tTh(){isDark=!isDark;document.documentElement.setAttribute("data-theme",isDark?"dark":"");localStorage.setItem("piste_theme",isDark?"dark":"light");document.getElementById("tIco").innerHTML=isDark?'<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>':'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';}
 if(localStorage.getItem("piste_theme")==="dark")tTh();
 
-function defFleet(){const dA=n=>{const d=new Date();d.setDate(d.getDate()-n);return iso(d);};const mk=(i,t)=>({immat:i,type:t,active:true,lastFlight:dA(10),lastLavage:dA(15),lastCorrosion:dA(15),lastPointFixe:dA(30)});return["TY-43L","TY-44L","TY-45L","TY-46L","TY-47L","TY-48L","TY-49L","TY-50L","TY-51L","TY-52L","TY-53L","TY-54L","TY-55L","TY-56L","TY-60L","TY-61L","TY-62L","TY-63L","TY-64L"].map(i=>mk(i,"ULM")).concat([mk("TY-27A","Avion"),mk("TY-29A","Avion")]);}
-function pushAll(){if(!db)return;const o={};fleet.forEach(a=>{o[fbK(a.immat)]=a;});db.ref("fleet").set(o);}
+// ===== AUTH =====
+function doLogin(){
+  const u=document.getElementById("loginUser").value.trim().toLowerCase();
+  const p=document.getElementById("loginPwd").value;
+  const admin=admins[u];
+  if(admin&&admin.password===p){
+    curAdmin=admin;curAdmin.id=u;
+    document.getElementById("loginScreen").style.display="none";
+    document.getElementById("appWrap").style.display="block";
+    document.getElementById("adminName").textContent=admin.name||u;
+    sessionStorage.setItem("piste_admin",u);
+    addLog("Connexion");
+  } else document.getElementById("loginError").style.display="block";
+}
+function doLogout(){curAdmin=null;sessionStorage.removeItem("piste_admin");document.getElementById("appWrap").style.display="none";document.getElementById("loginScreen").style.display="flex";document.getElementById("loginPwd").value="";document.getElementById("loginUser").value="";}
+function addLog(action){if(!db||!curAdmin)return;db.ref("auditLog").push({who:curAdmin.name||curAdmin.id,action,at:new Date().toISOString()});}
+
+// ===== WEEKLY PASSWORD =====
+function generateWeeklyPwd(){const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let p="";for(let i=0;i<6;i++)p+=c[Math.floor(Math.random()*c.length)];return p;}
+function checkAndRotatePwd(){
+  // Check if it's Monday and password needs rotation
+  const now=new Date();const day=now.getDay();
+  if(!db)return;
+  db.ref("weeklyPasswordDate").once("value",s=>{
+    const lastDate=s.val();const todayStr=today;
+    if(day===1&&lastDate!==todayStr){
+      const newPwd=generateWeeklyPwd();
+      db.ref("weeklyPassword").set(newPwd);
+      db.ref("weeklyPasswordDate").set(todayStr);
+    }
+  });
+}
+
+// ===== FIREBASE =====
+function initFB(){try{
+  firebase.initializeApp(FC);db=firebase.database();
+  db.ref(".info/connected").on("value",s=>{document.getElementById("cs").innerHTML=(s.val()?'<span class="cdot on"></span>Connecté':'<span class="cdot off"></span>Hors ligne');});
+  // Load admins first for login
+  db.ref("admins").on("value",s=>{
+    admins=s.val()||{};
+    if(!admins.admin){db.ref("admins/admin").set({name:"Administrateur",password:"admin"});admins.admin={name:"Administrateur",password:"admin"};}
+    // Auto-login from session
+    const saved=sessionStorage.getItem("piste_admin");
+    if(saved&&admins[saved]){curAdmin=admins[saved];curAdmin.id=saved;document.getElementById("loginScreen").style.display="none";document.getElementById("appWrap").style.display="block";document.getElementById("adminName").textContent=curAdmin.name||saved;}
+  });
+  db.ref("weeklyPassword").on("value",s=>{weeklyPwd=s.val()||"piste";});
+  checkAndRotatePwd();
+  db.ref("fleet").on("value",s=>{const d=s.val();if(d)fleet=Object.values(d);else fleet=[];loadOrGen();});
+  db.ref("pendingSubmissions").on("value",s=>{pendingSubs=s.val()||{};render();});
+  db.ref("auditLog").limitToLast(100).on("value",s=>{const d=s.val();auditLogs=d?Object.values(d).reverse():[];if(cv==="logs")rLog();});
+  db.ref("config").on("value",s=>{const c=s.val()||{};sigName=c.sigName||"";sigPost=c.sigPost||"";sigImage=c.sigImage||"";});
+}catch(e){console.error(e);}}
 
 // ===== TASK STATUS =====
 function taskStatus(im,ty,schedDate){
   const ac=fleet.find(a=>a.immat===im);if(!ac)return{st:"pending"};
-  const lastKey=ty==="pointFixe"?"lastPointFixe":ty==="lavage"?"lastLavage":"lastCorrosion";
-  const lastDate=ac[lastKey];const minInt=MIN_INT[ty];
-  if(lastDate&&lastDate>=schedDate){const late=lastDate>schedDate;return{st:"done",doneDate:late?lastDate:null};}
-  if(ty==="pointFixe"){const lf=ac.lastFlight,lp=ac.lastPointFixe;const base=(!lf&&!lp)?null:(!lp)?lf:(!lf)?lp:(lf>lp?lf:lp);if(base){const gap=daysBetween(base,schedDate);if(gap<minInt)return{st:"skip",label:`Dern. ${base===lf?"vol":"Pt Fixe"} -${minInt-gap}j`};}}
-  else{if(lastDate){const gap=daysBetween(lastDate,schedDate);if(gap<minInt)return{st:"skip",label:`Dern. ${TYPE_LABEL[ty]} -${minInt-gap}j`};}}
+  const lk=ty==="pointFixe"?"lastPointFixe":ty==="lavage"?"lastLavage":ty==="corrosion"?"lastCorrosion":"lastLavComp";
+  const ld=ac[lk];const mi=MIN_INT[ty];
+  if(ld&&ld>=schedDate){return{st:"done",doneDate:ld>schedDate?ld:null};}
+  if(ty==="pointFixe"){const lf=ac.lastFlight,lp=ac.lastPointFixe;const base=(!lf&&!lp)?null:(!lp)?lf:(!lf)?lp:(lf>lp?lf:lp);if(base){const g=daysBetween(base,schedDate);if(g<mi)return{st:"skip",label:`Dern.${base===lf?" vol":" PF"} -${mi-g}j`};}}
+  else{if(ld){const g=daysBetween(ld,schedDate);if(g<mi)return{st:"skip",label:`Dern.${TLABEL[ty]} -${mi-g}j`};}}
   if(schedDate<today)return{st:"missed"};
   return{st:"pending"};
 }
@@ -183,101 +268,102 @@ function taskStatus(im,ty,schedDate){
 // ===== SCHEDULE =====
 function generateSchedule(){
   const nd=dim(cM,cY),sd=new Date(cY,cM,1),sc={};
-  for(let i=0;i<nd;i++){const d=dk(addD(sd,i));sc[d]={pointFixe:[],lavage:[],corrosion:[]};}
-  Object.keys(sc).forEach(d=>{if(d<today)sc[d]._past=true;});
+  for(let i=0;i<nd;i++){sc[dk(addD(sd,i))]={pointFixe:[],lavage:[],corrosion:[],lavComp:[]};}
   const af=fleet.filter(a=>a.active),needs=[];
   af.forEach(ac=>{if(!ac.lastFlight)return;const lf=new Date(ac.lastFlight);
     const pfR=ac.lastPointFixe?new Date(ac.lastPointFixe):null,pfB=pfR&&pfR>lf?pfR:lf;
     needs.push({im:ac.immat,ty:"pointFixe",due:addD(pfB,7),pr:addD(pfB,7).getTime()});
     const lR=ac.lastLavage?new Date(ac.lastLavage):lf;needs.push({im:ac.immat,ty:"lavage",due:addD(lR,9),pr:addD(lR,9).getTime()});
     const cR=ac.lastCorrosion?new Date(ac.lastCorrosion):lf;needs.push({im:ac.immat,ty:"corrosion",due:addD(cR,9),pr:addD(cR,9).getTime()});
+    if(ac.hasLavComp){const lcR=ac.lastLavComp?new Date(ac.lastLavComp):lf;needs.push({im:ac.immat,ty:"lavComp",due:addD(lcR,7),pr:addD(lcR,7).getTime()});}
   });
   needs.sort((a,b)=>a.pr-b.pr);const used=new Set();
   for(let i=0;i<needs.length;i++){const n=needs[i],k=`${n.im}-${n.ty}-${n.due.getTime()}`;if(used.has(k))continue;
     for(let j=0;j<nd;j++){const d=addD(sd,j),d2=dk(d);if(d2<today||isWE(d2)||d<n.due)continue;const s=sc[d2];if(!s)continue;
-      if(n.ty==="pointFixe"&&s.pointFixe.length>=3)continue;if(n.ty==="lavage"&&s.lavage.length>=3)continue;if(n.ty==="corrosion"&&s.corrosion.length>=1)continue;
-      if(n.ty==="pointFixe"&&(s.lavage.includes(n.im)||s.corrosion.includes(n.im)))continue;
-      if((n.ty==="lavage"||n.ty==="corrosion")&&s.pointFixe.includes(n.im))continue;
+      if(n.ty==="pointFixe"&&s.pointFixe.length>=3)continue;if(n.ty==="lavage"&&s.lavage.length>=3)continue;if(n.ty==="corrosion"&&s.corrosion.length>=1)continue;if(n.ty==="lavComp"&&s.lavComp.length>=3)continue;
+      if(n.ty==="pointFixe"&&(s.lavage.includes(n.im)||s.corrosion.includes(n.im)||s.lavComp.includes(n.im)))continue;
+      if((n.ty==="lavage"||n.ty==="corrosion"||n.ty==="lavComp")&&s.pointFixe.includes(n.im))continue;
       if(s[n.ty].includes(n.im))continue;
       s[n.ty].push(n.im);used.add(k);const me=dk(new Date(cY,cM,nd));
-      if(n.ty!=="pointFixe"){const nx=addD(d,9);if(dk(nx)<=me){needs.push({im:n.im,ty:n.ty,due:nx,pr:nx.getTime()});needs.sort((a,b)=>a.pr-b.pr);}}
-      else{const nx=addD(d,7);if(dk(nx)<=me){needs.push({im:n.im,ty:"pointFixe",due:nx,pr:nx.getTime()});needs.sort((a,b)=>a.pr-b.pr);}}break;
+      const interval=n.ty==="lavComp"||n.ty==="pointFixe"?7:9;
+      const nx=addD(d,interval);if(dk(nx)<=me){needs.push({im:n.im,ty:n.ty,due:nx,pr:nx.getTime()});needs.sort((a,b)=>a.pr-b.pr);}break;
     }
   }
   sc._genDate=today;return sc;
 }
-function publishSchedule(){pubSched=generateSchedule();if(db){db.ref("schedules/"+mKey(cM,cY)).set(pubSched);if(pubSched[today])db.ref("todaySchedule").set(pubSched[today]);}render();}
-
-// ===== FIREBASE =====
-function initFB(){try{
-  firebase.initializeApp(FC);db=firebase.database();
-  db.ref(".info/connected").on("value",s=>{document.getElementById("cs").innerHTML=(s.val()?'<span class="cdot on"></span>Connecté':'<span class="cdot off"></span>Hors ligne');});
-  db.ref("fleet").on("value",s=>{const d=s.val();if(d)fleet=Object.values(d);else{fleet=defFleet();pushAll();}loadOrGen();});
-  db.ref("pendingSubmissions").on("value",s=>{pendingSubs=s.val()||{};render();});
-  db.ref("config").on("value",s=>{const c=s.val()||{};sigName=c.sigName||"";sigPost=c.sigPost||"";sigImage=c.sigImage||"";});
-}catch(e){fleet=defFleet();publishSchedule();}}
+function publishSchedule(){pubSched=generateSchedule();if(db){db.ref("schedules/"+mKey(cM,cY)).set(pubSched);if(pubSched[today])db.ref("todaySchedule").set(pubSched[today]);}addLog("Planning regénéré ("+MO[cM]+" "+cY+")");render();}
 function loadOrGen(){if(!db){pubSched=generateSchedule();render();return;}db.ref("schedules/"+mKey(cM,cY)).once("value",s=>{const d=s.val();if(d){pubSched=d;render();}else publishSchedule();});}
 
 // ===== VALIDATION =====
-function approveSubmission(id){
-  const p=pendingSubs[id];if(!p||!db)return;
-  db.ref("fleet/"+fbK(p.immat)+"/"+p.field).set(p.value);
-  db.ref("pendingSubmissions/"+id).remove();
-}
-function rejectSubmission(id){if(db)db.ref("pendingSubmissions/"+id).remove();}
-function approveAll(){Object.keys(pendingSubs).forEach(id=>approveSubmission(id));}
+function approveSub(id){const p=pendingSubs[id];if(!p||!db)return;db.ref("fleet/"+fbK(p.immat)+"/"+p.field).set(p.value);db.ref("pendingSubmissions/"+id).remove();addLog(`Validé: ${p.immat} ${p.label}=${fmt(p.value)}`);}
+function rejectSub(id){const p=pendingSubs[id];if(!db)return;db.ref("pendingSubmissions/"+id).remove();if(p)addLog(`Rejeté: ${p.immat} ${p.label}`);}
+function approveAll(){Object.keys(pendingSubs).forEach(id=>approveSub(id));}
 
 // ===== STATS =====
-const tl=t=>t==="pointFixe"?"POINT FIXE":t==="lavage"?"LAVAGE":"TRAIT. CORROSION";
-const tls=t=>TYPE_LABEL[t];const tH=t=>t==="pointFixe"?"pf-h":t==="lavage"?"lav-h":"tc-h";const tP=t=>t==="pointFixe"?"pending-pf":t==="lavage"?"pending-lav":"pending-tc";
-function getSt(){if(!pubSched)return{pf:0,lv:0,co:0,dn:0,ms:0,total:0,act:0,sz:fleet.length,pend:0};
-  let pf=0,lv=0,co=0,dn=0,ms=0,total=0;
-  Object.entries(pubSched).forEach(([dt,s])=>{if(!s||dt.startsWith("_"))return;["pointFixe","lavage","corrosion"].forEach(ty=>{if(!s[ty])return;s[ty].forEach(im=>{total++;const r=taskStatus(im,ty,dt);if(r.st==="done")dn++;else if(r.st==="missed")ms++;});});pf+=(s.pointFixe||[]).length;lv+=(s.lavage||[]).length;co+=(s.corrosion||[]).length;});
-  return{pf,lv,co,dn,ms,total,act:fleet.filter(a=>a.active&&a.lastFlight).length,sz:fleet.length,pend:Object.keys(pendingSubs).length};}
+const tl=t=>t==="pointFixe"?"PT FIXE":t==="lavage"?"LAVAGE":t==="corrosion"?"TRAIT. CORR.":"LAV. COMPR.";
+const tH=t=>t==="pointFixe"?"pf-h":t==="lavage"?"lav-h":t==="corrosion"?"tc-h":"lc-h";
+const tP=t=>t==="pointFixe"?"pending-pf":t==="lavage"?"pending-lav":t==="corrosion"?"pending-tc":"pending-lc";
+const tC=t=>t==="pointFixe"?{c:"var(--pf)",bg:"var(--pf-bg)",bd:"var(--pf-bd)"}:t==="lavage"?{c:"var(--lav)",bg:"var(--lav-bg)",bd:"var(--lav-bd)"}:t==="corrosion"?{c:"var(--tc)",bg:"var(--tc-bg)",bd:"var(--tc-bd)"}:{c:"var(--lc)",bg:"var(--lc-bg)",bd:"var(--lc-bd)"};
+
+function getSt(){if(!pubSched)return{pf:0,lv:0,co:0,lc:0,dn:0,ms:0,total:0,act:0,sz:fleet.length,pend:0};
+  let pf=0,lv=0,co=0,lcc=0,dn=0,ms=0,total=0;
+  Object.entries(pubSched).forEach(([dt,s])=>{if(!s||dt.startsWith("_"))return;
+    TASK_TYPES.forEach(ty=>{if(!s[ty])return;s[ty].forEach(im=>{total++;const r=taskStatus(im,ty,dt);if(r.st==="done")dn++;else if(r.st==="missed")ms++;});});
+    pf+=(s.pointFixe||[]).length;lv+=(s.lavage||[]).length;co+=(s.corrosion||[]).length;lcc+=(s.lavComp||[]).length;
+  });
+  return{pf,lv,co,lc:lcc,dn,ms,total,act:fleet.filter(a=>a.active&&a.lastFlight).length,sz:fleet.length,pend:Object.keys(pendingSubs).length};}
 
 // ===== RENDER =====
 function rSt(){const s=getSt();
   document.getElementById("stBar").innerHTML=[
-    {l:"Actifs",v:s.act,c:"var(--pf)"},{l:"Pt Fixes",v:s.pf,c:"var(--pf)"},{l:"Lavages",v:s.lv,c:"var(--lav)"},
-    {l:"Trait.Corr.",v:s.co,c:"var(--tc)"},{l:"Réalisés",v:s.dn+"/"+s.total,c:"var(--ok)"},{l:"Manqués",v:s.ms,c:s.ms?"var(--dn)":"var(--ok)"}
+    {l:"Actifs",v:s.act,c:"var(--pf)"},{l:"Lavages",v:s.lv,c:"var(--lav)"},{l:"Trait.Corr.",v:s.co,c:"var(--tc)"},{l:"Lav.Comp.",v:s.lc,c:"var(--lc)"},{l:"Réalisés",v:s.dn+"/"+s.total,c:"var(--ok)"},{l:"Manqués",v:s.ms,c:s.ms?"var(--dn)":"var(--ok)"}
   ].map(x=>`<div class="stat"><div class="stat-label">${x.l}</div><div class="stat-value" style="color:${x.c}">${x.v}</div></div>`).join("");
   document.getElementById("rb").textContent=s.ms;document.getElementById("rb").style.display=s.ms?"inline":"none";
   document.getElementById("vb").textContent=s.pend;document.getElementById("vb").style.display=s.pend?"inline":"none";
-  const appTitle="PLANNING DE LAVAGE - POINT FIXE - TRAITEMENT CORROSION";
-  document.getElementById("pT").textContent=`${appTitle} — ${MO[cM].toUpperCase()} ${cY}`;
+  document.getElementById("pT").textContent=`PLANNING DE LAVAGE - POINT FIXE - TRAITEMENT CORROSION — ${MO[cM].toUpperCase()} ${cY}`;
   document.getElementById("pS").textContent=`DU 01/${String(cM+1).padStart(2,'0')}/${cY} AU ${dim(cM,cY)}/${String(cM+1).padStart(2,'0')}/${cY} · ${s.act} aéronefs · ${fmtL(today)}`;
-  let sh="";if(sigName||sigPost||sigImage){sh+=`<div style="text-align:right;margin-top:14px">`;if(sigImage)sh+=`<img src="${sigImage}" style="max-height:70px;display:block;margin-left:auto;margin-bottom:4px">`;if(sigName)sh+=`<div style="font-size:11px;font-weight:800;color:#0f172a">${sigName}</div>`;if(sigPost)sh+=`<div style="font-size:9px;color:#64748b">${sigPost}</div>`;sh+=`</div>`;}
+  let sh="";if(sigName||sigPost||sigImage){sh+=`<div style="text-align:right;margin-top:12px">`;if(sigImage)sh+=`<img src="${sigImage}" style="max-height:60px;display:block;margin-left:auto;margin-bottom:3px">`;if(sigName)sh+=`<div style="font-size:10px;font-weight:800">${sigName}</div>`;if(sigPost)sh+=`<div style="font-size:8px;color:#64748b">${sigPost}</div>`;sh+=`</div>`;}
   document.getElementById("sigA").innerHTML=sh;}
 
 function rSch(){
-  if(!pubSched){document.getElementById("vSch").innerHTML=`<div style="text-align:center;padding:40px;color:var(--text2)">Chargement...</div>`;return;}
+  if(!pubSched){document.getElementById("vSch").innerHTML=`<div style="text-align:center;padding:30px;color:var(--text2)">Chargement...</div>`;return;}
   const nd=dim(cM,cY),sd=new Date(cY,cM,1),le=new Date(cY,cM,nd);
   let mon=new Date(sd);while(mon.getDay()!==1)mon.setDate(mon.getDate()-1);
   let fri=new Date(le);while(fri.getDay()!==5)fri.setDate(fri.getDate()+1);
   const wks=[];let cur=new Date(mon);while(cur<=fri){const w=[];for(let i=0;i<5;i++){w.push({d:dk(cur),in:cur.getMonth()===cM&&cur.getFullYear()===cY});cur.setDate(cur.getDate()+1);}cur.setDate(cur.getDate()+2);wks.push(w);}
 
   let h=`<div class="month-nav no-print"><button onclick="pM()">◀</button><div class="month-label">${MO[cM]} ${cY}</div><button onclick="nM()">▶</button>
-    <button onclick="if(confirm('Recalculer à partir d\\'aujourd\\'hui ?'))publishSchedule()" style="margin-left:auto;padding:9px 22px;border-radius:12px;border:none;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;cursor:pointer;font-family:inherit;font-size:12px;font-weight:800;box-shadow:0 4px 14px rgba(59,130,246,.35);display:flex;align-items:center;gap:6px" class="no-print">
-      <svg style="width:15px;height:15px" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Regénérer</button></div>`;
-  h+=`<div class="legend-bar no-print"><div class="legend-item"><div class="ld ld-p"></div>À faire</div><div class="legend-item"><div class="ld ld-d"></div>✓ Fait</div><div class="legend-item"><div class="ld ld-m"></div>✗ Manqué</div><div class="legend-item"><div class="ld ld-s"></div>— Inutile</div></div>`;
+    <button onclick="if(confirm('Recalculer?'))publishSchedule()" style="margin-left:auto;padding:8px 18px;border-radius:10px;border:none;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;cursor:pointer;font-size:11px;font-weight:800;box-shadow:0 4px 12px rgba(59,130,246,.3);display:flex;align-items:center;gap:5px" class="no-print">
+      <svg style="width:13px;height:13px" fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>Regénérer</button></div>`;
+  h+=`<div class="legend-bar no-print"><div class="legend-item"><div class="ld ld-p"></div>À faire</div><div class="legend-item"><div class="ld ld-d"></div>✓Fait</div><div class="legend-item"><div class="ld ld-m"></div>✗Manqué</div><div class="legend-item"><div class="ld ld-s"></div>Inutile</div></div>`;
   const pc=Object.keys(pendingSubs).length;
-  if(pc)h+=`<div onclick="sv('validation')" style="background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:10px;padding:10px 18px;margin-bottom:14px;cursor:pointer;display:flex;justify-content:space-between;font-weight:800;font-size:13px;color:var(--warn)" class="no-print"><span>📋 ${pc} saisie(s) en attente de validation</span><span>Voir →</span></div>`;
+  if(pc)h+=`<div onclick="sv('validation')" style="background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:8px;padding:8px 14px;margin-bottom:10px;cursor:pointer;display:flex;justify-content:space-between;font-weight:800;font-size:12px;color:var(--warn)" class="no-print"><span>📋 ${pc} saisie(s) en attente</span><span>→</span></div>`;
 
+  // Filter weeks with content
   wks.forEach(w=>{
-    const inW=w.filter(x=>x.in);const ws=inW.length?inW[0].d:w[0].d,we=inW.length?inW[inW.length-1].d:w[4].d;
+    const inW=w.filter(x=>x.in);
+    // Check if week has any tasks
+    let weekHasTasks=false;
+    w.forEach(({d,in:inM})=>{if(!inM)return;const sl=pubSched[d];if(!sl)return;if(TASK_TYPES.some(ty=>sl[ty]&&sl[ty].length))weekHasTasks=true;});
+    // Skip weeks entirely in past with no tasks
+    const allPast=inW.every(x=>x.d<today);
+    if(allPast&&!weekHasTasks)return;
+
+    const ws=inW.length?inW[0].d:w[0].d,we=inW.length?inW[inW.length-1].d:w[4].d;
     let wDone=0,wTotal=0;
-    w.forEach(({d,in:inM})=>{if(!inM)return;const sl=pubSched[d];if(!sl)return;const ht=(sl.pointFixe||[]).length||(sl.lavage||[]).length||(sl.corrosion||[]).length;if(!ht)return;["pointFixe","lavage","corrosion"].forEach(ty=>{if(!sl[ty])return;sl[ty].forEach(im=>{const r=taskStatus(im,ty,d);if(r.st!=="skip"){wTotal++;if(r.st==="done")wDone++;}});});});
+    w.forEach(({d,in:inM})=>{if(!inM)return;const sl=pubSched[d];if(!sl)return;TASK_TYPES.forEach(ty=>{if(!sl[ty])return;sl[ty].forEach(im=>{const r=taskStatus(im,ty,d);if(r.st!=="skip"){wTotal++;if(r.st==="done")wDone++;}});});});
     const wPct=wTotal?Math.round(wDone/wTotal*100):0;const bc=wPct>=80?"var(--ok)":wPct>=40?"var(--tc)":"var(--dn)";
     h+=`<div class="wblock"><div class="wheader"><span class="wheader-label">Sem. ${fmt(ws)} — ${fmt(we)}</span><div class="wprog">${wDone}/${wTotal}<div class="wprog-bar"><div class="wprog-fill" style="width:${wPct}%;background:${bc}"></div></div>${wPct}%</div></div><div class="wgrid">`;
     w.forEach(({d,in:inM})=>{
       const dt=new Date(d+'T12:00:00'),isT=d===today,isP=d<today;
       if(!inM){h+=`<div class="dcol outside"><div class="dhead">${WD[dt.getDay()]} ${dt.getDate()}</div></div>`;return;}
-      const sl=pubSched[d]||{pointFixe:[],lavage:[],corrosion:[]};
-      const hasTasks=(sl.pointFixe||[]).length||(sl.lavage||[]).length||(sl.corrosion||[]).length;
-      const isPastEmpty=isP&&!isT&&!hasTasks;
-      h+=`<div class="dcol${isT?' today':''}${isP&&!isT?' past':''}"><div class="dhead">${WD[dt.getDay()]} ${dt.getDate()}</div>`;
-      if(isPastEmpty){h+=`<div style="display:flex;align-items:center;justify-content:center;height:60px;opacity:.3"><div style="text-align:center"><svg style="width:18px;height:18px;margin:0 auto 3px;display:block" fill="none" stroke="var(--text3)" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="font-size:7px;font-weight:700;text-transform:uppercase;color:var(--text3)">Jour passé</span></div></div>`;}
-      else{["pointFixe","lavage","corrosion"].forEach(ty=>{
+      const sl=pubSched[d]||{pointFixe:[],lavage:[],corrosion:[],lavComp:[]};
+      const hasTasks=TASK_TYPES.some(ty=>sl[ty]&&sl[ty].length);
+      // Skip past empty days
+      if(isP&&!isT&&!hasTasks){h+=`<div class="dcol" style="opacity:.2"><div class="dhead">${WD[dt.getDay()]} ${dt.getDate()}</div><div style="text-align:center;margin-top:12px;font-size:7px;color:var(--text3);font-weight:700">PASSÉ</div></div>`;return;}
+
+      h+=`<div class="dcol${isT?' today':''}"><div class="dhead">${WD[dt.getDay()]} ${dt.getDate()}</div>`;
+      TASK_TYPES.forEach(ty=>{
         if(!sl[ty]||!sl[ty].length)return;
         h+=`<div class="tsec"><div class="tsec-head ${tH(ty)}">${tl(ty)}</div>`;
         sl[ty].forEach(im=>{const r=taskStatus(im,ty,d);let cls,ico,bdg="";
@@ -288,98 +374,109 @@ function rSch(){
           h+=`<div class="tp ${cls}"><div class="tp-ico">${ico}</div><span class="tp-name">${im}</span>${bdg}</div>`;
         });h+=`</div>`;
       });
-      if(!hasTasks&&!isPastEmpty)h+=`<div style="font-size:9px;color:var(--text3);margin-top:14px;text-align:center">—</div>`;}
+      if(!hasTasks)h+=`<div style="font-size:8px;color:var(--text3);margin-top:12px;text-align:center">—</div>`;
       h+=`</div>`;
     });h+=`</div></div>`;
   });
   document.getElementById("vSch").innerHTML=h;}
 
-function rFlt(){let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><h2 style="font-size:16px;font-weight:900">Flotte</h2><button class="btn btn-primary btn-sm" onclick="document.getElementById('aR').style.display='flex'">+ Ajouter</button></div>`;
-  h+=`<div id="aR" style="display:none" class="mrow"><div class="field"><label>Immat</label><input type="text" id="nI" placeholder="TY-XXX" style="text-transform:uppercase"></div><div class="field"><label>Type</label><input type="text" id="nT" value="ULM"></div><button class="btn btn-primary btn-sm" onclick="addA()">OK</button><button class="btn btn-sm" onclick="document.getElementById('aR').style.display='none'">×</button></div>`;
-  h+=`<div class="bulk-area"><h3>📝 Modification groupée</h3>
-    <p style="font-size:11px;color:var(--text2);margin-bottom:12px">Cochez les appareils dans le tableau, puis choisissez le champ et la date à appliquer.</p>
-    <div class="bulk-row">
-    <div class="field"><label>Champ</label><select id="bulkField"><option value="lastFlight">Dernier Vol</option><option value="lastLavage">Dernier Lavage</option><option value="lastCorrosion">Dernier Trait. Corrosion</option><option value="lastPointFixe">Dernier Point Fixe</option></select></div>
-    <div class="field"><label>Date</label><input type="date" id="bulkDate"></div>
-    <button class="btn btn-primary btn-sm" onclick="bulkEdit()">Appliquer aux sélectionnés</button>
-    <button class="btn btn-sm" onclick="bulkSelectAll()">Tout cocher</button>
-    <button class="btn btn-sm" onclick="bulkSelectNone()">Tout décocher</button>
-    </div></div>`;
-  h+=`<div style="overflow-x:auto;background:var(--bg2);border-radius:12px;border:1px solid var(--border);box-shadow:var(--sh)"><table><thead><tr><th style="width:40px"><input type="checkbox" id="checkAll" onchange="bulkToggleAll(this.checked)" style="width:16px;height:16px;cursor:pointer"></th><th>Actif</th><th>Immat</th><th>Type</th><th>Vol</th><th>Lavage</th><th>Corrosion</th><th>Pt Fixe</th><th></th></tr></thead><tbody>`;
-  fleet.forEach((a,i)=>{h+=`<tr style="${!a.active?'opacity:.35':''}"><td><input type="checkbox" class="ac-check" data-immat="${a.immat}" style="width:16px;height:16px;cursor:pointer"></td><td><button class="toggle ${a.active?'on':'off'}" onclick="tA(${i})"></button></td><td style="font-weight:800">${a.immat}</td><td><span class="tag" style="background:${a.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${a.type==='ULM'?'var(--pf-dark)':'#7c3aed'}">${a.type}</span></td><td><input type="date" value="${a.lastFlight||''}" onchange="uFld(${i},'lastFlight',this.value)" style="width:130px"></td><td><input type="date" value="${a.lastLavage||''}" onchange="uFld(${i},'lastLavage',this.value)" style="width:130px"></td><td><input type="date" value="${a.lastCorrosion||''}" onchange="uFld(${i},'lastCorrosion',this.value)" style="width:130px"></td><td><input type="date" value="${a.lastPointFixe||''}" onchange="uFld(${i},'lastPointFixe',this.value)" style="width:130px"></td><td><button class="btn btn-dn btn-xs" onclick="rmA(${i})">✕</button></td></tr>`;});
+function rFlt(){let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h2 style="font-size:15px;font-weight:900">Flotte</h2><button class="btn btn-primary btn-sm" onclick="document.getElementById('aR').style.display='flex'">+ Ajouter</button></div>`;
+  h+=`<div id="aR" style="display:none" class="mrow"><div class="field"><label>Immat</label><input type="text" id="nI" placeholder="TY-XXX" style="text-transform:uppercase"></div><div class="field"><label>Type</label><input type="text" id="nT" value="ULM"></div><div class="field"><label>Lav.Comp.</label><input type="checkbox" id="nLC" style="width:16px;height:16px"></div><button class="btn btn-primary btn-sm" onclick="addA()">OK</button><button class="btn btn-sm" onclick="document.getElementById('aR').style.display='none'">×</button></div>`;
+  h+=`<div class="bulk-area"><h3>📝 Modification groupée</h3><p style="font-size:10px;color:var(--text2);margin-bottom:8px">Cochez dans le tableau, choisissez champ + date</p><div class="bulk-row">
+    <div class="field"><label>Champ</label><select id="bF"><option value="lastFlight">Vol</option><option value="lastLavage">Lavage</option><option value="lastCorrosion">Corrosion</option><option value="lastPointFixe">Pt Fixe</option><option value="lastLavComp">Lav.Comp.</option></select></div>
+    <div class="field"><label>Date</label><input type="date" id="bD"></div>
+    <button class="btn btn-primary btn-sm" onclick="bulkEdit()">Appliquer</button>
+    <button class="btn btn-sm" onclick="bkAll(true)">✓ Tout</button><button class="btn btn-sm" onclick="bkAll(false)">✕ Rien</button></div></div>`;
+  h+=`<div style="overflow-x:auto;background:var(--bg2);border-radius:10px;border:1px solid var(--border);box-shadow:var(--sh)"><table><thead><tr><th style="width:30px"><input type="checkbox" onchange="bkAll(this.checked)" style="width:14px;height:14px;cursor:pointer"></th><th>Actif</th><th>Immat</th><th>Type</th><th>LC</th><th>Vol</th><th>Lavage</th><th>Corrosion</th><th>Pt Fixe</th><th>Lav.Comp</th><th></th></tr></thead><tbody>`;
+  fleet.forEach((a,i)=>{h+=`<tr style="${!a.active?'opacity:.35':''}"><td><input type="checkbox" class="bk-c" data-im="${a.immat}" style="width:14px;height:14px;cursor:pointer"></td><td><button class="toggle ${a.active?'on':'off'}" onclick="tA(${i})"></button></td><td style="font-weight:800">${a.immat}</td><td><span class="tag" style="background:${a.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${a.type==='ULM'?'var(--pf-dark)':'#7c3aed'}">${a.type}</span></td><td><input type="checkbox" ${a.hasLavComp?'checked':''} onchange="tLC(${i},this.checked)" style="width:14px;height:14px;cursor:pointer"></td><td><input type="date" value="${a.lastFlight||''}" onchange="uFld(${i},'lastFlight',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastLavage||''}" onchange="uFld(${i},'lastLavage',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastCorrosion||''}" onchange="uFld(${i},'lastCorrosion',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastPointFixe||''}" onchange="uFld(${i},'lastPointFixe',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastLavComp||''}" onchange="uFld(${i},'lastLavComp',this.value)" style="width:115px"></td><td><button class="btn btn-dn btn-xs" onclick="rmA(${i})">✕</button></td></tr>`;});
   h+=`</tbody></table></div>`;document.getElementById("vFlt").innerHTML=h;}
 
-function rVal(){
-  const entries=Object.entries(pendingSubs);
-  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px"><h2 style="font-size:16px;font-weight:900">Saisies en attente (${entries.length})</h2>`;
+function rVal(){const entries=Object.entries(pendingSubs);
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h2 style="font-size:15px;font-weight:900">Validations (${entries.length})</h2>`;
   if(entries.length)h+=`<button class="btn btn-ok btn-sm" onclick="approveAll()">✓ Tout valider</button>`;
   h+=`</div>`;
-  if(!entries.length)h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:14px;padding:36px;text-align:center"><div style="font-size:32px;margin-bottom:8px">✅</div><div style="font-weight:900;color:var(--ok-dark)">Aucune saisie en attente</div></div>`;
-  else{entries.sort((a,b)=>b[1].submittedAt?.localeCompare(a[1].submittedAt));
-    entries.forEach(([id,p])=>{
-      h+=`<div class="pend-card"><div class="pend-info">
-        <span class="pend-immat">${p.immat}</span>
-        <div><span class="tag" style="background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd)">${p.label||p.field}</span>
-        <span style="font-size:13px;font-weight:800;margin-left:8px;color:var(--text)">${fmt(p.value)}</span>
-        <span style="font-size:11px;color:var(--text3);margin-left:8px">${p.submittedAt?new Date(p.submittedAt).toLocaleString("fr-FR"):''}</span></div>
-      </div><div class="pend-actions">
-        <button class="btn btn-ok btn-sm" onclick="approveSubmission('${id}')">✓ Valider</button>
-        <button class="btn btn-dn btn-sm" onclick="rejectSubmission('${id}')">✕ Rejeter</button>
-      </div></div>`;
-    });}
+  if(!entries.length)h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:10px;padding:30px;text-align:center"><div style="font-size:28px;margin-bottom:6px">✅</div><div style="font-weight:900;color:var(--ok-dark)">Aucune saisie en attente</div></div>`;
+  else entries.sort((a,b)=>(b[1].submittedAt||"").localeCompare(a[1].submittedAt||"")).forEach(([id,p])=>{
+    h+=`<div class="pend-card"><div style="display:flex;align-items:center;gap:10px"><span style="font-weight:900;font-size:14px">${p.immat}</span><span class="tag" style="background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd)">${p.label||p.field}</span><span style="font-weight:800">${fmt(p.value)}</span><span style="font-size:10px;color:var(--text3)">${p.submittedAt?new Date(p.submittedAt).toLocaleString("fr-FR"):''}</span></div>
+    <div style="display:flex;gap:5px"><button class="btn btn-ok btn-sm" onclick="approveSub('${id}')">✓</button><button class="btn btn-dn btn-sm" onclick="rejectSub('${id}')">✕</button></div></div>`;
+  });
   document.getElementById("vVal").innerHTML=h;}
 
 function rRet(){let missed=[];
-  if(pubSched)Object.entries(pubSched).forEach(([dt,s])=>{if(!s||dt.startsWith("_"))return;["pointFixe","lavage","corrosion"].forEach(ty=>{if(!s[ty])return;s[ty].forEach(im=>{if(taskStatus(im,ty,dt).st==="missed")missed.push({im,ty,dt});});});});
-  let h=`<h2 style="font-size:16px;font-weight:900;margin-bottom:14px">Tâches manquées</h2>`;
-  if(!missed.length)h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:12px;padding:36px;text-align:center"><div style="font-size:32px;margin-bottom:8px">✅</div><div style="font-weight:900;color:var(--ok-dark)">Tout est à jour</div></div>`;
-  else{const g={pointFixe:[],lavage:[],corrosion:[]};missed.forEach(m=>g[m.ty].push(m));
-    [{k:"pointFixe",l:"Points Fixes"},{k:"lavage",l:"Lavages"},{k:"corrosion",l:"Trait. Corrosion"}].forEach(s=>{if(!g[s.k].length)return;
-      h+=`<div class="ocard"><div class="ohead"><span style="font-weight:900;color:var(--dn)">${s.l} (${g[s.k].length})</span></div><table><thead><tr><th>Aéronef</th><th>Date prévue</th><th>Retard</th></tr></thead><tbody>`;
-      g[s.k].forEach(m=>{const late=daysBetween(m.dt,today);h+=`<tr><td style="font-weight:800">${m.im}</td><td style="color:var(--dn);font-weight:700">${fmt(m.dt)}</td><td><span style="background:var(--dn-bg);color:var(--dn);padding:3px 8px;border-radius:5px;font-weight:900;font-size:11px">+${late}j</span></td></tr>`;});
+  if(pubSched)Object.entries(pubSched).forEach(([dt,s])=>{if(!s||dt.startsWith("_"))return;TASK_TYPES.forEach(ty=>{if(!s[ty])return;s[ty].forEach(im=>{if(taskStatus(im,ty,dt).st==="missed")missed.push({im,ty,dt});});});});
+  let h=`<h2 style="font-size:15px;font-weight:900;margin-bottom:12px">Manqués</h2>`;
+  if(!missed.length)h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:10px;padding:30px;text-align:center"><div style="font-size:28px;margin-bottom:6px">✅</div><div style="font-weight:900;color:var(--ok-dark)">Tout est à jour</div></div>`;
+  else{const g={};TASK_TYPES.forEach(ty=>{g[ty]=[];});missed.forEach(m=>g[m.ty].push(m));
+    TASK_TYPES.forEach(ty=>{if(!g[ty].length)return;
+      h+=`<div class="ocard"><div class="ohead"><span style="font-weight:900;color:var(--dn)">${tl(ty)} (${g[ty].length})</span></div><table><thead><tr><th>Aéronef</th><th>Prévu</th><th>Retard</th></tr></thead><tbody>`;
+      g[ty].forEach(m=>{const late=daysBetween(m.dt,today);h+=`<tr><td style="font-weight:800">${m.im}</td><td style="color:var(--dn);font-weight:700">${fmt(m.dt)}</td><td><span style="background:var(--dn-bg);color:var(--dn);padding:2px 7px;border-radius:4px;font-weight:900;font-size:10px">+${late}j</span></td></tr>`;});
       h+=`</tbody></table></div>`;});}
   document.getElementById("vRet").innerHTML=h;}
 
-function rAdm(){let h=`<h2 style="font-size:16px;font-weight:900;margin-bottom:14px">Administration</h2>`;
-  h+=`<div class="sig-area"><h3 style="font-weight:800;margin-bottom:10px">Signature PDF</h3><p style="font-size:11px;color:var(--text2);margin-bottom:12px">Signature → Nom → Poste</p>`;
-  h+=`<div class="field" style="margin-bottom:8px"><label>Image</label><input type="file" accept="image/*" onchange="uSig(event)" style="font-size:12px"></div>`;
-  if(sigImage)h+=`<div style="margin-bottom:8px"><img src="${sigImage}" style="max-height:60px;border-radius:6px;border:1px solid var(--border)"><br><button class="btn btn-dn btn-xs" style="margin-top:4px" onclick="rSig()">Suppr.</button></div>`;
-  h+=`<div class="field" style="margin-bottom:8px"><label>Nom</label><input type="text" id="sN" value="${sigName}" style="width:100%;padding:8px" onchange="sSig()"></div>`;
-  h+=`<div class="field" style="margin-bottom:8px"><label>Poste</label><input type="text" id="sP" value="${sigPost}" style="width:100%;padding:8px" onchange="sSig()"></div>`;
-  if(sigName||sigImage)h+=`<div style="margin-top:10px;padding:12px;background:var(--bg);border-radius:8px;border:1px dashed var(--border)"><div style="font-size:9px;color:var(--text3);margin-bottom:4px;font-weight:800">APERÇU</div><div style="text-align:right">${sigImage?`<img src="${sigImage}" style="max-height:50px;display:block;margin-left:auto;margin-bottom:3px">`:''}${sigName?`<div style="font-size:12px;font-weight:800">${sigName}</div>`:''}${sigPost?`<div style="font-size:11px;color:var(--text2)">${sigPost}</div>`:''}</div></div>`;
-  h+=`</div><div style="margin-top:14px;padding:16px;background:var(--bg2);border-radius:12px;border:1px solid var(--border)"><h3 style="font-weight:800;margin-bottom:8px">Données</h3><button class="btn btn-sm" onclick="xBk()">💾 Backup</button> <button class="btn btn-sm" onclick="document.getElementById('iF').click()">📂 Importer</button><input type="file" id="iF" accept=".json" style="display:none" onchange="iBk(event)"></div>`;
+function rAdm(){let h=`<h2 style="font-size:15px;font-weight:900;margin-bottom:14px">Administration</h2>`;
+  // Weekly password
+  h+=`<div class="pwd-card"><h3>🔑 Mot de passe hebdomadaire (mobile)</h3>
+    <p style="font-size:11px;color:var(--text2)">Généré automatiquement chaque lundi. À communiquer au personnel de permanence.</p>
+    <div class="pwd-display" id="pwdDisp">${weeklyPwd}</div>
+    <div style="display:flex;gap:6px"><button class="btn btn-primary btn-sm" onclick="newPwd()">Nouveau mot de passe</button>
+    <input type="text" id="customPwd" placeholder="Ou saisir manuellement" style="flex:1;padding:7px">
+    <button class="btn btn-sm" onclick="setPwd()">Appliquer</button></div></div>`;
+  // Admin accounts
+  h+=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)"><h3 style="font-size:13px;font-weight:800;margin-bottom:10px">👤 Comptes Admin</h3>`;
+  Object.entries(admins).forEach(([id,a])=>{
+    h+=`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bg3)">
+      <div><span style="font-weight:800">${a.name||id}</span> <span style="font-size:10px;color:var(--text3)">ID: ${id}</span></div>
+      <div style="display:flex;gap:5px">${id!=='admin'?`<button class="btn btn-dn btn-xs" onclick="rmAdmin('${id}')">Suppr.</button>`:''}</div></div>`;
+  });
+  h+=`<div class="mrow" style="margin-top:10px"><div class="field"><label>ID</label><input type="text" id="naId" placeholder="identifiant"></div><div class="field"><label>Nom</label><input type="text" id="naName" placeholder="Nom complet"></div><div class="field"><label>Mot de passe</label><input type="text" id="naPwd" placeholder="mot de passe"></div><button class="btn btn-primary btn-sm" onclick="addAdmin()">Créer</button></div></div>`;
+  // Signature
+  h+=`<div class="sig-area"><h3 style="font-size:13px;font-weight:800;margin-bottom:8px">Signature PDF</h3>
+    <div class="field" style="margin-bottom:6px"><label>Image</label><input type="file" accept="image/*" onchange="uSig(event)" style="font-size:11px"></div>
+    ${sigImage?`<div style="margin-bottom:6px"><img src="${sigImage}" style="max-height:50px;border-radius:6px;border:1px solid var(--border)"><br><button class="btn btn-dn btn-xs" style="margin-top:3px" onclick="rSig()">Suppr.</button></div>`:''}
+    <div class="field" style="margin-bottom:6px"><label>Nom</label><input type="text" id="sN" value="${sigName}" style="width:100%;padding:7px" onchange="sSig()"></div>
+    <div class="field" style="margin-bottom:6px"><label>Poste</label><input type="text" id="sP" value="${sigPost}" style="width:100%;padding:7px" onchange="sSig()"></div></div>`;
+  // Backup
+  h+=`<div style="margin-top:12px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)"><button class="btn btn-sm" onclick="xBk()">💾 Backup</button> <button class="btn btn-sm" onclick="document.getElementById('iF').click()">📂 Importer</button><input type="file" id="iF" accept=".json" style="display:none" onchange="iBk(event)"></div>`;
   document.getElementById("vAdm").innerHTML=h;}
 
-function sSig(){sigName=document.getElementById("sN").value;sigPost=document.getElementById("sP").value;if(db){db.ref("config/sigName").set(sigName);db.ref("config/sigPost").set(sigPost);}rAdm();}
+function rLog(){
+  let h=`<h2 style="font-size:15px;font-weight:900;margin-bottom:12px">Journal d'activité</h2>`;
+  if(!auditLogs.length)h+=`<p style="color:var(--text2)">Aucune activité enregistrée</p>`;
+  else{h+=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:var(--sh)">`;
+    auditLogs.forEach(l=>{h+=`<div class="log-entry"><span class="log-who">${l.who||'—'}</span><span class="log-when">${l.at?new Date(l.at).toLocaleString("fr-FR"):''}</span><span class="log-what">${l.action||''}</span></div>`;});
+    h+=`</div>`;}
+  document.getElementById("vLog").innerHTML=h;}
+
+// Admin account management
+function addAdmin(){const id=document.getElementById("naId").value.trim().toLowerCase();const name=document.getElementById("naName").value.trim();const pwd=document.getElementById("naPwd").value;if(!id||!pwd)return;if(db)db.ref("admins/"+id).set({name:name||id,password:pwd});addLog("Créé compte admin: "+id);document.getElementById("naId").value="";document.getElementById("naName").value="";document.getElementById("naPwd").value="";rAdm();}
+function rmAdmin(id){if(!confirm("Supprimer le compte "+id+" ?"))return;if(db)db.ref("admins/"+id).remove();addLog("Supprimé compte admin: "+id);}
+
+// Weekly password
+function newPwd(){const p=generateWeeklyPwd();if(db){db.ref("weeklyPassword").set(p);db.ref("weeklyPasswordDate").set(today);}addLog("Nouveau MDP hebdo généré");rAdm();}
+function setPwd(){const p=document.getElementById("customPwd").value.trim();if(!p)return;if(db){db.ref("weeklyPassword").set(p);db.ref("weeklyPasswordDate").set(today);}addLog("MDP hebdo modifié manuellement");rAdm();}
+
+// Signature
+function sSig(){sigName=document.getElementById("sN").value;sigPost=document.getElementById("sP").value;if(db){db.ref("config/sigName").set(sigName);db.ref("config/sigPost").set(sigPost);}addLog("Signature modifiée");}
 function uSig(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{sigImage=ev.target.result;if(db)db.ref("config/sigImage").set(sigImage);rAdm();};r.readAsDataURL(f);}
 function rSig(){sigImage="";if(db)db.ref("config/sigImage").remove();rAdm();}
 function xBk(){const d=JSON.stringify({fleet,sigName,sigPost,sigImage},null,2);const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([d],{type:"application/json"}));a.download="piste_backup.json";a.click();}
-function iBk(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.fleet){fleet=d.fleet;sigName=d.sigName||"";sigPost=d.sigPost||"";sigImage=d.sigImage||"";if(db){pushAll();db.ref("config").set({sigName,sigPost,sigImage});}publishSchedule();}}catch(e){}};r.readAsText(f);e.target.value="";}
+function iBk(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.fleet){fleet=d.fleet;sigName=d.sigName||"";sigPost=d.sigPost||"";sigImage=d.sigImage||"";if(db){const o={};fleet.forEach(a=>{o[fbK(a.immat)]=a;});db.ref("fleet").set(o);db.ref("config").set({sigName,sigPost,sigImage});}addLog("Import backup");publishSchedule();}}catch(e){}};r.readAsText(f);e.target.value="";}
 
+// Nav
 function pM(){cM--;if(cM<0){cM=11;cY--;}pubSched=null;loadOrGen();}
 function nM(){cM++;if(cM>11){cM=0;cY++;}pubSched=null;loadOrGen();}
-function bulkEdit(){
-  const field=document.getElementById("bulkField").value;
-  const date=document.getElementById("bulkDate").value;
-  if(!date){alert("Sélectionnez une date");return;}
-  const checked=[...document.querySelectorAll(".ac-check:checked")].map(c=>c.dataset.immat);
-  if(!checked.length){alert("Cochez au moins un aéronef");return;}
-  if(!confirm(`Appliquer ${FIELD_LABELS[field]} = ${fmt(date)} à ${checked.length} aéronef(s) ?\n\n${checked.join(", ")}`))return;
-  checked.forEach(im=>{
-    const ac=fleet.find(a=>a.immat===im);if(!ac)return;
-    ac[field]=date;
-    if(db)db.ref("fleet/"+fbK(im)+"/"+field).set(date);
-  });render();
-}
-function bulkToggleAll(v){document.querySelectorAll(".ac-check").forEach(c=>{c.checked=v;});}
-function bulkSelectAll(){document.querySelectorAll(".ac-check").forEach(c=>{c.checked=true;});const ca=document.getElementById("checkAll");if(ca)ca.checked=true;}
-function bulkSelectNone(){document.querySelectorAll(".ac-check").forEach(c=>{c.checked=false;});const ca=document.getElementById("checkAll");if(ca)ca.checked=false;}
-function sv(v){cv=v;["Sch","Flt","Ret","Val","Adm"].forEach(id=>{document.getElementById("v"+id).style.display="none";const b=document.getElementById("b"+id);if(b)b.classList.remove("active");});const m={schedule:"Sch",fleet:"Flt",retards:"Ret",validation:"Val",admin:"Adm"};document.getElementById("v"+m[v]).style.display="block";const b2=document.getElementById("b"+m[v]);if(b2)b2.classList.add("active");if(v==="admin")rAdm();if(v==="validation")rVal();}
+function sv(v){cv=v;["Sch","Flt","Ret","Val","Adm","Log"].forEach(id=>{document.getElementById("v"+id).style.display="none";const b=document.getElementById("b"+id);if(b)b.classList.remove("active");});const m={schedule:"Sch",fleet:"Flt",retards:"Ret",validation:"Val",admin:"Adm",logs:"Log"};document.getElementById("v"+m[v]).style.display="block";const b2=document.getElementById("b"+m[v]);if(b2)b2.classList.add("active");if(v==="admin")rAdm();if(v==="validation")rVal();if(v==="logs")rLog();}
 function render(){rSt();rFlt();rSch();rRet();rVal();}
-function uFld(i,field,val){fleet[i][field]=val||null;if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/"+field).set(val||null);render();}
-function tA(i){fleet[i].active=!fleet[i].active;if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/active").set(fleet[i].active);render();}
-function rmA(i){if(!confirm("Supprimer "+fleet[i].immat+" ?"))return;const im=fleet[i].immat;fleet.splice(i,1);if(db)db.ref("fleet/"+fbK(im)).remove();render();}
-function addA(){const im=document.getElementById("nI").value.trim().toUpperCase(),ty=document.getElementById("nT").value.trim()||"ULM";if(!im||fleet.find(a=>a.immat===im))return;const ac={immat:im,type:ty,active:true,lastFlight:null,lastLavage:null,lastCorrosion:null,lastPointFixe:null};fleet.push(ac);if(db)db.ref("fleet/"+fbK(im)).set(ac);document.getElementById("aR").style.display="none";document.getElementById("nI").value="";render();}
+
+// Fleet ops
+function uFld(i,f,v){fleet[i][f]=v||null;if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/"+f).set(v||null);addLog(`${fleet[i].immat}: ${FLABEL[f]||f}=${v?fmt(v):'vide'}`);render();}
+function tLC(i,v){fleet[i].hasLavComp=v;if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/hasLavComp").set(v);render();}
+function tA(i){fleet[i].active=!fleet[i].active;if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/active").set(fleet[i].active);addLog(`${fleet[i].immat}: ${fleet[i].active?'Activé':'Désactivé'}`);render();}
+function rmA(i){if(!confirm("Supprimer "+fleet[i].immat+" ?"))return;const im=fleet[i].immat;fleet.splice(i,1);if(db)db.ref("fleet/"+fbK(im)).remove();addLog("Supprimé: "+im);render();}
+function addA(){const im=document.getElementById("nI").value.trim().toUpperCase(),ty=document.getElementById("nT").value.trim()||"ULM",lc=document.getElementById("nLC").checked;if(!im||fleet.find(a=>a.immat===im))return;const ac={immat:im,type:ty,active:true,hasLavComp:lc,lastFlight:null,lastLavage:null,lastCorrosion:null,lastPointFixe:null,lastLavComp:null};fleet.push(ac);if(db)db.ref("fleet/"+fbK(im)).set(ac);document.getElementById("aR").style.display="none";document.getElementById("nI").value="";addLog("Ajouté: "+im);render();}
+function bulkEdit(){const f=document.getElementById("bF").value,d=document.getElementById("bD").value;if(!d){alert("Date?");return;}const sel=[...document.querySelectorAll(".bk-c:checked")].map(c=>c.dataset.im);if(!sel.length){alert("Cochez des aéronefs");return;}if(!confirm(`Appliquer ${FLABEL[f]||f}=${fmt(d)} à ${sel.length} aéronef(s)?`))return;sel.forEach(im=>{const ac=fleet.find(a=>a.immat===im);if(ac){ac[f]=d;if(db)db.ref("fleet/"+fbK(im)+"/"+f).set(d);}});addLog(`Modif groupée: ${FLABEL[f]||f}=${fmt(d)} sur ${sel.length} aéronefs`);render();}
+function bkAll(v){document.querySelectorAll(".bk-c").forEach(c=>{c.checked=v;});}
+
 initFB();
 </script>
 </body>
