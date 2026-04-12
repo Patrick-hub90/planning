@@ -104,10 +104,7 @@ td{padding:7px 10px;border-bottom:1px solid var(--bg3);font-size:11px}
 .log-who{font-weight:800;color:var(--pf);min-width:80px}
 .log-when{color:var(--text3);font-size:10px;min-width:120px}
 .log-what{flex:1;color:var(--text)}
-/* Weekly password section */
-.pwd-card{background:var(--bg2);border:1px solid var(--pf-bd);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:var(--sh)}
-.pwd-card h3{font-size:14px;font-weight:800;margin-bottom:8px;color:var(--pf)}
-.pwd-display{font-size:28px;font-weight:900;letter-spacing:6px;color:var(--text);text-align:center;padding:14px;background:var(--bg3);border-radius:10px;margin:10px 0;font-family:monospace}
+/* Weekly password section removed */
 .print-header,.print-footer{display:none}
 @media print{
 @page{size:landscape;margin:10mm}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
@@ -214,7 +211,7 @@ const TLABEL={pointFixe:"Pt Fixe",lavage:"Lavage",corrosion:"Trait. Corr.",lavCo
 const FLABEL={lastFlight:"Dernier Vol",lastLavage:"Dernier Lavage",lastPointFixe:"Dernier Pt Fixe",lastCorrosion:"Dernier Trait. Corrosion",lastLavComp:"Dernier Lav. Compresseur"};
 const TASK_TYPES=["pointFixe","lavage","corrosion","lavComp"];
 
-let fleet=[],pubSched=null,pendingSubs={},admins={},auditLogs=[],weeklyPwd="",curAdmin=null,isSuper=false,cv="schedule",db=null,isDark=false;
+let fleet=[],pubSched=null,pendingSubs={},admins={},auditLogs=[],mobileUsers={},curAdmin=null,isSuper=false,cv="schedule",db=null,isDark=false;
 let sigName="",sigPost="",sigImage="";
 let pFonts={title:18,subtitle:11,weekHeader:12,dayHeader:12,sectionLabel:9,taskName:10,taskBadge:7,signature:11};
 let maxDay={pointFixe:1,lavage:1,corrosion:1,lavComp:1};
@@ -241,22 +238,6 @@ function doLogin(){
 function doLogout(){curAdmin=null;sessionStorage.removeItem("piste_admin");document.getElementById("appWrap").style.display="none";document.getElementById("loginScreen").style.display="flex";document.getElementById("loginPwd").value="";document.getElementById("loginUser").value="";}
 function addLog(action){if(!db||!curAdmin)return;db.ref("auditLog").push({who:curAdmin.name||curAdmin.id,action,at:new Date().toISOString()});}
 
-// ===== WEEKLY PASSWORD =====
-function generateWeeklyPwd(){const c="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";let p="";for(let i=0;i<6;i++)p+=c[Math.floor(Math.random()*c.length)];return p;}
-function checkAndRotatePwd(){
-  // Check if it's Monday and password needs rotation
-  const now=new Date();const day=now.getDay();
-  if(!db)return;
-  db.ref("weeklyPasswordDate").once("value",s=>{
-    const lastDate=s.val();const todayStr=today;
-    if(day===1&&lastDate!==todayStr){
-      const newPwd=generateWeeklyPwd();
-      db.ref("weeklyPassword").set(newPwd);
-      db.ref("weeklyPasswordDate").set(todayStr);
-    }
-  });
-}
-
 // ===== FIREBASE =====
 function initFB(){try{
   firebase.initializeApp(FC);db=firebase.database();
@@ -271,8 +252,7 @@ function initFB(){try{
     const saved=sessionStorage.getItem("piste_admin");
     if(saved&&admins[saved]){curAdmin=admins[saved];curAdmin.id=saved;isSuper=(saved==="admin"||curAdmin.role==="super");document.getElementById("loginScreen").style.display="none";document.getElementById("appWrap").style.display="block";document.getElementById("adminName").textContent=(curAdmin.name||saved)+(isSuper?" (Admin)":" (Lecture)");document.getElementById("superBtns").style.display=isSuper?"inline":"none";render();}
   });
-  db.ref("weeklyPassword").on("value",s=>{weeklyPwd=s.val()||"piste";});
-  checkAndRotatePwd();
+  db.ref("mobileUsers").on("value",s=>{mobileUsers=s.val()||{};if(cv==="admin")rAdm();});
   db.ref("fleet").on("value",s=>{const d=s.val();if(d)fleet=Object.values(d);else fleet=[];loadOrGen();});
   db.ref("pendingSubmissions").on("value",s=>{pendingSubs=s.val()||{};render();});
   db.ref("auditLog").limitToLast(100).on("value",s=>{const d=s.val();auditLogs=d?Object.values(d).reverse():[];if(cv==="logs")rLog();});
@@ -321,8 +301,8 @@ function publishSchedule(){pubSched=generateSchedule();if(db){db.ref("schedules/
 function loadOrGen(){if(!db){pubSched=generateSchedule();render();return;}db.ref("schedules/"+mKey(cM,cY)).once("value",s=>{const d=s.val();if(d){pubSched=d;render();}else publishSchedule();});}
 
 // ===== VALIDATION =====
-function approveSub(id){const p=pendingSubs[id];if(!p||!db)return;db.ref("fleet/"+fbK(p.immat)+"/"+p.field).set(p.value);db.ref("pendingSubmissions/"+id).remove();addLog(`Validé: ${p.immat} ${p.label}=${fmt(p.value)}`);}
-function rejectSub(id){const p=pendingSubs[id];if(!db)return;db.ref("pendingSubmissions/"+id).remove();if(p)addLog(`Rejeté: ${p.immat} ${p.label}`);}
+function approveSub(id){const p=pendingSubs[id];if(!p||!db)return;db.ref("fleet/"+fbK(p.immat)+"/"+p.field).set(p.value);db.ref("pendingSubmissions/"+id).remove();const who=curAdmin?(curAdmin.name||curAdmin.id):"admin";addLog(`Validé par ${who}: ${p.immat} ${p.label}=${fmt(p.value)} (soumis par ${p.submittedBy||'—'})`);}
+function rejectSub(id){const p=pendingSubs[id];if(!db)return;db.ref("pendingSubmissions/"+id).remove();const who=curAdmin?(curAdmin.name||curAdmin.id):"admin";if(p)addLog(`Rejeté par ${who}: ${p.immat} ${p.label} (soumis par ${p.submittedBy||'—'})`);}
 function approveAll(){Object.keys(pendingSubs).forEach(id=>approveSub(id));}
 
 // ===== STATS =====
@@ -435,7 +415,7 @@ function rVal(){const entries=Object.entries(pendingSubs);
   h+=`</div>`;
   if(!entries.length)h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:10px;padding:30px;text-align:center"><div style="font-size:28px;margin-bottom:6px">✅</div><div style="font-weight:900;color:var(--ok-dark)">Aucune saisie en attente</div></div>`;
   else entries.sort((a,b)=>(b[1].submittedAt||"").localeCompare(a[1].submittedAt||"")).forEach(([id,p])=>{
-    h+=`<div class="pend-card"><div style="display:flex;align-items:center;gap:10px"><span style="font-weight:900;font-size:14px">${p.immat}</span><span class="tag" style="background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd)">${p.label||p.field}</span><span style="font-weight:800">${fmt(p.value)}</span><span style="font-size:10px;color:var(--text3)">${p.submittedAt?new Date(p.submittedAt).toLocaleString("fr-FR"):''}</span></div>
+    h+=`<div class="pend-card"><div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span style="font-weight:900;font-size:14px">${p.immat}</span><span class="tag" style="background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd)">${p.label||p.field}</span><span style="font-weight:800">${fmt(p.value)}</span>${p.submittedBy?`<span style="font-size:10px;color:var(--pf);font-weight:700">par ${p.submittedBy}</span>`:''}<span style="font-size:10px;color:var(--text3)">${p.submittedAt?new Date(p.submittedAt).toLocaleString("fr-FR"):''}</span></div>
     ${isSuper?`<div style="display:flex;gap:5px"><button class="btn btn-ok btn-sm" onclick="approveSub('${id}')">✓</button><button class="btn btn-dn btn-sm" onclick="rejectSub('${id}')">✕</button></div>`:'<span style="font-size:10px;color:var(--text3)">En attente</span>'}</div>`;
   });
   document.getElementById("vVal").innerHTML=h;}
@@ -453,13 +433,16 @@ function rRet(){let missed=[];
 
 function rAdm(){if(!isSuper){document.getElementById("vAdm").innerHTML=`<div style="text-align:center;padding:30px;color:var(--text2)"><div style="font-size:28px;margin-bottom:8px">🔒</div><div style="font-weight:800">Accès réservé à l'administrateur principal</div></div>`;return;}
   let h=`<h2 style="font-size:15px;font-weight:900;margin-bottom:14px">Administration</h2>`;
-  // Weekly password
-  h+=`<div class="pwd-card"><h3>🔑 Mot de passe hebdomadaire (mobile)</h3>
-    <p style="font-size:11px;color:var(--text2)">Généré automatiquement chaque lundi. À communiquer au personnel de permanence.</p>
-    <div class="pwd-display" id="pwdDisp">${weeklyPwd}</div>
-    <div style="display:flex;gap:6px"><button class="btn btn-primary btn-sm" onclick="newPwd()">Nouveau mot de passe</button>
-    <input type="text" id="customPwd" placeholder="Ou saisir manuellement" style="flex:1;padding:7px">
-    <button class="btn btn-sm" onclick="setPwd()">Appliquer</button></div></div>`;
+  // Mobile users
+  h+=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)"><h3 style="font-size:13px;font-weight:800;margin-bottom:10px">📱 Utilisateurs mobile (${Object.keys(mobileUsers).length})</h3>`;
+  const mu=Object.entries(mobileUsers);
+  if(!mu.length)h+=`<p style="font-size:11px;color:var(--text2)">Aucun utilisateur inscrit</p>`;
+  else{h+=`<div style="overflow-x:auto"><table><thead><tr><th>Grade</th><th>Nom</th><th>Email</th><th>Inscrit le</th><th></th></tr></thead><tbody>`;
+    mu.forEach(([key,u])=>{
+      h+=`<tr><td style="font-weight:700">${u.grade||'—'}</td><td style="font-weight:800">${u.name||'—'}</td><td style="font-size:10px;color:var(--text2)">${u.email||'—'}</td><td style="font-size:10px;color:var(--text3)">${u.createdAt?new Date(u.createdAt).toLocaleDateString("fr-FR"):''}</td><td><button class="btn btn-dn btn-xs" onclick="rmMobileUser('${key}')">Suppr.</button></td></tr>`;
+    });
+    h+=`</tbody></table></div>`;}
+  h+=`</div>`;
   // Admin accounts
   h+=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)"><h3 style="font-size:13px;font-weight:800;margin-bottom:10px">👤 Comptes</h3>
   <p style="font-size:10px;color:var(--text2);margin-bottom:10px">Admin = lecture + écriture · Lecture = consultation uniquement</p>`;
@@ -515,9 +498,8 @@ function addAdmin(){const id=document.getElementById("naId").value.trim().toLowe
 function rmAdmin(id){if(!confirm("Supprimer le compte "+id+" ?"))return;if(db)db.ref("admins/"+id).remove();addLog("Supprimé compte: "+id);}
 function changePwd(id){const el=document.getElementById("pwd_"+id);if(!el)return;const pwd=el.value.trim();if(!pwd){alert("Saisissez un mot de passe");return;}if(db)db.ref("admins/"+id+"/password").set(pwd);addLog("MDP modifié pour: "+id);el.value="";rAdm();}
 
-// Weekly password
-function newPwd(){const p=generateWeeklyPwd();if(db){db.ref("weeklyPassword").set(p);db.ref("weeklyPasswordDate").set(today);}addLog("Nouveau MDP hebdo généré");rAdm();}
-function setPwd(){const p=document.getElementById("customPwd").value.trim();if(!p)return;if(db){db.ref("weeklyPassword").set(p);db.ref("weeklyPasswordDate").set(today);}addLog("MDP hebdo modifié manuellement");rAdm();}
+// Mobile user management
+function rmMobileUser(key){if(!confirm("Supprimer ce compte mobile ?"))return;if(db)db.ref("mobileUsers/"+key).remove();addLog("Supprimé compte mobile: "+key);}
 
 // Signature
 function sSig(){sigName=document.getElementById("sN").value;sigPost=document.getElementById("sP").value;if(db){db.ref("config/sigName").set(sigName);db.ref("config/sigPost").set(sigPost);}addLog("Signature modifiée");}
