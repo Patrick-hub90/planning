@@ -18,16 +18,22 @@
 --lc-bg:#831843;--lc-bd:#9d174d;--ok-bg:#14532d;--ok-bd:#166534;--dn-bg:#7f1d1d;--warn-bg:#7c2d12;--warn-bd:#9a3412;--sh:0 1px 4px rgba(0,0,0,.3)}
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;font-size:15px;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
-/* Login screen */
-.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:40px 32px;max-width:380px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.1)}
-.login-box .logo{width:56px;height:56px;border-radius:16px;margin:0 auto 20px}
-.login-box h1{font-size:20px;font-weight:900;margin-bottom:6px}
-.login-box p{font-size:13px;color:var(--text2);margin-bottom:24px}
-.login-box input{width:100%;padding:14px 18px;border-radius:14px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:inherit;font-size:16px;font-weight:700;text-align:center;letter-spacing:4px;margin-bottom:16px}
-.login-box button{width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(59,130,246,.3)}
-.login-box .error{color:var(--dn);font-size:12px;font-weight:700;margin-top:10px;display:none}
-/* App (hidden until login) */
+.auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-box{background:var(--bg2);border:1px solid var(--border);border-radius:24px;padding:36px 28px;max-width:400px;width:100%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.1)}
+.auth-box .logo{width:56px;height:56px;border-radius:16px;margin:0 auto 16px}
+.auth-box h1{font-size:20px;font-weight:900;margin-bottom:4px}
+.auth-box p{font-size:12px;color:var(--text2);margin-bottom:18px}
+.auth-box input,.auth-box select{width:100%;padding:12px 16px;border-radius:12px;border:1px solid var(--border);background:var(--bg3);color:var(--text);font-family:inherit;font-size:14px;margin-bottom:10px;-webkit-appearance:none}
+.auth-box select{cursor:pointer}
+.auth-box input::placeholder{color:var(--text3)}
+.btn-auth{width:100%;padding:13px;border-radius:12px;border:none;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(59,130,246,.3);margin-bottom:10px}
+.btn-auth:active{transform:scale(.98)}
+.link{font-size:12px;color:var(--pf);cursor:pointer;font-weight:700}.link:hover{text-decoration:underline}
+.msg{font-size:11px;font-weight:700;margin-top:6px;display:none}.msg.err{color:var(--dn)}.msg.ok{color:var(--ok)}
+.sep{display:flex;align-items:center;gap:10px;margin:14px 0;font-size:11px;color:var(--text3);font-weight:600}
+.sep::before,.sep::after{content:'';flex:1;height:1px;background:var(--border)}
+.step-indicator{display:flex;gap:6px;justify-content:center;margin-bottom:16px}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border)}.step-dot.active{background:var(--pf)}
 .app{display:none;padding-bottom:72px}
 .header{position:sticky;top:0;z-index:50;background:var(--bg2);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--sh)}
 .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);display:flex;align-items:center;justify-content:center}
@@ -35,8 +41,8 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .header h2{font-size:15px;font-weight:800}.header p{font-size:10px;color:var(--text2)}
 .conn{font-size:10px;padding:3px 8px;border-radius:20px;font-weight:700;border:1px solid}
 .conn.on{background:var(--ok-bg);color:var(--ok);border-color:var(--ok-bd)}.conn.off{background:var(--dn-bg);color:var(--dn);border-color:#fecaca}
-.theme-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center}
-.theme-btn svg{width:18px;height:18px;stroke:var(--text2);fill:none;stroke-width:2}
+.icon-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.icon-btn svg{width:18px;height:18px;stroke:var(--text2);fill:none;stroke-width:2}
 .search-bar{padding:10px 16px;position:sticky;top:61px;z-index:40;background:var(--bg)}
 .search-bar input{width:100%;padding:10px 14px 10px 38px;border-radius:12px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-family:inherit;font-size:14px;box-shadow:var(--sh)}
 .search-wrap{position:relative}.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;fill:none;stroke:var(--text2);stroke-width:2}
@@ -62,14 +68,13 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 .field-label{font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:8px}
 .field-row{display:flex;gap:8px;align-items:center}
 .field-row input[type="date"]{flex:1;padding:10px 12px;border-radius:10px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-family:inherit;font-size:14px;box-shadow:var(--sh)}
-[data-theme="dark"] .field-row input::-webkit-calendar-picker-indicator{filter:invert(.7)}
+[data-theme="dark"] input::-webkit-calendar-picker-indicator{filter:invert(.7)}
 .btn-today{padding:10px 14px;border-radius:10px;border:none;background:var(--pf);color:#fff;cursor:pointer;font-family:inherit;font-size:12px;font-weight:700;min-width:100px;text-align:center;box-shadow:0 2px 6px rgba(59,130,246,.25)}
 .btn-today:active{transform:scale(.96)}
-.btn-done{background:var(--ok)}.btn-undo{background:var(--dn)}
+.btn-done{background:var(--ok)}
 .field-info{font-size:11px;color:var(--text2);margin-top:6px;display:flex;justify-content:space-between}
 .field-info .ago{font-weight:700}.field-info .ago.recent{color:var(--ok)}.field-info .ago.mid{color:var(--tc)}.field-info .ago.old{color:var(--dn)}
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:10px 22px;border-radius:14px;font-weight:700;font-size:13px;z-index:200;display:none;box-shadow:0 4px 12px rgba(0,0,0,.2)}
-.toast-ok{background:var(--ok);color:#fff}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);padding:10px 22px;border-radius:14px;font-weight:700;font-size:13px;z-index:200;display:none;box-shadow:0 4px 12px rgba(0,0,0,.2);background:var(--ok);color:#fff}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px)}
 .confirm-modal{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:28px;max-width:360px;width:90%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.15)}
 .confirm-modal h3{font-size:16px;font-weight:800;margin-bottom:6px}
@@ -89,26 +94,101 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
+<!-- AUTH -->
+<div class="auth-screen" id="authScreen">
+
 <!-- LOGIN -->
-<div class="login-screen" id="loginScreen">
-<div class="login-box">
-  <div class="logo" style="width:56px;height:56px;border-radius:16px;margin:0 auto 20px"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:#fff"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0011.5 2 1.5 1.5 0 0010 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
+<div class="auth-box" id="boxLogin">
+  <div class="logo" style="width:56px;height:56px;border-radius:16px;margin:0 auto 16px"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:#fff"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0011.5 2 1.5 1.5 0 0010 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
   <h1>Saisie PISTE</h1>
-  <p>Entrez le mot de passe de la semaine pour accéder à l'application</p>
-  <input type="password" id="loginPwd" placeholder="••••••" maxlength="8" onkeydown="if(event.key==='Enter')doLogin()">
-  <button onclick="doLogin()">Accéder</button>
-  <div class="error" id="loginError">Mot de passe incorrect</div>
-</div></div>
+  <p>Connectez-vous avec votre compte</p>
+  <input type="email" id="lEmail" placeholder="Email" autocomplete="email">
+  <input type="password" id="lPwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')doLogin()">
+  <button class="btn-auth" onclick="doLogin()">Se connecter</button>
+  <div class="msg err" id="lErr"></div>
+  <div class="sep">ou</div>
+  <div style="display:flex;gap:10px;justify-content:center">
+    <span class="link" onclick="showBox('Register')">Créer un compte</span>
+    <span style="color:var(--text3)">·</span>
+    <span class="link" onclick="showBox('Reset1')">Mot de passe oublié</span>
+  </div>
+</div>
+
+<!-- REGISTER -->
+<div class="auth-box" id="boxRegister" style="display:none">
+  <h1>Créer un compte</h1>
+  <p>Informations pour accéder à la saisie</p>
+  <select id="rGrade">
+    <option value="">— Grade —</option>
+    <option>Soldat</option><option>Caporal</option><option>Caporal-Chef</option>
+    <option>Sergent</option><option>Sergent-Chef</option><option>Adjudant</option><option>Adjudant-Chef</option>
+    <option>Sous-Lieutenant</option><option>Lieutenant</option><option>Capitaine</option>
+    <option>Commandant</option><option>Lieutenant-Colonel</option><option>Colonel</option>
+    <option>Technicien</option><option>Civil</option>
+  </select>
+  <input type="text" id="rName" placeholder="Nom complet">
+  <input type="email" id="rEmail" placeholder="Adresse email">
+  <input type="password" id="rPwd" placeholder="Mot de passe (min. 6 caractères)">
+  <input type="password" id="rPwd2" placeholder="Confirmer le mot de passe">
+  <button class="btn-auth" onclick="doRegister()">Créer mon compte</button>
+  <div class="msg err" id="rErr"></div>
+  <div class="msg ok" id="rOk"></div>
+  <div style="margin-top:10px"><span class="link" onclick="showBox('Login')">← Retour à la connexion</span></div>
+</div>
+
+<!-- RESET STEP 1: email -->
+<div class="auth-box" id="boxReset1" style="display:none">
+  <h1>Réinitialisation</h1>
+  <div class="step-indicator"><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span></div>
+  <p>Entrez l'email de votre compte</p>
+  <input type="email" id="rs1Email" placeholder="Adresse email">
+  <button class="btn-auth" onclick="resetStep1()">Suivant</button>
+  <div class="msg err" id="rs1Err"></div>
+  <div style="margin-top:10px"><span class="link" onclick="showBox('Login')">← Retour</span></div>
+</div>
+
+<!-- RESET STEP 2: verify identity -->
+<div class="auth-box" id="boxReset2" style="display:none">
+  <h1>Vérification</h1>
+  <div class="step-indicator"><span class="step-dot active"></span><span class="step-dot active"></span><span class="step-dot"></span></div>
+  <p>Confirmez votre identité</p>
+  <select id="rs2Grade"><option value="">— Votre grade —</option>
+    <option>Soldat</option><option>Caporal</option><option>Caporal-Chef</option>
+    <option>Sergent</option><option>Sergent-Chef</option><option>Adjudant</option><option>Adjudant-Chef</option>
+    <option>Sous-Lieutenant</option><option>Lieutenant</option><option>Capitaine</option>
+    <option>Commandant</option><option>Lieutenant-Colonel</option><option>Colonel</option>
+    <option>Technicien</option><option>Civil</option>
+  </select>
+  <input type="text" id="rs2Name" placeholder="Votre nom complet (identique à l'inscription)">
+  <button class="btn-auth" onclick="resetStep2()">Vérifier</button>
+  <div class="msg err" id="rs2Err"></div>
+  <div style="margin-top:10px"><span class="link" onclick="showBox('Login')">← Retour</span></div>
+</div>
+
+<!-- RESET STEP 3: new password -->
+<div class="auth-box" id="boxReset3" style="display:none">
+  <h1>Nouveau mot de passe</h1>
+  <div class="step-indicator"><span class="step-dot active"></span><span class="step-dot active"></span><span class="step-dot active"></span></div>
+  <p>Choisissez votre nouveau mot de passe</p>
+  <input type="password" id="rs3Pwd" placeholder="Nouveau mot de passe (min. 6)">
+  <input type="password" id="rs3Pwd2" placeholder="Confirmer">
+  <button class="btn-auth" onclick="resetStep3()">Réinitialiser</button>
+  <div class="msg err" id="rs3Err"></div>
+  <div class="msg ok" id="rs3Ok"></div>
+</div>
+
+</div>
 
 <!-- APP -->
 <div class="app" id="app">
 <div class="header">
 <div style="display:flex;align-items:center;gap:10px">
 <div class="logo"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0011.5 2 1.5 1.5 0 0010 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
-<div><h2>Saisie PISTE</h2><p>Lavage · Pt Fixe · Trait. Corrosion · Lav. Compresseur</p></div>
+<div><h2>Saisie PISTE</h2><p id="userLabel">—</p></div>
 </div>
 <div style="display:flex;gap:6px;align-items:center">
-<button class="theme-btn" onclick="tTh()"><svg id="tIco" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+<button class="icon-btn" onclick="tTh()"><svg id="tIco" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+<button class="icon-btn" onclick="doLogout()" title="Déconnexion"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
 <span class="conn off" id="connBadge">--</span>
 </div></div>
 
@@ -116,63 +196,117 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
 <input type="text" id="searchInput" placeholder="Rechercher..." oninput="render()">
 </div></div>
-
 <div class="pill-bar">
 <div class="pill active" onclick="setFilter('all',this)">Tous</div>
 <div class="pill" onclick="setFilter('ULM',this)">ULM</div>
 <div class="pill" onclick="setFilter('Avion',this)">Avions</div>
 </div>
-
 <div id="acList" class="ac-list"></div>
-<div class="toast toast-ok" id="toastOk">✓ Soumis — en attente de validation</div>
+<div class="toast" id="toastOk">✓ Soumis — en attente de validation</div>
 <div id="confirmOverlay" class="overlay" style="display:none"></div>
 
 <div class="tab-bar">
-<div class="tab active" onclick="setTab('vol',this)"><svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>Vols</div>
+<div class="tab active" onclick="setTab('vol',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>Vols</div>
 <div class="tab" onclick="setTab('lav',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v6a4 4 0 014 4v1a2 2 0 01-2 2H10a2 2 0 01-2-2v-1a4 4 0 014-4z"/><path d="M6 22v-4a2 2 0 012-2h8a2 2 0 012 2v4"/></svg>Lavage</div>
 <div class="tab" onclick="setTab('pf',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>Pt Fixe</div>
 <div class="tab" onclick="setTab('tc',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 2v7.5a2 2 0 01-.2.9L4.7 20.6a1 1 0 00.9 1.4h12.8a1 1 0 00.9-1.4l-5.1-10.2A2 2 0 0114 9.5V2"/><path d="M8.5 2h7"/></svg>Corrosion</div>
-<div class="tab" onclick="setTab('lc',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4m0 14v4M4.2 4.2l2.8 2.8m10 10l2.8 2.8M1 12h4m14 0h4M4.2 19.8l2.8-2.8m10-10l2.8-2.8"/></svg>Lav.Comp.</div>
+<div class="tab" onclick="setTab('lc',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4m0 14v4M4.2 4.2l2.8 2.8m10 10l2.8 2.8M1 12h4m14 0h4M4.2 19.8l2.8-2.8m10-10l2.8-2.8"/></svg>Lav.C.</div>
 </div>
 </div>
 
 <script>
 const iso=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');};
 const today=iso(new Date());
-const dAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return iso(d);};
 const daysBetween=(a,b)=>{if(!a||!b)return 999;return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/86400000);};
 const fbK=im=>im.replace(/[.#$/\[\]]/g,"_");
+const emailKey=e=>e.replace(/[.#$/\[\]@]/g,"_").toLowerCase();
 const FLABELS={lastFlight:"Dernier Vol",lastLavage:"Dernier Lavage",lastPointFixe:"Dernier Point Fixe",lastCorrosion:"Dernier Trait. Corrosion",lastLavComp:"Dernier Lav. Compresseur"};
 
-let fleet=[],db=null,todaySched=null,pendingSubs={},weeklyPwd="",currentFilter="all",currentTab="vol",openCard=null,isDark=false;
+let fleet=[],db=null,todaySched=null,pendingSubs={},mobileUsers={},curUser=null,resetKey="",currentFilter="all",currentTab="vol",openCard=null,isDark=false;
 
 function tTh(){isDark=!isDark;document.documentElement.setAttribute("data-theme",isDark?"dark":"");localStorage.setItem("piste_theme",isDark?"dark":"light");document.getElementById("tIco").innerHTML=isDark?'<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>':'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';}
 if(localStorage.getItem("piste_theme")==="dark")tTh();
 
-// ===== LOGIN =====
+// ===== AUTH =====
+function showBox(name){document.querySelectorAll(".auth-box").forEach(b=>b.style.display="none");document.getElementById("box"+name).style.display="";document.querySelectorAll(".msg").forEach(m=>m.style.display="none");}
+function showMsg(id,msg){const e=document.getElementById(id);e.textContent=msg;e.style.display="block";}
+
 function doLogin(){
-  const pwd=document.getElementById("loginPwd").value.trim();
-  if(pwd===weeklyPwd){
-    document.getElementById("loginScreen").style.display="none";
-    document.getElementById("app").style.display="block";
-    sessionStorage.setItem("piste_logged","1");
-  } else {
-    document.getElementById("loginError").style.display="block";
-    if(navigator.vibrate)navigator.vibrate(200);
-  }
+  const email=document.getElementById("lEmail").value.trim().toLowerCase();
+  const pwd=document.getElementById("lPwd").value;
+  if(!email||!pwd){showMsg("lErr","Remplissez tous les champs");return;}
+  const u=mobileUsers[emailKey(email)];
+  if(!u){showMsg("lErr","Compte introuvable");return;}
+  if(u.password!==pwd){showMsg("lErr","Mot de passe incorrect");return;}
+  curUser={...u,_key:emailKey(email)};
+  sessionStorage.setItem("piste_muser",emailKey(email));
+  enterApp();
 }
 
+function doRegister(){
+  const grade=document.getElementById("rGrade").value;
+  const name=document.getElementById("rName").value.trim();
+  const email=document.getElementById("rEmail").value.trim().toLowerCase();
+  const pwd=document.getElementById("rPwd").value;
+  const pwd2=document.getElementById("rPwd2").value;
+  if(!grade||!name||!email||!pwd){showMsg("rErr","Remplissez tous les champs");return;}
+  if(pwd.length<6){showMsg("rErr","Mot de passe: 6 caractères minimum");return;}
+  if(pwd!==pwd2){showMsg("rErr","Les mots de passe ne correspondent pas");return;}
+  if(!email.includes("@")){showMsg("rErr","Email invalide");return;}
+  const key=emailKey(email);
+  if(mobileUsers[key]){showMsg("rErr","Un compte avec cet email existe déjà");return;}
+  if(db)db.ref("mobileUsers/"+key).set({grade,name,email,password:pwd,createdAt:new Date().toISOString()});
+  showMsg("rOk","✓ Compte créé ! Vous pouvez vous connecter.");
+  document.getElementById("rGrade").value="";document.getElementById("rName").value="";
+  document.getElementById("rEmail").value="";document.getElementById("rPwd").value="";document.getElementById("rPwd2").value="";
+  setTimeout(()=>showBox("Login"),2000);
+}
+
+// Reset step 1: verify email exists
+function resetStep1(){
+  const email=document.getElementById("rs1Email").value.trim().toLowerCase();
+  if(!email||!email.includes("@")){showMsg("rs1Err","Entrez un email valide");return;}
+  const key=emailKey(email);
+  if(!mobileUsers[key]){showMsg("rs1Err","Aucun compte trouvé avec cet email");return;}
+  resetKey=key;showBox("Reset2");
+}
+// Reset step 2: verify grade + name
+function resetStep2(){
+  const grade=document.getElementById("rs2Grade").value;
+  const name=document.getElementById("rs2Name").value.trim();
+  if(!grade||!name){showMsg("rs2Err","Remplissez tous les champs");return;}
+  const u=mobileUsers[resetKey];
+  if(!u||u.grade!==grade||u.name.toLowerCase()!==name.toLowerCase()){showMsg("rs2Err","Grade ou nom incorrect");return;}
+  showBox("Reset3");
+}
+// Reset step 3: set new password
+function resetStep3(){
+  const pwd=document.getElementById("rs3Pwd").value;
+  const pwd2=document.getElementById("rs3Pwd2").value;
+  if(!pwd||pwd.length<6){showMsg("rs3Err","Mot de passe: 6 caractères minimum");return;}
+  if(pwd!==pwd2){showMsg("rs3Err","Les mots de passe ne correspondent pas");return;}
+  if(db)db.ref("mobileUsers/"+resetKey+"/password").set(pwd);
+  showMsg("rs3Ok","✓ Mot de passe réinitialisé ! Vous pouvez vous connecter.");
+  setTimeout(()=>showBox("Login"),2000);
+}
+
+function enterApp(){
+  document.getElementById("authScreen").style.display="none";
+  document.getElementById("app").style.display="block";
+  const label=curUser.grade?curUser.grade+" "+curUser.name:curUser.name;
+  document.getElementById("userLabel").textContent=label;
+}
+function doLogout(){curUser=null;sessionStorage.removeItem("piste_muser");document.getElementById("app").style.display="none";document.getElementById("authScreen").style.display="flex";showBox("Login");}
+function userDisplayName(){if(!curUser)return"Inconnu";return(curUser.grade?curUser.grade+" ":"")+curUser.name;}
+
+// ===== FIREBASE =====
 function initFB(){try{
   firebase.initializeApp(FC);db=firebase.database();
   db.ref(".info/connected").on("value",s=>{const on=!!s.val();const b=document.getElementById("connBadge");b.className="conn "+(on?"on":"off");b.textContent=on?"Connecté":"Hors ligne";});
-  // Get weekly password
-  db.ref("weeklyPassword").on("value",s=>{
-    weeklyPwd=s.val()||"piste";
-    // Auto-login if session valid
-    if(sessionStorage.getItem("piste_logged")==="1"){
-      document.getElementById("loginScreen").style.display="none";
-      document.getElementById("app").style.display="block";
-    }
+  db.ref("mobileUsers").on("value",s=>{
+    mobileUsers=s.val()||{};
+    const saved=sessionStorage.getItem("piste_muser");
+    if(saved&&mobileUsers[saved]&&!curUser){curUser={...mobileUsers[saved],_key:saved};enterApp();}
   });
   db.ref("fleet").on("value",s=>{const d=s.val();if(d)fleet=Object.values(d).filter(a=>a.active!==false);else fleet=[];render();});
   db.ref("todaySchedule").on("value",s=>{todaySched=s.val()||null;render();});
@@ -195,7 +329,7 @@ function askConfirm(immat,field,value){
 function closeC(){document.getElementById("confirmOverlay").style.display="none";}
 function submitP(immat,field,value){
   if(!db)return;
-  db.ref("pendingSubmissions/"+Date.now()+"_"+Math.random().toString(36).substr(2,4)).set({immat,field,value,submittedAt:new Date().toISOString(),label:FLABELS[field]||field});
+  db.ref("pendingSubmissions/"+Date.now()+"_"+Math.random().toString(36).substr(2,4)).set({immat,field,value,submittedAt:new Date().toISOString(),label:FLABELS[field]||field,submittedBy:userDisplayName()});
   if(navigator.vibrate)navigator.vibrate([50,30,50]);
   const t=document.getElementById("toastOk");t.style.display="block";setTimeout(()=>{t.style.display="none";},2500);
 }
@@ -210,79 +344,38 @@ function fmtShort(d){if(!d)return"—";return new Date(d+'T12:00:00').toLocaleDa
 function fmtFull(d){if(!d)return"Non renseigné";return new Date(d+'T12:00:00').toLocaleDateString("fr-FR",{weekday:"short",day:"2-digit",month:"short",year:"numeric"});}
 function fmtAgo(d){if(!d)return"";const days=daysBetween(d,today);if(days<0)return"";if(days===0)return"Aujourd'hui";if(days===1)return"Hier";return"Il y a "+days+"j";}
 function agoClass(d,w,c){if(!d)return"old";const days=daysBetween(d,today);if(days<0)return"";if(days<=w)return"recent";if(days<=c)return"mid";return"old";}
-
 function hasTaskToday(im,tab){if(!todaySched)return false;const k=tab==="pf"?"pointFixe":tab==="lav"?"lavage":tab==="tc"?"corrosion":tab==="lc"?"lavComp":null;return k&&todaySched[k]&&todaySched[k].includes(im);}
 function taskField(tab){return tab==="pf"?"lastPointFixe":tab==="lav"?"lastLavage":tab==="tc"?"lastCorrosion":tab==="lc"?"lastLavComp":"lastFlight";}
 function getPending(im,f){for(const[id,p]of Object.entries(pendingSubs)){if(p.immat===im&&p.field===f)return p;}return null;}
 
 function render(){
   const q=document.getElementById("searchInput")?.value.trim().toUpperCase()||"";
-  let list=fleet.filter(a=>{
-    if(q&&!a.immat.includes(q))return false;
-    if(currentFilter!=="all"&&a.type!==currentFilter)return false;
-    if(currentTab==="lc"&&!a.hasLavComp)return false;
-    return true;
-  });
+  let list=fleet.filter(a=>{if(q&&!a.immat.includes(q))return false;if(currentFilter!=="all"&&a.type!==currentFilter)return false;if(currentTab==="lc"&&!a.hasLavComp)return false;return true;});
   list.sort((a,b)=>{const at=hasTaskToday(a.immat,currentTab)?-1:0;const bt=hasTaskToday(b.immat,currentTab)?-1:0;return at!==bt?at-bt:a.immat.localeCompare(b.immat);});
-
   if(!list.length){document.getElementById("acList").innerHTML=`<div style="text-align:center;padding:40px;color:var(--text2)">Aucun aéronef</div>`;return;}
-
   let h="";
   list.forEach(ac=>{
-    const isOpen=openCard===ac.immat;
-    const fld=taskField(currentTab);
-    const scheduled=hasTaskToday(ac.immat,currentTab);
-    const doneToday=ac[fld]===today;
-    const pending=getPending(ac.immat,fld);
-
-    let sDate=ac[fld],sLabel;
-    if(currentTab==="vol")sLabel="Dern. vol";
-    else if(currentTab==="lav")sLabel="Dern. lavage";
-    else if(currentTab==="pf")sLabel="Dern. pt fixe";
-    else if(currentTab==="tc")sLabel="Dern. trait. corr.";
-    else sLabel="Dern. lav. comp.";
-    const sDays=daysBetween(sDate,today);
-    const sClass=!sDate?"warn":(sDays<0?"":sDays<=5?"ok":sDays<=9?"":"warn");
+    const isOpen=openCard===ac.immat,fld=taskField(currentTab),scheduled=hasTaskToday(ac.immat,currentTab),doneToday=ac[fld]===today,pending=getPending(ac.immat,fld);
+    let sDate=ac[fld],sLabel=currentTab==="vol"?"Dern. vol":currentTab==="lav"?"Dern. lavage":currentTab==="pf"?"Dern. pt fixe":currentTab==="tc"?"Dern. trait. corr.":"Dern. lav. comp.";
+    const sDays=daysBetween(sDate,today),sClass=!sDate?"warn":(sDays<0?"":sDays<=5?"ok":sDays<=9?"":"warn");
     const typeClass=ac.type==="ULM"?"type-ulm":"type-avion";
     const schedClass=currentTab==="pf"?"sched-pf":currentTab==="lav"?"sched-lav":currentTab==="tc"?"sched-tc":currentTab==="lc"?"sched-lc":"sched-pf";
-
     h+=`<div class="ac-card${isOpen?' open':''}"><div class="ac-head" onclick="toggleCard('${ac.immat}')">
-      <div class="ac-head-top">
-        <div style="display:flex;align-items:center"><span class="ac-immat">${ac.immat}</span><span class="ac-type ${typeClass}">${ac.type}</span></div>
-        <div style="display:flex;align-items:center;gap:6px">
-          ${pending?`<span class="pending-badge">⏳ En attente</span>`:doneToday?`<span class="done-badge">✓ Fait</span>`:scheduled?`<span class="sched-badge ${schedClass}">PRÉVU</span>`:''}
-          <span class="chevron"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span>
-        </div>
-      </div>
-      <div class="ac-summary"><span class="date-text">${sLabel}: <strong>${fmtShort(sDate)}</strong> <span class="${sClass}">${fmtAgo(sDate)}</span></span></div>
+      <div class="ac-head-top"><div style="display:flex;align-items:center"><span class="ac-immat">${ac.immat}</span><span class="ac-type ${typeClass}">${ac.type}</span></div>
+        <div style="display:flex;align-items:center;gap:6px">${pending?`<span class="pending-badge">⏳ En attente</span>`:doneToday?`<span class="done-badge">✓ Fait</span>`:scheduled?`<span class="sched-badge ${schedClass}">PRÉVU</span>`:''}<span class="chevron"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
+      </div><div class="ac-summary"><span class="date-text">${sLabel}: <strong>${fmtShort(sDate)}</strong> <span class="${sClass}">${fmtAgo(sDate)}</span></span></div>
     </div><div class="ac-body">`;
-
-    const fields=[];
-    if(currentTab==="vol")fields.push({key:"lastFlight",label:"Dernier Vol",w:5,c:7});
-    if(currentTab==="lav")fields.push({key:"lastLavage",label:"Dernier Lavage",w:9,c:14});
-    if(currentTab==="pf")fields.push({key:"lastPointFixe",label:"Dernier Point Fixe",w:7,c:9});
-    if(currentTab==="tc")fields.push({key:"lastCorrosion",label:"Dernier Trait. Corrosion",w:9,c:14});
-    if(currentTab==="lc")fields.push({key:"lastLavComp",label:"Dernier Lav. Compresseur",w:5,c:7});
-
-    fields.forEach(f=>{
-      const val=ac[f.key],ago=fmtAgo(val),cls=agoClass(val,f.w,f.c);
-      const fp=getPending(ac.immat,f.key);
+    const fields=currentTab==="vol"?[{key:"lastFlight",label:"Dernier Vol",w:5,c:7}]:currentTab==="lav"?[{key:"lastLavage",label:"Dernier Lavage",w:9,c:14}]:currentTab==="pf"?[{key:"lastPointFixe",label:"Dernier Point Fixe",w:7,c:9}]:currentTab==="tc"?[{key:"lastCorrosion",label:"Dernier Trait. Corrosion",w:9,c:14}]:[{key:"lastLavComp",label:"Dernier Lav. Compresseur",w:5,c:7}];
+    fields.forEach(f=>{const val=ac[f.key],ago=fmtAgo(val),cls=agoClass(val,f.w,f.c),fp=getPending(ac.immat,f.key);
       h+=`<div class="field-group"><div class="field-label">${f.label}</div>`;
       if(fp)h+=`<div style="background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:10px;padding:10px;text-align:center"><div style="font-size:13px;font-weight:800;color:var(--warn)">⏳ En attente</div><div style="font-size:12px;color:var(--text2);margin-top:4px">Soumis: <strong>${fmtShort(fp.value)}</strong></div></div>`;
       else h+=`<div class="field-row"><input type="date" value="${val||''}" onchange="reqDate('${ac.immat}','${f.key}',this)"><button class="btn-today" onclick="event.stopPropagation();reqToday('${ac.immat}','${f.key}')">Aujourd'hui</button></div><div class="field-info"><span>${fmtFull(val)}</span><span class="ago ${cls}">${ago}</span></div>`;
-      h+=`</div>`;
-    });
-
-    if((scheduled||doneToday)&&!pending){
-      h+=`<button onclick="event.stopPropagation();${doneToday?'':`reqToday('${ac.immat}','${fld}')`}" class="btn-today btn-done" style="width:100%;padding:14px;font-size:14px;border-radius:14px;margin-top:4px;${doneToday?'opacity:.5;pointer-events:none':''}">
-        ${doneToday?'✓ Déjà soumis':'✓ Marquer réalisé'}
-      </button>`;
-    }
+      h+=`</div>`;});
+    if((scheduled||doneToday)&&!pending)h+=`<button onclick="event.stopPropagation();${doneToday?'':`reqToday('${ac.immat}','${fld}')`}" class="btn-today btn-done" style="width:100%;padding:14px;font-size:14px;border-radius:14px;margin-top:4px;${doneToday?'opacity:.5;pointer-events:none':''}">${doneToday?'✓ Déjà soumis':'✓ Marquer réalisé'}</button>`;
     h+=`</div></div>`;
   });
   document.getElementById("acList").innerHTML=h;
 }
-
 initFB();
 </script>
 </body>
