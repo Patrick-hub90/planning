@@ -118,14 +118,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div class="auth-box" id="boxRegister" style="display:none">
   <h1>Créer un compte</h1>
   <p>Informations pour accéder à la saisie</p>
-  <select id="rGrade">
-    <option value="">— Grade —</option>
-    <option>Soldat</option><option>Caporal</option><option>Caporal-Chef</option>
-    <option>Sergent</option><option>Sergent-Chef</option><option>Adjudant</option><option>Adjudant-Chef</option>
-    <option>Sous-Lieutenant</option><option>Lieutenant</option><option>Capitaine</option>
-    <option>Commandant</option><option>Lieutenant-Colonel</option><option>Colonel</option>
-    <option>Technicien</option><option>Civil</option>
-  </select>
+  <input type="text" id="rGrade" placeholder="Grade (ex: Sergent, Capitaine...)">
   <input type="text" id="rName" placeholder="Nom complet">
   <input type="email" id="rEmail" placeholder="Adresse email">
   <input type="password" id="rPwd" placeholder="Mot de passe (min. 6 caractères)">
@@ -139,7 +132,6 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <!-- RESET STEP 1: email -->
 <div class="auth-box" id="boxReset1" style="display:none">
   <h1>Réinitialisation</h1>
-  <div class="step-indicator"><span class="step-dot active"></span><span class="step-dot"></span><span class="step-dot"></span></div>
   <p>Entrez l'email de votre compte</p>
   <input type="email" id="rs1Email" placeholder="Adresse email">
   <button class="btn-auth" onclick="resetStep1()">Suivant</button>
@@ -147,34 +139,15 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
   <div style="margin-top:10px"><span class="link" onclick="showBox('Login')">← Retour</span></div>
 </div>
 
-<!-- RESET STEP 2: verify identity -->
+<!-- RESET STEP 2: new password -->
 <div class="auth-box" id="boxReset2" style="display:none">
-  <h1>Vérification</h1>
-  <div class="step-indicator"><span class="step-dot active"></span><span class="step-dot active"></span><span class="step-dot"></span></div>
-  <p>Confirmez votre identité</p>
-  <select id="rs2Grade"><option value="">— Votre grade —</option>
-    <option>Soldat</option><option>Caporal</option><option>Caporal-Chef</option>
-    <option>Sergent</option><option>Sergent-Chef</option><option>Adjudant</option><option>Adjudant-Chef</option>
-    <option>Sous-Lieutenant</option><option>Lieutenant</option><option>Capitaine</option>
-    <option>Commandant</option><option>Lieutenant-Colonel</option><option>Colonel</option>
-    <option>Technicien</option><option>Civil</option>
-  </select>
-  <input type="text" id="rs2Name" placeholder="Votre nom complet (identique à l'inscription)">
-  <button class="btn-auth" onclick="resetStep2()">Vérifier</button>
-  <div class="msg err" id="rs2Err"></div>
-  <div style="margin-top:10px"><span class="link" onclick="showBox('Login')">← Retour</span></div>
-</div>
-
-<!-- RESET STEP 3: new password -->
-<div class="auth-box" id="boxReset3" style="display:none">
   <h1>Nouveau mot de passe</h1>
-  <div class="step-indicator"><span class="step-dot active"></span><span class="step-dot active"></span><span class="step-dot active"></span></div>
   <p>Choisissez votre nouveau mot de passe</p>
-  <input type="password" id="rs3Pwd" placeholder="Nouveau mot de passe (min. 6)">
-  <input type="password" id="rs3Pwd2" placeholder="Confirmer">
-  <button class="btn-auth" onclick="resetStep3()">Réinitialiser</button>
-  <div class="msg err" id="rs3Err"></div>
-  <div class="msg ok" id="rs3Ok"></div>
+  <input type="password" id="rs2Pwd" placeholder="Nouveau mot de passe (min. 6)">
+  <input type="password" id="rs2Pwd2" placeholder="Confirmer">
+  <button class="btn-auth" onclick="resetStep2()">Réinitialiser</button>
+  <div class="msg err" id="rs2Err"></div>
+  <div class="msg ok" id="rs2Ok"></div>
 </div>
 
 </div>
@@ -262,7 +235,7 @@ function doRegister(){
   setTimeout(()=>showBox("Login"),2000);
 }
 
-// Reset step 1: verify email exists
+// Reset step 1: verify email exists → go to new password
 function resetStep1(){
   const email=document.getElementById("rs1Email").value.trim().toLowerCase();
   if(!email||!email.includes("@")){showMsg("rs1Err","Entrez un email valide");return;}
@@ -270,23 +243,14 @@ function resetStep1(){
   if(!mobileUsers[key]){showMsg("rs1Err","Aucun compte trouvé avec cet email");return;}
   resetKey=key;showBox("Reset2");
 }
-// Reset step 2: verify grade + name
+// Reset step 2: set new password
 function resetStep2(){
-  const grade=document.getElementById("rs2Grade").value;
-  const name=document.getElementById("rs2Name").value.trim();
-  if(!grade||!name){showMsg("rs2Err","Remplissez tous les champs");return;}
-  const u=mobileUsers[resetKey];
-  if(!u||u.grade!==grade||u.name.toLowerCase()!==name.toLowerCase()){showMsg("rs2Err","Grade ou nom incorrect");return;}
-  showBox("Reset3");
-}
-// Reset step 3: set new password
-function resetStep3(){
-  const pwd=document.getElementById("rs3Pwd").value;
-  const pwd2=document.getElementById("rs3Pwd2").value;
-  if(!pwd||pwd.length<6){showMsg("rs3Err","Mot de passe: 6 caractères minimum");return;}
-  if(pwd!==pwd2){showMsg("rs3Err","Les mots de passe ne correspondent pas");return;}
+  const pwd=document.getElementById("rs2Pwd").value;
+  const pwd2=document.getElementById("rs2Pwd2").value;
+  if(!pwd||pwd.length<6){showMsg("rs2Err","Mot de passe: 6 caractères minimum");return;}
+  if(pwd!==pwd2){showMsg("rs2Err","Les mots de passe ne correspondent pas");return;}
   if(db)db.ref("mobileUsers/"+resetKey+"/password").set(pwd);
-  showMsg("rs3Ok","✓ Mot de passe réinitialisé ! Vous pouvez vous connecter.");
+  showMsg("rs2Ok","✓ Mot de passe réinitialisé !");
   setTimeout(()=>showBox("Login"),2000);
 }
 
