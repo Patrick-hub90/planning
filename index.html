@@ -481,6 +481,16 @@ function rAdm(){if(!isSuper){document.getElementById("vAdm").innerHTML=`<div sty
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px">`;
   pfl.forEach(f=>{h+=`<div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">${f.l}</label><input type="number" id="pf_${f.k}" value="${pFonts[f.k]}" min="4" max="40" style="width:100%;padding:6px 8px"></div>`;});
   h+=`</div><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="savePFonts()">Enregistrer les polices</button></div>`;
+  // Export tasks for external app (per week)
+  const wList=getWeeksList();
+  h+=`<div style="margin-top:12px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);box-shadow:var(--sh)">
+    <h3 style="font-size:13px;font-weight:800;margin-bottom:6px">📤 Export tâches JSON (par semaine)</h3>
+    <p style="font-size:10px;color:var(--text2);margin-bottom:10px">Exporte les tâches d'une semaine pour consommation par une autre application (attribution au personnel qualifié)</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+      <select id="expWeek" style="padding:7px;flex:1;min-width:180px"><option value="all">Toutes les semaines du mois</option>${wList.map(w=>`<option value="${w.start}|${w.end}">Sem. ${fmt(w.start)} — ${fmt(w.end)}</option>`).join("")}</select>
+      <button class="btn btn-primary btn-sm" onclick="exportTasksJSON()">📤 Exporter</button>
+    </div>
+  </div>`;
   // Backup
   h+=`<div style="margin-top:12px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)"><button class="btn btn-sm" onclick="xBk()">💾 Backup</button> <button class="btn btn-sm" onclick="document.getElementById('iF').click()">📂 Importer</button><input type="file" id="iF" accept=".json" style="display:none" onchange="iBk(event)"></div>`;
   document.getElementById("vAdm").innerHTML=h;}
@@ -506,6 +516,79 @@ function sSig(){sigName=document.getElementById("sN").value;sigPost=document.get
 function uSig(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{sigImage=ev.target.result;if(db)db.ref("config/sigImage").set(sigImage);rAdm();};r.readAsDataURL(f);}
 function rSig(){sigImage="";if(db)db.ref("config/sigImage").remove();rAdm();}
 function xBk(){const d=JSON.stringify({fleet,sigName,sigPost,sigImage},null,2);const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([d],{type:"application/json"}));a.download="piste_backup.json";a.click();}
+
+// Get weeks (Mon-Fri) for current month
+function getWeeksList(){
+  if(!pubSched)return[];
+  const nd=dim(cM,cY),sd=new Date(cY,cM,1),le=new Date(cY,cM,nd);
+  let mon=new Date(sd);while(mon.getDay()!==1)mon.setDate(mon.getDate()-1);
+  let fri=new Date(le);while(fri.getDay()!==5)fri.setDate(fri.getDate()+1);
+  const wks=[];let cur=new Date(mon);
+  while(cur<=fri){
+    const days=[];for(let i=0;i<5;i++){days.push(dk(new Date(cur)));cur.setDate(cur.getDate()+1);}cur.setDate(cur.getDate()+2);
+    // Only keep weeks that have at least one day in the current month
+    const inMonth=days.filter(d=>{const x=new Date(d+'T12:00:00');return x.getMonth()===cM&&x.getFullYear()===cY;});
+    if(inMonth.length){
+      const start=inMonth[0],end=inMonth[inMonth.length-1];
+      wks.push({start,end,days:inMonth});
+    }
+  }
+  return wks;
+}
+
+// Export tasks as JSON for external app
+function exportTasksJSON(){
+  if(!pubSched){alert("Aucun planning à exporter");return;}
+  const scope=document.getElementById("expWeek").value;
+  let filterDays=null;
+  if(scope!=="all"){const[start,end]=scope.split("|");filterDays=d=>d>=start&&d<=end;}
+
+  const tasks=[];
+  Object.entries(pubSched).forEach(([dt,s])=>{
+    if(!s||dt.startsWith("_"))return;
+    if(filterDays&&!filterDays(dt))return;
+    ["pointFixe","lavage","corrosion","lavComp"].forEach(ty=>{
+      if(!s[ty])return;
+      s[ty].forEach(im=>{
+        const ac=fleet.find(a=>a.immat===im);
+        const status=taskStatus(im,ty,dt);
+        tasks.push({
+          date:dt,
+          taskType:ty,
+          taskLabel:TLABEL[ty],
+          aircraft:im,
+          aircraftType:ac?.type||null,
+          hasLavComp:ac?.hasLavComp||false,
+          status:status.st,
+          statusDetails:status.label||status.doneDate||null,
+          lastFlight:ac?.lastFlight||null,
+          lastDate:ac?(ty==="pointFixe"?ac.lastPointFixe:ty==="lavage"?ac.lastLavage:ty==="corrosion"?ac.lastCorrosion:ac.lastLavComp):null
+        });
+      });
+    });
+  });
+  tasks.sort((a,b)=>a.date.localeCompare(b.date)||a.aircraft.localeCompare(b.aircraft));
+
+  const scopeLabel=scope==="all"?`${MO[cM]}_${cY}`:`Sem_${scope.split("|")[0]}`;
+  const payload={
+    meta:{
+      source:"PISTE",
+      app:"Planning Lavage · Point Fixe · Trait. Corrosion",
+      exportedAt:new Date().toISOString(),
+      exportedBy:curAdmin?(curAdmin.name||curAdmin.id):"admin",
+      month:MO[cM]+" "+cY,
+      scope:scope==="all"?"month":"week",
+      scopeRange:scope==="all"?{start:dk(new Date(cY,cM,1)),end:dk(new Date(cY,cM,dim(cM,cY)))}:{start:scope.split("|")[0],end:scope.split("|")[1]},
+      taskCount:tasks.length
+    },
+    taskTypes:{pointFixe:{label:"Point Fixe",interval:7,maxPerDay:maxDay.pointFixe},lavage:{label:"Lavage",interval:9,maxPerDay:maxDay.lavage},corrosion:{label:"Traitement Corrosion",interval:9,maxPerDay:maxDay.corrosion},lavComp:{label:"Lavage Compresseur",interval:7,maxPerDay:maxDay.lavComp}},
+    tasks
+  };
+
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`piste_tasks_${scopeLabel}.json`;a.click();
+  addLog(`Export JSON: ${tasks.length} tâches (${scope==="all"?"mois complet":"semaine"})`);
+}
 function iBk(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.fleet){fleet=d.fleet;sigName=d.sigName||"";sigPost=d.sigPost||"";sigImage=d.sigImage||"";if(db){const o={};fleet.forEach(a=>{o[fbK(a.immat)]=a;});db.ref("fleet").set(o);db.ref("config").set({sigName,sigPost,sigImage});}addLog("Import backup");publishSchedule();}}catch(e){}};r.readAsText(f);e.target.value="";}
 
 // Print fonts
