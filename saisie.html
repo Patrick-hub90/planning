@@ -182,7 +182,7 @@ body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-h
 <div class="tab active" onclick="setTab('vol',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>Vols</div>
 <div class="tab" onclick="setTab('lav',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v6a4 4 0 014 4v1a2 2 0 01-2 2H10a2 2 0 01-2-2v-1a4 4 0 014-4z"/><path d="M6 22v-4a2 2 0 012-2h8a2 2 0 012 2v4"/></svg>Lavage</div>
 <div class="tab" onclick="setTab('pf',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>Pt Fixe</div>
-<div class="tab" onclick="setTab('tc',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 2v7.5a2 2 0 01-.2.9L4.7 20.6a1 1 0 00.9 1.4h12.8a1 1 0 00.9-1.4l-5.1-10.2A2 2 0 0114 9.5V2"/><path d="M8.5 2h7"/></svg>Corrosion</div>
+<div class="tab" onclick="setTab('tc',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 2v7.5a2 2 0 01-.2.9L4.7 20.6a1 1 0 00.9 1.4h12.8a1 1 0 00.9-1.4l-5.1-10.2A2 2 0 0114 9.5V2"/><path d="M8.5 2h7"/></svg>Anti-Corr.</div>
 <div class="tab" onclick="setTab('lc',this)"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 1v4m0 14v4M4.2 4.2l2.8 2.8m10 10l2.8 2.8M1 12h4m14 0h4M4.2 19.8l2.8-2.8m10-10l2.8-2.8"/></svg>Lav.C.</div>
 </div>
 </div>
@@ -193,7 +193,7 @@ const today=iso(new Date());
 const daysBetween=(a,b)=>{if(!a||!b)return 999;return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/86400000);};
 const fbK=im=>im.replace(/[.#$/\[\]]/g,"_");
 const emailKey=e=>e.replace(/[.#$/\[\]@]/g,"_").toLowerCase();
-const FLABELS={lastFlight:"Dernier Vol",lastLavage:"Dernier Lavage",lastPointFixe:"Dernier Point Fixe",lastCorrosion:"Dernier Trait. Corrosion",lastLavComp:"Dernier Lav. Compresseur"};
+const FLABELS={lastFlight:"Dernier Vol",lastLavage:"Dernier Lavage",lastPointFixe:"Dernier Point Fixe",lastCorrosion:"Dernière Insp. Anti-Corrosion",lastLavComp:"Dernier Lav. Compresseur"};
 
 let fleet=[],db=null,todaySched=null,pendingSubs={},mobileUsers={},curUser=null,resetKey="",currentFilter="all",currentTab="vol",openCard=null,isDark=false;
 
@@ -320,7 +320,7 @@ function render(){
   let h="";
   list.forEach(ac=>{
     const isOpen=openCard===ac.immat,fld=taskField(currentTab),scheduled=hasTaskToday(ac.immat,currentTab),doneToday=ac[fld]===today,pending=getPending(ac.immat,fld);
-    let sDate=ac[fld],sLabel=currentTab==="vol"?"Dern. vol":currentTab==="lav"?"Dern. lavage":currentTab==="pf"?"Dern. pt fixe":currentTab==="tc"?"Dern. trait. corr.":"Dern. lav. comp.";
+    let sDate=ac[fld],sLabel=currentTab==="vol"?"Dern. vol":currentTab==="lav"?"Dern. lavage":currentTab==="pf"?"Dern. pt fixe":currentTab==="tc"?"Dern. Insp. Anti-Corr.":"Dern. lav. comp.";
     const sDays=daysBetween(sDate,today),sClass=!sDate?"warn":(sDays<0?"":sDays<=5?"ok":sDays<=9?"":"warn");
     const typeClass=ac.type==="ULM"?"type-ulm":"type-avion";
     const schedClass=currentTab==="pf"?"sched-pf":currentTab==="lav"?"sched-lav":currentTab==="tc"?"sched-tc":currentTab==="lc"?"sched-lc":"sched-pf";
@@ -329,7 +329,7 @@ function render(){
         <div style="display:flex;align-items:center;gap:6px">${pending?`<span class="pending-badge">⏳ En attente</span>`:doneToday?`<span class="done-badge">✓ Fait</span>`:scheduled?`<span class="sched-badge ${schedClass}">PRÉVU</span>`:''}<span class="chevron"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></div>
       </div><div class="ac-summary"><span class="date-text">${sLabel}: <strong>${fmtShort(sDate)}</strong> <span class="${sClass}">${fmtAgo(sDate)}</span></span></div>
     </div><div class="ac-body">`;
-    const fields=currentTab==="vol"?[{key:"lastFlight",label:"Dernier Vol",w:5,c:7}]:currentTab==="lav"?[{key:"lastLavage",label:"Dernier Lavage",w:9,c:14}]:currentTab==="pf"?[{key:"lastPointFixe",label:"Dernier Point Fixe",w:7,c:9}]:currentTab==="tc"?[{key:"lastCorrosion",label:"Dernier Trait. Corrosion",w:9,c:14}]:[{key:"lastLavComp",label:"Dernier Lav. Compresseur",w:5,c:7}];
+    const fields=currentTab==="vol"?[{key:"lastFlight",label:"Dernier Vol",w:5,c:7}]:currentTab==="lav"?[{key:"lastLavage",label:"Dernier Lavage",w:9,c:14}]:currentTab==="pf"?[{key:"lastPointFixe",label:"Dernier Point Fixe",w:7,c:9}]:currentTab==="tc"?[{key:"lastCorrosion",label:"Dernière Insp. Anti-Corrosion",w:9,c:14}]:[{key:"lastLavComp",label:"Dernier Lav. Compresseur",w:5,c:7}];
     fields.forEach(f=>{const val=ac[f.key],ago=fmtAgo(val),cls=agoClass(val,f.w,f.c),fp=getPending(ac.immat,f.key);
       h+=`<div class="field-group"><div class="field-label">${f.label}</div>`;
       if(fp)h+=`<div style="background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:10px;padding:10px;text-align:center"><div style="font-size:13px;font-weight:800;color:var(--warn)">⏳ En attente</div><div style="font-size:12px;color:var(--text2);margin-top:4px">Soumis: <strong>${fmtShort(fp.value)}</strong></div></div>`;
