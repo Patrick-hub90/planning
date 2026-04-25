@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PISTE — Planning Lavage · Pt Fixe · Trait. Corrosion</title>
+<title>PISTE — Planning Lavage · Pt Fixe · Insp. Anti-Corrosion</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#eef1f6;--bg2:#fff;--bg3:#f6f8fb;--border:#dce3ed;--text:#0f172a;--text2:#64748b;--text3:#94a3b8;
@@ -170,7 +170,7 @@ body{background:#fff!important;font-size:11px!important;color:#000!important}
 <div class="hdr">
 <div style="display:flex;align-items:center;gap:10px">
 <div class="logo"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0011.5 2 1.5 1.5 0 0010 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
-<div><div class="htitle">PLANNING LAVAGE · PT FIXE · TRAIT. CORROSION</div><div class="hsub">Connecté: <span id="adminName">—</span></div></div>
+<div><div class="htitle">PLANNING LAVAGE · PT FIXE · INSP. ANTI-CORROSION</div><div class="hsub">Connecté: <span id="adminName">—</span></div></div>
 </div>
 <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
 <span id="cs" style="font-size:10px;font-weight:700"><span class="cdot off"></span>--</span>
@@ -207,8 +207,8 @@ const daysBetween=(a,b)=>{if(!a||!b)return 999;return Math.round((new Date(b+'T1
 const today=iso(new Date());const fbK=im=>im.replace(/[.#$/\[\]]/g,"_");
 const dim=(m,y)=>new Date(y,m+1,0).getDate();const mKey=(m,y)=>y+'-'+String(m+1).padStart(2,'0');
 const MIN_INT={pointFixe:7,lavage:9,corrosion:9,lavComp:7};
-const TLABEL={pointFixe:"Pt Fixe",lavage:"Lavage",corrosion:"Trait. Corr.",lavComp:"Lav. Compr."};
-const FLABEL={lastFlight:"Dernier Vol",lastLavage:"Dernier Lavage",lastPointFixe:"Dernier Pt Fixe",lastCorrosion:"Dernier Trait. Corrosion",lastLavComp:"Dernier Lav. Compresseur"};
+const TLABEL={pointFixe:"Pt Fixe",lavage:"Lavage",corrosion:"Insp. Anti-Corr.",lavComp:"Lav. Compr."};
+const FLABEL={lastFlight:"Dernier Vol",lastLavage:"Dernier Lavage",lastPointFixe:"Dernier Pt Fixe",lastCorrosion:"Dernier Insp. Anti-Corrosion",lastLavComp:"Dernier Lav. Compresseur"};
 const TASK_TYPES=["pointFixe","lavage","corrosion","lavComp"];
 
 let fleet=[],pubSched=null,pendingSubs={},admins={},auditLogs=[],mobileUsers={},curAdmin=null,isSuper=false,cv="schedule",db=null,isDark=false;
@@ -306,7 +306,7 @@ function rejectSub(id){const p=pendingSubs[id];if(!db)return;db.ref("pendingSubm
 function approveAll(){Object.keys(pendingSubs).forEach(id=>approveSub(id));}
 
 // ===== STATS =====
-const tl=t=>t==="pointFixe"?"PT FIXE":t==="lavage"?"LAVAGE":t==="corrosion"?"TRAIT. CORR.":"LAV. COMPR.";
+const tl=t=>t==="pointFixe"?"PT FIXE":t==="lavage"?"LAVAGE":t==="corrosion"?"INSP. ANTI-CORR.":"LAV. COMPR.";
 const tH=t=>t==="pointFixe"?"pf-h":t==="lavage"?"lav-h":t==="corrosion"?"tc-h":"lc-h";
 const tP=t=>t==="pointFixe"?"pending-pf":t==="lavage"?"pending-lav":t==="corrosion"?"pending-tc":"pending-lc";
 const tC=t=>t==="pointFixe"?{c:"var(--pf)",bg:"var(--pf-bg)",bd:"var(--pf-bd)"}:t==="lavage"?{c:"var(--lav)",bg:"var(--lav-bg)",bd:"var(--lav-bd)"}:t==="corrosion"?{c:"var(--tc)",bg:"var(--tc-bg)",bd:"var(--tc-bd)"}:{c:"var(--lc)",bg:"var(--lc-bg)",bd:"var(--lc-bd)"};
@@ -322,11 +322,11 @@ function getSt(){if(!pubSched)return{pf:0,lv:0,co:0,lc:0,dn:0,ms:0,total:0,act:0
 // ===== RENDER =====
 function rSt(){const s=getSt();
   document.getElementById("stBar").innerHTML=[
-    {l:"Actifs",v:s.act,c:"var(--pf)"},{l:"Lavages",v:s.lv,c:"var(--lav)"},{l:"Trait.Corr.",v:s.co,c:"var(--tc)"},{l:"Lav.Comp.",v:s.lc,c:"var(--lc)"},{l:"Réalisés",v:s.dn+"/"+s.total,c:"var(--ok)"},{l:"Manqués",v:s.ms,c:s.ms?"var(--dn)":"var(--ok)"}
+    {l:"Actifs",v:s.act,c:"var(--pf)"},{l:"Lavages",v:s.lv,c:"var(--lav)"},{l:"Insp. Anti-Corr.",v:s.co,c:"var(--tc)"},{l:"Lav.Comp.",v:s.lc,c:"var(--lc)"},{l:"Réalisés",v:s.dn+"/"+s.total,c:"var(--ok)"},{l:"Manqués",v:s.ms,c:s.ms?"var(--dn)":"var(--ok)"}
   ].map(x=>`<div class="stat"><div class="stat-label">${x.l}</div><div class="stat-value" style="color:${x.c}">${x.v}</div></div>`).join("");
   document.getElementById("rb").textContent=s.ms;document.getElementById("rb").style.display=s.ms?"inline":"none";
   document.getElementById("vb").textContent=s.pend;document.getElementById("vb").style.display=s.pend?"inline":"none";
-  document.getElementById("pT").textContent=`PLANNING DE LAVAGE - POINT FIXE - TRAITEMENT CORROSION — ${MO[cM].toUpperCase()} ${cY}`;
+  document.getElementById("pT").textContent=`PLANNING DE LAVAGE - POINT FIXE - INSPECTION ANTI-CORROSION — ${MO[cM].toUpperCase()} ${cY}`;
   document.getElementById("pS").textContent=`DU 01/${String(cM+1).padStart(2,'0')}/${cY} AU ${dim(cM,cY)}/${String(cM+1).padStart(2,'0')}/${cY} · ${s.act} aéronefs · ${fmtL(today)}`;
   let sh="";if(sigName||sigPost||sigImage){sh+=`<div style="text-align:right;margin-top:12px">`;if(sigImage)sh+=`<img src="${sigImage}" style="max-height:60px;display:block;margin-left:auto;margin-bottom:3px">`;if(sigName)sh+=`<div style="font-size:10px;font-weight:800">${sigName}</div>`;if(sigPost)sh+=`<div style="font-size:8px;color:#64748b">${sigPost}</div>`;sh+=`</div>`;}
   document.getElementById("sigA").innerHTML=sh;}
@@ -399,7 +399,7 @@ function rFlt(){let h=`<div style="display:flex;justify-content:space-between;al
     <div class="field"><label>Date</label><input type="date" id="bD"></div>
     <button class="btn btn-primary btn-sm" onclick="bulkEdit()">Appliquer</button>
     <button class="btn btn-sm" onclick="bkAll(true)">✓ Tout</button><button class="btn btn-sm" onclick="bkAll(false)">✕ Rien</button></div></div>`;}
-  h+=`<div style="overflow-x:auto;background:var(--bg2);border-radius:10px;border:1px solid var(--border);box-shadow:var(--sh)"><table><thead><tr>${isSuper?'<th style="width:30px"><input type="checkbox" onchange="bkAll(this.checked)" style="width:14px;height:14px;cursor:pointer"></th>':''}<th>Actif</th><th>Immat</th><th>Type</th><th>LC</th><th>Vol</th><th>Lavage</th><th>Corrosion</th><th>Pt Fixe</th><th>Lav.Comp</th>${isSuper?'<th></th>':''}</tr></thead><tbody>`;
+  h+=`<div style="overflow-x:auto;background:var(--bg2);border-radius:10px;border:1px solid var(--border);box-shadow:var(--sh)"><table><thead><tr>${isSuper?'<th style="width:30px"><input type="checkbox" onchange="bkAll(this.checked)" style="width:14px;height:14px;cursor:pointer"></th>':''}<th>Actif</th><th>Immat</th><th>Type</th><th>LC</th><th>Vol</th><th>Lavage</th><th>Insp. Anti-Corr.</th><th>Pt Fixe</th><th>Lav.Comp</th>${isSuper?'<th></th>':''}</tr></thead><tbody>`;
   fleet.forEach((a,i)=>{
     if(isSuper){
       h+=`<tr style="${!a.active?'opacity:.35':''}"><td><input type="checkbox" class="bk-c" data-im="${a.immat}" style="width:14px;height:14px;cursor:pointer"></td><td><button class="toggle ${a.active?'on':'off'}" onclick="tA(${i})"></button></td><td style="font-weight:800">${a.immat}</td><td><span class="tag" style="background:${a.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${a.type==='ULM'?'var(--pf-dark)':'#7c3aed'}">${a.type}</span></td><td><input type="checkbox" ${a.hasLavComp?'checked':''} onchange="tLC(${i},this.checked)" style="width:14px;height:14px;cursor:pointer"></td><td><input type="date" value="${a.lastFlight||''}" onchange="uFld(${i},'lastFlight',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastLavage||''}" onchange="uFld(${i},'lastLavage',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastCorrosion||''}" onchange="uFld(${i},'lastCorrosion',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastPointFixe||''}" onchange="uFld(${i},'lastPointFixe',this.value)" style="width:115px"></td><td><input type="date" value="${a.lastLavComp||''}" onchange="uFld(${i},'lastLavComp',this.value)" style="width:115px"></td><td><button class="btn btn-dn btn-xs" onclick="rmA(${i})">✕</button></td></tr>`;
@@ -472,7 +472,7 @@ function rAdm(){if(!isSuper){document.getElementById("vAdm").innerHTML=`<div sty
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
   <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">Point Fixe</label><input type="number" id="md_pointFixe" value="${maxDay.pointFixe}" min="1" max="10" style="width:100%;padding:6px 8px"></div>
   <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">Lavage</label><input type="number" id="md_lavage" value="${maxDay.lavage}" min="1" max="10" style="width:100%;padding:6px 8px"></div>
-  <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">Trait. Corrosion</label><input type="number" id="md_corrosion" value="${maxDay.corrosion}" min="1" max="10" style="width:100%;padding:6px 8px"></div>
+  <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">Insp. Anti-Corrosion</label><input type="number" id="md_corrosion" value="${maxDay.corrosion}" min="1" max="10" style="width:100%;padding:6px 8px"></div>
   <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">Lav. Compresseur</label><input type="number" id="md_lavComp" value="${maxDay.lavComp}" min="1" max="10" style="width:100%;padding:6px 8px"></div>
   </div><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="saveMaxDay()">Enregistrer</button></div>`;
   // Print fonts
@@ -573,7 +573,7 @@ function exportTasksJSON(){
   const payload={
     meta:{
       source:"PISTE",
-      app:"Planning Lavage · Point Fixe · Trait. Corrosion",
+      app:"Planning Lavage · Point Fixe · Insp. Anti-Corrosion",
       exportedAt:new Date().toISOString(),
       exportedBy:curAdmin?(curAdmin.name||curAdmin.id):"admin",
       month:MO[cM]+" "+cY,
@@ -581,7 +581,7 @@ function exportTasksJSON(){
       scopeRange:scope==="all"?{start:dk(new Date(cY,cM,1)),end:dk(new Date(cY,cM,dim(cM,cY)))}:{start:scope.split("|")[0],end:scope.split("|")[1]},
       taskCount:tasks.length
     },
-    taskTypes:{pointFixe:{label:"Point Fixe",interval:7,maxPerDay:maxDay.pointFixe},lavage:{label:"Lavage",interval:9,maxPerDay:maxDay.lavage},corrosion:{label:"Traitement Corrosion",interval:9,maxPerDay:maxDay.corrosion},lavComp:{label:"Lavage Compresseur",interval:7,maxPerDay:maxDay.lavComp}},
+    taskTypes:{pointFixe:{label:"Point Fixe",interval:7,maxPerDay:maxDay.pointFixe},lavage:{label:"Lavage",interval:9,maxPerDay:maxDay.lavage},corrosion:{label:"Inspection Anti-Corrosion",interval:9,maxPerDay:maxDay.corrosion},lavComp:{label:"Lavage Compresseur",interval:7,maxPerDay:maxDay.lavComp}},
     tasks
   };
 
@@ -625,7 +625,7 @@ function doPrint(){
   // Update title for week scope
   const pTitle=document.getElementById("pT");
   const pSub=document.getElementById("pS");
-  const baseTitle=`PLANNING DE LAVAGE - POINT FIXE - TRAITEMENT CORROSION`;
+  const baseTitle=`PLANNING DE LAVAGE - POINT FIXE - INSPECTION ANTI-CORROSION`;
   if(scope==="all"){
     blocks.forEach(b=>{b.style.display="";});
     pTitle.textContent=`${baseTitle} — ${MO[cM].toUpperCase()} ${cY}`;
