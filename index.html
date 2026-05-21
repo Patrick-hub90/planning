@@ -594,18 +594,34 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
   font-family:inherit;text-align:left;width:100%;
   transition:all .15s
 }
-.settings-nav-item svg{width:18px;height:18px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2}
-.settings-nav-item:hover{background:rgba(255,255,255,0.05);color:var(--text)}
-.settings-nav-item.active{background:var(--glass-strong);color:var(--text);font-weight:700}
+.settings-nav-item svg{width:18px;height:18px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.settings-nav-item:hover{background:rgba(15,23,42,.04);color:var(--text)}
+[data-theme="dark"] .settings-nav-item:hover{background:rgba(255,255,255,.05)}
+/* Tab system: only show active section */
+.settings-section{display:none;animation:tabIn .22s ease-out}
+.settings-section.active{display:block}
+@keyframes tabIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.settings-nav-item.active{background:var(--pf-bg);color:var(--pf-dark);font-weight:700}
 .settings-nav-item.active::before{
-  content:'';position:absolute;left:0;top:8px;bottom:8px;width:2px;border-radius:0 2px 2px 0;
-  background:#6366f1
+  content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;
+  background:var(--pf)
 }
-.settings-nav-item:focus-visible{outline:2px solid #6366f1;outline-offset:2px}
+.settings-nav-item:focus-visible{outline:2px solid var(--pf);outline-offset:2px}
 .settings-panel{min-width:0}
 @media (max-width:900px){
-  .settings-layout{grid-template-columns:1fr}
-  .settings-nav{position:static;flex-direction:row;flex-wrap:wrap;overflow-x:auto}
+  .settings-layout{grid-template-columns:1fr;gap:12px}
+  .settings-nav{
+    position:static;flex-direction:row;flex-wrap:nowrap;
+    overflow-x:auto;-webkit-overflow-scrolling:touch;
+    gap:6px;padding:6px;
+    scrollbar-width:thin
+  }
+  .settings-nav-item{
+    flex-shrink:0;height:38px;padding:0 14px;white-space:nowrap;
+    font-size:12px
+  }
+  .settings-nav-item.active::before{display:none}
+  .settings-nav-item.active{background:var(--pf);color:#fff}
 }
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce){
@@ -1108,67 +1124,110 @@ function rRet(){let missed=[];
   document.getElementById("vRet").innerHTML=h;}
 
 function rAdm(){if(!isSuper){document.getElementById("vAdm").innerHTML=`<div style="text-align:center;padding:30px;color:var(--text2)"><div style="font-size:28px;margin-bottom:8px">🔒</div><div style="font-weight:800">Accès réservé à l'administrateur principal</div></div>`;return;}
-  let h=`<h2 style="font-size:15px;font-weight:900;margin-bottom:14px">Administration</h2>`;
-  // Mobile users
-  h+=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)"><h3 style="font-size:13px;font-weight:800;margin-bottom:10px">📱 Utilisateurs mobile (${Object.keys(mobileUsers).length})</h3>`;
+  let h="";
+  // ===== Section: Comptes admin =====
+  h+=`<div class="settings-section active" id="sect-admins" data-title="Comptes admin">
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">Comptes admin</h2>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Admin = lecture + écriture · Lecture = consultation uniquement</p>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px">`;
+  Object.entries(admins).forEach(([id,a])=>{
+    const role=a.role==="super"?"Admin":"Lecture";const roleCol=a.role==="super"?"var(--pf)":"var(--text3)";
+    h+=`<div style="padding:10px 0;border-bottom:1px solid var(--bg3)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;gap:8px;flex-wrap:wrap">
+        <div><span style="font-weight:800">${a.name||id}</span> <span style="font-size:9px;color:var(--text3)">ID: ${id}</span> <span class="tag" style="font-size:9px;background:var(--bg3);color:${roleCol}">${role}</span></div>
+        ${id!=='admin'?`<button class="btn btn-dn btn-xs" onclick="rmAdmin('${id}')">Suppr.</button>`:''}
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+        <input type="password" id="pwd_${id}" placeholder="Nouveau mot de passe" style="flex:1;min-width:140px;padding:6px 10px;font-size:11px">
+        <button class="btn btn-sm" onclick="changePwd('${id}')">Modifier MDP</button>
+      </div>
+    </div>`;
+  });
+  h+=`<div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bg3)">
+      <div style="font-weight:800;font-size:12px;margin-bottom:8px">+ Ajouter un compte lecture</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;align-items:end">
+        <div class="field"><label>ID</label><input type="text" id="naId" placeholder="identifiant" style="width:100%"></div>
+        <div class="field"><label>Nom</label><input type="text" id="naName" placeholder="Nom complet" style="width:100%"></div>
+        <div class="field"><label>Mot de passe</label><input type="text" id="naPwd" placeholder="mot de passe" style="width:100%"></div>
+        <button class="btn btn-primary btn-sm" onclick="addAdmin()">Créer (lecture)</button>
+      </div>
+    </div></div>
+  </div>`;
+  // ===== Section: Utilisateurs mobile =====
+  h+=`<div class="settings-section" id="sect-mobile" data-title="Utilisateurs mobile">
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">Utilisateurs mobile <span style="color:var(--text3);font-weight:600;font-size:14px">(${Object.keys(mobileUsers).length})</span></h2>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Comptes des techniciens utilisant l'application mobile de saisie</p>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px">`;
   const mu=Object.entries(mobileUsers);
-  if(!mu.length)h+=`<p style="font-size:11px;color:var(--text2)">Aucun utilisateur inscrit</p>`;
+  if(!mu.length)h+=`<p style="font-size:11px;color:var(--text2);text-align:center;padding:20px">Aucun utilisateur inscrit</p>`;
   else{h+=`<div style="overflow-x:auto"><table><thead><tr><th>Grade</th><th>Nom</th><th>Email</th><th>Inscrit le</th><th></th></tr></thead><tbody>`;
     mu.forEach(([key,u])=>{
       h+=`<tr><td style="font-weight:700">${u.grade||'—'}</td><td style="font-weight:800">${u.name||'—'}</td><td style="font-size:10px;color:var(--text2)">${u.email||'—'}</td><td style="font-size:10px;color:var(--text3)">${u.createdAt?new Date(u.createdAt).toLocaleDateString("fr-FR"):''}</td><td><button class="btn btn-dn btn-xs" onclick="rmMobileUser('${key}')">Suppr.</button></td></tr>`;
     });
     h+=`</tbody></table></div>`;}
-  h+=`</div>`;
-  // Admin accounts
-  h+=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:var(--sh)"><h3 style="font-size:13px;font-weight:800;margin-bottom:10px">👤 Comptes</h3>
-  <p style="font-size:10px;color:var(--text2);margin-bottom:10px">Admin = lecture + écriture · Lecture = consultation uniquement</p>`;
-  Object.entries(admins).forEach(([id,a])=>{
-    const role=a.role==="super"?"Admin":"Lecture";const roleCol=a.role==="super"?"var(--pf)":"var(--text3)";
-    h+=`<div style="padding:10px 0;border-bottom:1px solid var(--bg3)">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-        <div><span style="font-weight:800">${a.name||id}</span> <span style="font-size:9px;color:var(--text3)">ID: ${id}</span> <span class="tag" style="font-size:9px;background:var(--bg3);color:${roleCol}">${role}</span></div>
-        ${id!=='admin'?`<button class="btn btn-dn btn-xs" onclick="rmAdmin('${id}')">Suppr.</button>`:''}
-      </div>
-      <div style="display:flex;gap:6px;align-items:center">
-        <input type="password" id="pwd_${id}" placeholder="Nouveau mot de passe" style="flex:1;padding:6px 10px;font-size:11px">
-        <button class="btn btn-sm" onclick="changePwd('${id}')">Modifier MDP</button>
-      </div>
-    </div>`;
-  });
-  h+=`<div class="mrow" style="margin-top:10px"><div class="field"><label>ID</label><input type="text" id="naId" placeholder="identifiant"></div><div class="field"><label>Nom</label><input type="text" id="naName" placeholder="Nom complet"></div><div class="field"><label>Mot de passe</label><input type="text" id="naPwd" placeholder="mot de passe"></div><button class="btn btn-primary btn-sm" onclick="addAdmin()">Créer (lecture)</button></div></div>`;
-  // Signature
-  h+=`<div class="sig-area"><h3 style="font-size:13px;font-weight:800;margin-bottom:8px">Signature PDF</h3>
-    <div class="field" style="margin-bottom:6px"><label>Image</label><input type="file" accept="image/*" onchange="uSig(event)" style="font-size:11px"></div>
-    ${sigImage?`<div style="margin-bottom:6px"><img src="${sigImage}" style="max-height:50px;border-radius:6px;border:1px solid var(--border)"><br><button class="btn btn-dn btn-xs" style="margin-top:3px" onclick="rSig()">Suppr.</button></div>`:''}
-    <div class="field" style="margin-bottom:6px"><label>Nom</label><input type="text" id="sN" value="${sigName}" style="width:100%;padding:7px" onchange="sSig()"></div>
-    <div class="field" style="margin-bottom:6px"><label>Poste</label><input type="text" id="sP" value="${sigPost}" style="width:100%;padding:7px" onchange="sSig()"></div></div>`;
-  // Print fonts
-  h+=`<div style="margin-top:14px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);box-shadow:var(--sh)"><h3 style="font-size:13px;font-weight:800;margin-bottom:10px">📋 Max tâches par jour</h3>
-  <p style="font-size:10px;color:var(--text2);margin-bottom:10px">Nombre maximum de chaque type de tâche pouvant être programmé sur un même jour</p>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px">
-  <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">Point Fixe</label><input type="number" id="md_pointFixe" value="${maxDay.pointFixe}" min="1" max="10" style="width:100%;padding:6px 8px"></div>
-  <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">Lavage</label><input type="number" id="md_lavage" value="${maxDay.lavage}" min="1" max="10" style="width:100%;padding:6px 8px"></div>
-  <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">Insp. Anti-Corrosion</label><input type="number" id="md_corrosion" value="${maxDay.corrosion}" min="1" max="10" style="width:100%;padding:6px 8px"></div>
-  <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">Lav. Compresseur</label><input type="number" id="md_lavComp" value="${maxDay.lavComp}" min="1" max="10" style="width:100%;padding:6px 8px"></div>
-  </div><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="saveMaxDay()">Enregistrer</button></div>`;
-  // Print fonts
-  const pfl=[{k:"title",l:"Titre"},{k:"subtitle",l:"Sous-titre"},{k:"weekHeader",l:"En-tête semaine"},{k:"dayHeader",l:"En-tête jour"},{k:"sectionLabel",l:"Label tâche (PF/LAV/TC)"},{k:"taskName",l:"Nom aéronef"},{k:"taskBadge",l:"Badge statut"},{k:"signature",l:"Signature"}];
-  h+=`<div style="margin-top:14px;padding:16px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);box-shadow:var(--sh)"><h3 style="font-size:13px;font-weight:800;margin-bottom:10px">🖨 Polices Export PDF (px)</h3>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px">`;
-  pfl.forEach(f=>{h+=`<div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:2px">${f.l}</label><input type="number" id="pf_${f.k}" value="${pFonts[f.k]}" min="4" max="40" style="width:100%;padding:6px 8px"></div>`;});
-  h+=`</div><button class="btn btn-primary btn-sm" style="margin-top:10px" onclick="savePFonts()">Enregistrer les polices</button></div>`;
-  // Export tasks for external app (per week)
-  const wList=getWeeksList();
-  h+=`<div style="margin-top:12px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border);box-shadow:var(--sh)">
-    <h3 style="font-size:13px;font-weight:800;margin-bottom:6px">📤 Export tâches JSON (par semaine)</h3>
-    <p style="font-size:10px;color:var(--text2);margin-bottom:10px">Exporte les tâches d'une semaine pour consommation par une autre application (attribution au personnel qualifié)</p>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-      <select id="expWeek" style="padding:7px;flex:1;min-width:180px"><option value="all">Toutes les semaines du mois</option>${wList.map(w=>`<option value="${w.start}|${w.end}">Sem. ${fmt(w.start)} — ${fmt(w.end)}</option>`).join("")}</select>
-      <button class="btn btn-primary btn-sm" onclick="exportTasksJSON()">📤 Exporter</button>
+  h+=`</div></div>`;
+  // ===== Section: Signature =====
+  h+=`<div class="settings-section" id="sect-signature" data-title="Signature">
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">Signature PDF</h2>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Signature qui apparaîtra en bas des plannings imprimés</p>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px">
+      <div class="field" style="margin-bottom:10px"><label>Image de signature</label><input type="file" accept="image/*" onchange="uSig(event)" style="font-size:11px"></div>
+      ${sigImage?`<div style="margin-bottom:10px;padding:10px;background:var(--bg3);border-radius:8px"><img src="${sigImage}" style="max-height:60px;border-radius:6px;background:#fff;padding:4px"><br><button class="btn btn-dn btn-xs" style="margin-top:6px" onclick="rSig()">Supprimer l'image</button></div>`:''}
+      <div class="field" style="margin-bottom:8px"><label>Nom</label><input type="text" id="sN" value="${sigName}" style="width:100%;padding:8px" onchange="sSig()"></div>
+      <div class="field"><label>Poste / Fonction</label><input type="text" id="sP" value="${sigPost}" style="width:100%;padding:8px" onchange="sSig()"></div>
     </div>
   </div>`;
-  // Backup
-  h+=`<div style="margin-top:12px;padding:14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border)"><button class="btn btn-sm" onclick="xBk()">💾 Backup</button> <button class="btn btn-sm" onclick="document.getElementById('iF').click()">📂 Importer</button><input type="file" id="iF" accept=".json" style="display:none" onchange="iBk(event)"></div>`;
+  // ===== Section: Max par jour =====
+  h+=`<div class="settings-section" id="sect-maxday" data-title="Max par jour">
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">Tâches par jour</h2>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Nombre maximum de chaque type de tâche programmable sur un même jour</p>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+        <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Point Fixe</label><input type="number" id="md_pointFixe" value="${maxDay.pointFixe}" min="1" max="10" style="width:100%;padding:8px"></div>
+        <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Lavage</label><input type="number" id="md_lavage" value="${maxDay.lavage}" min="1" max="10" style="width:100%;padding:8px"></div>
+        <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Insp. Anti-Corr.</label><input type="number" id="md_corrosion" value="${maxDay.corrosion}" min="1" max="10" style="width:100%;padding:8px"></div>
+        <div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">Lav. Compresseur</label><input type="number" id="md_lavComp" value="${maxDay.lavComp}" min="1" max="10" style="width:100%;padding:8px"></div>
+      </div>
+      <button class="btn btn-primary btn-sm" style="margin-top:14px" onclick="saveMaxDay()">Enregistrer</button>
+    </div>
+  </div>`;
+  // ===== Section: Polices Impression =====
+  const pfl=[{k:"title",l:"Titre"},{k:"subtitle",l:"Sous-titre"},{k:"weekHeader",l:"En-tête semaine"},{k:"dayHeader",l:"En-tête jour"},{k:"sectionLabel",l:"Label tâche"},{k:"taskName",l:"Nom aéronef"},{k:"taskBadge",l:"Badge statut"},{k:"signature",l:"Signature"}];
+  h+=`<div class="settings-section" id="sect-print" data-title="Impression">
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">Polices d'impression</h2>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Taille des polices (en pixels) pour l'export PDF du planning</p>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px">`;
+  pfl.forEach(f=>{h+=`<div><label style="font-size:10px;color:var(--text2);font-weight:700;display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px">${f.l}</label><input type="number" id="pf_${f.k}" value="${pFonts[f.k]}" min="4" max="40" style="width:100%;padding:8px"></div>`;});
+  h+=`</div>
+      <button class="btn btn-primary btn-sm" style="margin-top:14px" onclick="savePFonts()">Enregistrer les polices</button>
+    </div>
+  </div>`;
+  // ===== Section: Export =====
+  const wList=getWeeksList();
+  h+=`<div class="settings-section" id="sect-export" data-title="Export">
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">Export tâches JSON</h2>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Exporte les tâches au format JSON pour consommation par une autre application</p>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <select id="expWeek" style="padding:8px;flex:1;min-width:200px"><option value="all">Toutes les semaines du mois</option>${wList.map(w=>`<option value="${w.start}|${w.end}">Sem. ${fmt(w.start)} — ${fmt(w.end)}</option>`).join("")}</select>
+        <button class="btn btn-primary btn-sm" onclick="exportTasksJSON()">📤 Exporter</button>
+      </div>
+    </div>
+  </div>`;
+  // ===== Section: Sauvegarde =====
+  h+=`<div class="settings-section" id="sect-backup" data-title="Sauvegarde">
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">Sauvegarde &amp; Restauration</h2>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Exporter ou importer la configuration complète de la flotte et de la signature</p>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-primary btn-sm" onclick="xBk()">💾 Télécharger backup</button>
+        <button class="btn btn-sm" onclick="document.getElementById('iF').click()">📂 Importer backup</button>
+        <input type="file" id="iF" accept=".json" style="display:none" onchange="iBk(event)">
+      </div>
+      <p style="font-size:10.5px;color:var(--text3);margin-top:10px">⚠ L'import remplace les données actuelles de la flotte</p>
+    </div>
+  </div>`;
   document.getElementById("vAdm").innerHTML=h;}
 
 function rLog(){
@@ -1419,16 +1478,16 @@ function wrapSettingsLayout(){
   // If already wrapped (after wrapper re-renders), skip
   if(vAdm.querySelector(".settings-layout"))return;
   const sections=[
-    {id:"sect-account",label:"Compte",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'},
-    {id:"sect-appearance",label:"Apparence",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 000 20z"/></svg>'},
-    {id:"sect-admins",label:"Utilisateurs admins",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-3-3.87"/><path d="M7 21v-2a4 4 0 014-4h2"/><circle cx="9" cy="7" r="4"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>'},
-    {id:"sect-mobile",label:"Utilisateurs mobile",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>'},
-    {id:"sect-signature",label:"Rapport & Signature",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 8-8"/><polyline points="14 7 21 7 21 14"/></svg>'},
-    {id:"sect-print",label:"Impression",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>'},
-    {id:"sect-advanced",label:"Avancé",icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 7l-5 5 5 5"/></svg>'}
+    {id:"sect-admins",label:"Comptes admin",icon:'<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-3-3.87"/><path d="M7 21v-2a4 4 0 014-4h2"/><circle cx="9" cy="7" r="4"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>'},
+    {id:"sect-mobile",label:"Utilisateurs mobile",icon:'<svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>'},
+    {id:"sect-signature",label:"Signature",icon:'<svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><polyline points="14 7 21 7 21 14"/></svg>'},
+    {id:"sect-maxday",label:"Tâches/jour",icon:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'},
+    {id:"sect-print",label:"Impression",icon:'<svg viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>'},
+    {id:"sect-export",label:"Export JSON",icon:'<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>'},
+    {id:"sect-backup",label:"Sauvegarde",icon:'<svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>'}
   ];
   const inner=vAdm.innerHTML;
-  const navHtml=sections.map((s,i)=>`<button class="settings-nav-item${i===0?' active':''}" data-target="${s.id}" onclick="scrollSettings('${s.id}',this)">${s.icon}<span>${s.label}</span></button>`).join("");
+  const navHtml=sections.map((s,i)=>`<button class="settings-nav-item${i===0?' active':''}" data-target="${s.id}" onclick="switchSettings('${s.id}',this)">${s.icon}<span>${s.label}</span></button>`).join("");
   vAdm.innerHTML=`<div class="settings-layout">
     <aside class="settings-nav" aria-label="Sections des paramètres">${navHtml}</aside>
     <div class="settings-panel" id="settingsPanel">
@@ -1436,14 +1495,17 @@ function wrapSettingsLayout(){
     </div>
   </div>`;
 }
-function scrollSettings(target,el){
+function switchSettings(target,el){
   document.querySelectorAll(".settings-nav-item").forEach(b=>b.classList.remove("active"));
   if(el)el.classList.add("active");
+  document.querySelectorAll(".settings-section").forEach(s=>s.classList.remove("active"));
+  const tgt=document.getElementById(target);
+  if(tgt)tgt.classList.add("active");
   const panel=document.getElementById("settingsPanel");
-  const anchor=document.getElementById(target);
-  if(anchor&&panel){anchor.scrollIntoView({behavior:"smooth",block:"start"});}
-  else if(panel){panel.scrollTo?panel.scrollTo({top:0,behavior:"smooth"}):window.scrollTo({top:panel.offsetTop-80,behavior:"smooth"});}
+  if(panel)panel.scrollTop=0;
 }
+// Alias for backward compat
+function scrollSettings(target,el){switchSettings(target,el);}
 // Wrap rSt to keep topbar subtitle fresh on data updates
 const __rSt_original=rSt;
 rSt=function(){__rSt_original();try{updateTopbar(cv);}catch(e){}};
