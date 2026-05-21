@@ -527,19 +527,21 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
 #sidebar.collapsed .sb-wm,
 #sidebar.collapsed .sb-sec-h,
 #sidebar.collapsed .sb-user-info,
-#sidebar.collapsed .sb-toggle-lbl{display:none}
+#sidebar.collapsed .sb-toggle-lbl,
+#sidebar.collapsed .sb-it-lbl{display:none}
 #sidebar.collapsed .sb-head{justify-content:center;padding:0}
-#sidebar.collapsed .sb-sec{padding:10px 8px 2px;border-top:1px solid var(--glass-bd2);margin-top:6px}
-#sidebar.collapsed .sb-sec:first-of-type{border-top:none;margin-top:0;padding-top:6px}
-#sidebar.collapsed .sb-items{padding:4px 6px}
+#sidebar.collapsed .sb-sec{padding:10px 4px 4px}
+#sidebar.collapsed .sb-sec:first-of-type{padding-top:6px}
+#sidebar.collapsed .sb-items{padding:2px 6px}
 #sidebar.collapsed .sb-it{
-  flex-direction:column;height:auto;padding:12px 4px 8px;gap:4px;
-  font-size:9px;font-weight:700;line-height:1;justify-content:center;align-items:center
+  height:42px;padding:0;gap:0;
+  justify-content:center;align-items:center;position:relative
 }
-#sidebar.collapsed .sb-it-lbl{font-size:9.5px;font-weight:700;text-align:center;line-height:1.1;margin-top:2px}
+#sidebar.collapsed .sb-it svg{width:22px;height:22px}
+#sidebar.collapsed .sb-it.active::before{top:6px;bottom:6px}
 #sidebar.collapsed .sb-badge{
-  position:absolute;top:4px;right:6px;
-  min-width:16px;height:15px;font-size:9px;padding:0 4px;border-radius:7px
+  position:absolute;top:2px;right:6px;
+  min-width:16px;height:14px;font-size:9px;padding:0 4px;border-radius:7px
 }
 #sidebar.collapsed .sb-foot{padding:8px 6px}
 #sidebar.collapsed .sb-user{padding:4px;justify-content:center;background:transparent;border:none}
@@ -569,15 +571,7 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
   font-size:11px;font-weight:700;color:var(--text2)
 }
 #cs.fb-pill .cdot{width:8px;height:8px;margin-right:0}
-/* Sidebar auto-hide on small screens */
-@media (max-width:1100px){
-  .app-shell{grid-template-columns:56px 1fr}
-  #sidebar{width:56px}
-  #sidebar:not(.expanded-mobile) .sb-wm,
-  #sidebar:not(.expanded-mobile) .sb-sec-h,
-  #sidebar:not(.expanded-mobile) .sb-user-info,
-  #sidebar:not(.expanded-mobile) .sb-toggle-lbl{display:none}
-}
+/* Sidebar responsive: hamburger menu on < 1100px (tablet + mobile) */
 /* Settings sub-nav */
 .settings-layout{display:grid;grid-template-columns:200px 1fr;gap:18px;align-items:flex-start}
 .settings-nav{
@@ -664,37 +658,49 @@ tbody tr:hover{background:rgba(59,130,246,.04)!important}
 .sb-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:99;opacity:0;transition:opacity .2s}
 .sb-backdrop.show{opacity:1}
 /* ===== Responsive ===== */
-/* Tablet */
+/* Tablet + Mobile: hamburger menu mode (< 1100px) */
 @media (max-width:1100px){
-  .stats{grid-template-columns:repeat(3,1fr)}
-}
-/* Mobile */
-@media (max-width:768px){
   .app-shell{grid-template-columns:1fr!important}
   #sidebar{
     transform:translateX(-100%);z-index:100;
-    width:260px!important;
-    box-shadow:4px 0 20px rgba(0,0,0,.12);
+    width:280px!important;
+    box-shadow:4px 0 24px rgba(0,0,0,.18);
     transition:transform .25s cubic-bezier(.2,.7,.3,1)!important
   }
   #sidebar.mobile-open{transform:translateX(0)}
-  #sidebar.collapsed{width:260px!important}
+  /* Force expanded look when sidebar slides out (override .collapsed) */
+  #sidebar.collapsed{width:280px!important}
   #sidebar.collapsed .sb-wm,
   #sidebar.collapsed .sb-sec-h,
   #sidebar.collapsed .sb-user-info,
-  #sidebar.collapsed .sb-toggle-lbl{display:flex}
-  #sidebar.collapsed .sb-it{flex-direction:row;height:44px;padding:0 14px;gap:12px;font-size:14px}
-  #sidebar.collapsed .sb-it-lbl{font-size:14px;text-align:left;margin-top:0}
-  #sidebar.collapsed .sb-badge{position:static;min-width:18px;height:18px;font-size:10px;padding:0 5px}
+  #sidebar.collapsed .sb-toggle-lbl,
+  #sidebar.collapsed .sb-it-lbl{display:flex}
+  #sidebar.collapsed .sb-it{
+    flex-direction:row;height:46px;padding:0 14px;gap:12px;
+    font-size:14px;align-items:center;justify-content:flex-start
+  }
+  #sidebar.collapsed .sb-it svg{width:20px;height:20px}
+  #sidebar.collapsed .sb-it-lbl{font-size:14px;text-align:left;margin-top:0;display:block}
+  #sidebar.collapsed .sb-badge{
+    position:static;min-width:22px;height:20px;
+    font-size:11px;padding:0 7px;border-radius:10px
+  }
+  #sidebar.collapsed .sb-it.active::before{top:8px;bottom:8px}
   #sidebar.collapsed .sb-head{justify-content:flex-start;padding:0 16px}
-  #sidebar.collapsed .sb-sec{padding:14px 16px 6px}
+  #sidebar.collapsed .sb-sec{padding:14px 16px 4px}
   #sidebar.collapsed .sb-items{padding:4px 8px}
   #sidebar.collapsed .sb-foot{padding:10px}
-  #sidebar.collapsed .sb-user{padding:8px 10px;justify-content:flex-start}
+  #sidebar.collapsed .sb-user{padding:8px 10px;justify-content:flex-start;background:rgba(255,255,255,.04);border:1px solid var(--glass-bd2)}
   #sidebar.collapsed .sb-foot-row{flex-direction:row}
+  #sidebar.collapsed .sb-toggle svg{transform:none}
   .sb-backdrop.show{display:block}
   .tb-hamburger{display:flex}
   #mainArea{grid-column:1}
+  .sb-toggle{display:none}
+  .stats{grid-template-columns:repeat(3,1fr)}
+}
+/* Mobile refinements (< 768px) */
+@media (max-width:768px){
   #topbar{padding:0 14px;height:52px;gap:10px}
   .tb-title{font-size:17px}
   .tb-actions .btn,.tb-actions select{display:none}
@@ -721,8 +727,7 @@ tbody tr:hover{background:rgba(59,130,246,.04)!important}
   .mrow{flex-direction:column;gap:8px}
   .bulk-row{flex-direction:column;gap:8px}
   .settings-layout{grid-template-columns:1fr!important}
-  .settings-nav{position:static!important;flex-direction:row;flex-wrap:wrap;overflow-x:auto}
-  .sb-toggle{display:none}
+  .settings-nav{position:static!important;flex-direction:row;flex-wrap:nowrap;overflow-x:auto}
   table{font-size:11px}
   th,td{padding:7px 8px}
   .pend-card{flex-direction:column;align-items:flex-start;gap:8px}
@@ -1411,13 +1416,6 @@ function updateTopbar(v){
   // Print actions only relevant for schedule
   const sel=document.getElementById("printScope");
   if(sel)sel.style.display=(v==="schedule")?"":"none";
-  // Auto-collapse logic
-  if(v==="admin"){setSidebarCollapsed(true,{persist:false});}
-  else if(v==="schedule"){
-    if(window.innerWidth<1440 && !localStorage.getItem("piste:sidebar:userOverride")){
-      setSidebarCollapsed(true,{persist:false});
-    }
-  }
 }
 function setSidebarCollapsed(collapsed,opts){
   opts=opts||{};
@@ -1467,6 +1465,10 @@ function closeMobileSidebar(){
   if(sb)sb.classList.remove("mobile-open");
   if(bd)bd.classList.remove("show");
 }
+// Close mobile sidebar with Escape
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMobileSidebar();});
+// Close mobile sidebar when window resizes beyond breakpoint
+window.addEventListener("resize",()=>{if(window.innerWidth>1100)closeMobileSidebar();});
 // Wrap sv() to also update topbar + restructure Paramètres on entry
 const __sv_original=sv;
 sv=function(v){__sv_original(v);try{updateTopbar(v);if(v==="admin")wrapSettingsLayout();closeMobileSidebar();}catch(e){console.error(e);}};
