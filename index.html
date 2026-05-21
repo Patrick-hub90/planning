@@ -475,13 +475,13 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
 }
 .sb-it:focus-visible{outline:2px solid #6366f1;outline-offset:2px}
 .sb-badge{
-  min-width:18px;height:18px;border-radius:9px;padding:0 5px;
-  background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;
-  font-size:10px;font-weight:800;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 2px 6px rgba(239,68,68,.4);flex-shrink:0
+  min-width:20px;height:18px;border-radius:9px;padding:0 6px;
+  background:var(--dn);color:#fff;
+  font-size:10px;font-weight:700;line-height:1;
+  display:inline-flex;align-items:center;justify-content:center;
+  flex-shrink:0
 }
-.sb-badge.warn{background:linear-gradient(135deg,#f97316,#f59e0b);box-shadow:0 2px 6px rgba(249,115,22,.4)}
+.sb-badge.warn{background:var(--warn)}
 .sb-foot{
   border-top:1px solid var(--glass-bd2);
   padding:10px;display:flex;flex-direction:column;gap:6px;flex-shrink:0
@@ -533,11 +533,14 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
 #sidebar.collapsed .sb-sec:first-of-type{border-top:none;margin-top:0;padding-top:6px}
 #sidebar.collapsed .sb-items{padding:4px 6px}
 #sidebar.collapsed .sb-it{
-  flex-direction:column;height:auto;padding:8px 4px;gap:3px;
+  flex-direction:column;height:auto;padding:12px 4px 8px;gap:4px;
   font-size:9px;font-weight:700;line-height:1;justify-content:center;align-items:center
 }
-#sidebar.collapsed .sb-it-lbl{font-size:9px;font-weight:700;text-align:center;line-height:1;margin-top:3px}
-#sidebar.collapsed .sb-badge{position:absolute;top:4px;right:4px;min-width:14px;height:14px;font-size:8px;padding:0 3px}
+#sidebar.collapsed .sb-it-lbl{font-size:9.5px;font-weight:700;text-align:center;line-height:1.1;margin-top:2px}
+#sidebar.collapsed .sb-badge{
+  position:absolute;top:4px;right:6px;
+  min-width:16px;height:15px;font-size:9px;padding:0 4px;border-radius:7px
+}
 #sidebar.collapsed .sb-foot{padding:8px 6px}
 #sidebar.collapsed .sb-user{padding:4px;justify-content:center;background:transparent;border:none}
 #sidebar.collapsed .sb-foot-row{flex-direction:column;gap:4px}
