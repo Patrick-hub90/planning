@@ -453,15 +453,15 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
 .sb-items{display:flex;flex-direction:column;gap:2px;padding:6px 8px}
 .sb-it{
   position:relative;display:flex;align-items:center;gap:12px;
-  height:48px;padding:0 14px;border-radius:10px;
-  font-size:14px;font-weight:600;color:var(--text2);
+  min-height:46px;padding:0 14px;border-radius:10px;
+  font-size:13.5px;font-weight:600;color:var(--text2);
   background:transparent;border:none;cursor:pointer;
   font-family:inherit;text-align:left;width:100%;
-  transition:all .15s cubic-bezier(.2,.7,.3,1)
+  transition:background .15s,color .15s
 }
 .sb-it svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;opacity:.75;transition:opacity .15s}
-.sb-it-lbl{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sb-it:hover{background:rgba(255,255,255,0.05);color:var(--text);transform:translateX(1px)}
+.sb-it-lbl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-it:hover{background:rgba(15,23,42,0.05);color:var(--text)}
 [data-theme="dark"] .sb-it:hover{background:rgba(255,255,255,0.05)}
 .sb-it:hover svg{opacity:1}
 .sb-it.active{
@@ -473,13 +473,14 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
   content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;
   background:var(--pf)
 }
-.sb-it:focus-visible{outline:2px solid #6366f1;outline-offset:2px}
+.sb-it:focus-visible{outline:2px solid var(--pf);outline-offset:2px}
 .sb-badge{
-  min-width:20px;height:18px;border-radius:9px;padding:0 6px;
+  min-width:22px;height:20px;border-radius:10px;padding:0 7px;
   background:var(--dn);color:#fff;
-  font-size:10px;font-weight:700;line-height:1;
+  font-size:10.5px;font-weight:700;line-height:1;
   display:inline-flex;align-items:center;justify-content:center;
-  flex-shrink:0
+  flex-shrink:0;margin-left:auto;
+  letter-spacing:.01em;font-variant-numeric:tabular-nums
 }
 .sb-badge.warn{background:var(--warn)}
 .sb-foot{
@@ -539,9 +540,12 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
 }
 #sidebar.collapsed .sb-it svg{width:22px;height:22px}
 #sidebar.collapsed .sb-it.active::before{top:6px;bottom:6px}
+/* Collapsed: notification dot only (no number, no overlap with icon) */
 #sidebar.collapsed .sb-badge{
-  position:absolute;top:2px;right:6px;
-  min-width:16px;height:14px;font-size:9px;padding:0 4px;border-radius:7px
+  position:absolute;top:8px;right:10px;
+  min-width:8px;width:8px;height:8px;
+  font-size:0;color:transparent;padding:0;border-radius:50%;
+  margin-left:0
 }
 #sidebar.collapsed .sb-foot{padding:8px 6px}
 #sidebar.collapsed .sb-user{padding:4px;justify-content:center;background:transparent;border:none}
