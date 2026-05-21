@@ -184,7 +184,7 @@ body::before{
 }
 .theme-btn:hover{background:var(--glass-strong);transform:translateY(-1px) rotate(20deg)}
 .theme-btn svg{width:16px;height:16px;stroke:var(--text2);fill:none;stroke-width:2}
-.content{padding:22px 26px;position:relative;z-index:1}
+.content{padding:28px 32px;position:relative;z-index:1}
 /* Stats */
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:20px}
 .stat{
@@ -435,7 +435,7 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
 }
 /* ===== Sidebar + Topbar (Maya v2) ===== */
 :root{--sidebar-w:208px}
-.app-shell{display:grid;grid-template-columns:var(--sidebar-w) 1fr;min-height:100vh;transition:grid-template-columns .22s cubic-bezier(.2,.7,.3,1)}
+.app-shell{grid-template-columns:var(--sidebar-w) 1fr;min-height:100vh;transition:grid-template-columns .22s cubic-bezier(.2,.7,.3,1)}
 #sidebar{
   position:fixed;left:0;top:0;height:100vh;width:var(--sidebar-w);z-index:50;
   display:flex;flex-direction:column;
@@ -556,15 +556,20 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
 #sidebar.collapsed .sb-foot-row{flex-direction:column;gap:4px}
 #sidebar.collapsed .sb-toggle svg{transform:rotate(180deg)}
 /* Main area + topbar */
-#mainArea{display:flex;flex-direction:column;min-width:0;min-height:100vh}
+#mainArea{grid-column:2;display:flex;flex-direction:column;min-width:0;height:100vh;overflow-y:auto;overflow-x:hidden}
 #topbar{
   position:sticky;top:0;z-index:40;
-  height:56px;display:flex;align-items:center;gap:16px;
-  padding:0 28px;
+  height:60px;display:flex;align-items:center;gap:16px;
+  padding:0 30px;
   background:var(--glass-strong);
   backdrop-filter:blur(20px) saturate(180%);
   -webkit-backdrop-filter:blur(20px) saturate(180%);
-  border-bottom:1px solid var(--glass-bd2)
+  border-bottom:1px solid var(--glass-bd2);
+  box-shadow:0 1px 3px rgba(15,23,42,.04),0 4px 16px -6px rgba(15,23,42,.06)
+}
+#topbar::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;
+  background:var(--grad);opacity:.2;pointer-events:none
 }
 .tb-left{display:flex;flex-direction:column;line-height:1.2;min-width:0}
 .tb-title{font-size:20px;font-weight:800;letter-spacing:-0.02em;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -606,6 +611,7 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
   font-family:inherit;text-align:left;width:100%;
   transition:all .15s
 }
+.settings-nav-item svg{width:18px;height:18px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2}
 .settings-nav-item:hover{background:rgba(255,255,255,0.05);color:var(--text)}
 .settings-nav-item.active{background:var(--glass-strong);color:var(--text);font-weight:700}
 .settings-nav-item.active::before{
@@ -629,12 +635,77 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
 }
 /* Hide legacy header */
 .hdr{display:none!important}
+/* ===== Premium Enhancements ===== */
+/* View transition animation */
+#vSch,#vFlt,#vRet,#vVal,#vAdm,#vLog{animation:viewIn .32s cubic-bezier(.2,.7,.3,1)}
+@keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+/* Better table styling */
+tbody tr{transition:background .15s ease}
+tbody tr:nth-child(even){background:rgba(15,23,42,.018)}
+[data-theme="dark"] tbody tr:nth-child(even){background:rgba(255,255,255,.018)}
+tbody tr:hover{background:rgba(59,130,246,.05)!important}
+[data-theme="dark"] tbody tr:hover{background:rgba(59,130,246,.07)!important}
+/* Enhanced stat cards */
+.stat{transition:transform .22s cubic-bezier(.2,.7,.3,1),box-shadow .3s;position:relative}
+.stat:hover{transform:translateY(-3px) scale(1.01);box-shadow:var(--sh2)}
+.stat-value{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+  font-size:28px
+}
+.stat:nth-child(5) .stat-value{background:linear-gradient(135deg,#22c55e,#10b981);-webkit-background-clip:text;background-clip:text}
+.stat:nth-child(6) .stat-value{background:linear-gradient(135deg,#ef4444,#f97316);-webkit-background-clip:text;background-clip:text}
+/* Topbar title gradient */
+.tb-title{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-size:22px;font-weight:900}
+/* Better week blocks */
+.wblock{transition:transform .2s cubic-bezier(.2,.7,.3,1),box-shadow .3s}
+.wblock:hover{transform:translateY(-1px);box-shadow:var(--sh2)}
+.wheader{
+  background:linear-gradient(90deg,rgba(99,102,241,.06),rgba(168,85,247,.04),transparent)!important;
+  border-bottom:1px solid var(--glass-bd2)
+}
+[data-theme="dark"] .wheader{background:linear-gradient(90deg,rgba(99,102,241,.1),rgba(168,85,247,.06),transparent)!important}
+/* Better task pills */
+.tp{transition:transform .12s,background .15s,box-shadow .2s}
+.tp:hover{transform:translateX(2px);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+/* Better month label */
+.month-label{font-size:20px;font-weight:900}
+/* Better legend bar */
+.legend-bar{border-radius:14px;padding:12px 18px;background:var(--glass-strong);backdrop-filter:blur(var(--blur))}
+/* Scrollable main area */
+#mainArea{scrollbar-gutter:stable}
+/* Better login box */
+.login-box{border-radius:32px;padding:52px 40px}
+.login-box .logo-big{width:72px;height:72px;border-radius:22px;margin:0 auto 26px}
+.login-box h1{font-size:22px;margin-bottom:8px}
+.login-box button{padding:16px;font-size:15px;border-radius:16px}
+.login-box input{padding:15px 18px;border-radius:16px;font-size:14.5px;margin-bottom:14px}
+/* Better pending cards */
+.pend-card{border-radius:16px;transition:transform .15s,box-shadow .25s}
+.pend-card:hover{transform:translateY(-1px);box-shadow:var(--sh2)}
+/* Better overdue cards */
+.ocard{border-radius:16px;transition:box-shadow .25s}
+.ocard:hover{box-shadow:var(--sh2)}
+/* Subtle glow on active sidebar item */
+.sb-it.active{
+  box-shadow:0 0 20px -4px rgba(99,102,241,.15);
+  background:linear-gradient(135deg,rgba(99,102,241,.14),rgba(168,85,247,.14))
+}
+[data-theme="dark"] .sb-it.active{box-shadow:0 0 24px -4px rgba(99,102,241,.25)}
+/* Better sidebar header */
+.sb-wm-title{
+  font-size:17px;font-weight:900;letter-spacing:-0.02em;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent
+}
 /* Print overrides for new shell */
 @media print{
   #sidebar{display:none!important}
   #topbar{display:none!important}
   .app-shell{display:block!important;grid-template-columns:none!important}
-  #mainArea{display:block!important}
+  #mainArea{display:block!important;grid-column:auto!important}
+  .stat-value{-webkit-text-fill-color:var(--text)!important;background:none!important}
+  .tb-title{-webkit-text-fill-color:#000!important;background:none!important}
+  .month-label{-webkit-text-fill-color:#000!important;background:none!important}
 }
 </style>
 </head>
@@ -898,9 +969,15 @@ function getSt(){if(!pubSched)return{pf:0,lv:0,co:0,lc:0,dn:0,ms:0,total:0,act:0
 
 // ===== RENDER =====
 function rSt(){const s=getSt();
-  document.getElementById("stBar").innerHTML=[
-    {l:"Actifs",v:s.act,c:"var(--pf)"},{l:"Lavages",v:s.lv,c:"var(--lav)"},{l:"Insp. Anti-Corr.",v:s.co,c:"var(--tc)"},{l:"Lav.Comp.",v:s.lc,c:"var(--lc)"},{l:"Réalisés",v:s.dn+"/"+s.total,c:"var(--ok)"},{l:"Manqués",v:s.ms,c:s.ms?"var(--dn)":"var(--ok)"}
-  ].map(x=>`<div class="stat"><div class="stat-label">${x.l}</div><div class="stat-value" style="color:${x.c}">${x.v}</div></div>`).join("");
+  const statItems=[
+    {l:"Actifs",v:s.act,g:"linear-gradient(135deg,#3b82f6,#6366f1)",ico:"✈"},
+    {l:"Lavages",v:s.lv,g:"linear-gradient(135deg,#10b981,#059669)",ico:"💧"},
+    {l:"Insp. Anti-Corr.",v:s.co,g:"linear-gradient(135deg,#f59e0b,#d97706)",ico:"🔍"},
+    {l:"Lav.Comp.",v:s.lc,g:"linear-gradient(135deg,#ec4899,#db2777)",ico:"⚙"},
+    {l:"Réalisés",v:s.dn+"/"+s.total,g:"linear-gradient(135deg,#22c55e,#10b981)",ico:"✓"},
+    {l:"Manqués",v:s.ms,g:s.ms?"linear-gradient(135deg,#ef4444,#f97316)":"linear-gradient(135deg,#22c55e,#10b981)",ico:s.ms?"⚠":"✓"}
+  ];
+  document.getElementById("stBar").innerHTML=statItems.map(x=>`<div class="stat"><div class="stat-label">${x.l}</div><div class="stat-value" style="background:${x.g};-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">${x.v}</div></div>`).join("");
   document.getElementById("rb").textContent=s.ms;document.getElementById("rb").style.display=s.ms?"inline":"none";
   document.getElementById("vb").textContent=s.pend;document.getElementById("vb").style.display=s.pend?"inline":"none";
   document.getElementById("pT").textContent=`PLANNING DE LAVAGE - POINT FIXE - INSPECTION ANTI-CORROSION — ${MO[cM].toUpperCase()} ${cY}`;
@@ -1321,9 +1398,6 @@ function wrapSettingsLayout(){
   vAdm.innerHTML=`<div class="settings-layout">
     <aside class="settings-nav" aria-label="Sections des paramètres">${navHtml}</aside>
     <div class="settings-panel" id="settingsPanel">
-      <div style="margin-bottom:14px;padding:10px 14px;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.18);border-radius:10px;font-size:11.5px;color:var(--text2)">
-        <strong style="color:var(--text)">Note :</strong> la restructuration profonde de cette page (sections ancrées) arrive bientôt. Le contenu ci-dessous reste fonctionnel.
-      </div>
       ${inner}
     </div>
   </div>`;
