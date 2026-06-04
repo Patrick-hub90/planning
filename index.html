@@ -638,60 +638,34 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
   .settings-nav-item.active::before{display:none}
   .settings-nav-item.active{background:var(--pf);color:#fff}
 }
-/* ===== Filter bar + Segmented control ===== */
+/* ===== Filter bar with dropdowns ===== */
 .filter-bar{
-  display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;
+  display:flex;flex-wrap:wrap;gap:14px 20px;align-items:flex-end;
   padding:14px 16px;margin-bottom:16px;
   background:var(--bg2);border:1px solid var(--border);border-radius:12px;
   box-shadow:var(--sh)
 }
-.filter-group{display:flex;align-items:center;gap:10px;min-width:0}
+.filter-group{display:flex;flex-direction:column;gap:5px;min-width:0}
 .filter-label{
   font-size:10px;font-weight:700;color:var(--text3);
   text-transform:uppercase;letter-spacing:.7px;white-space:nowrap
 }
-.seg{
-  display:inline-flex;align-items:center;gap:2px;
-  padding:3px;border-radius:9px;
-  background:var(--bg3);border:1px solid var(--border)
-}
-[data-theme="dark"] .seg{background:rgba(255,255,255,.04)}
-.seg-item{
-  position:relative;display:inline-flex;align-items:center;gap:6px;
-  padding:6px 13px;border-radius:7px;border:none;cursor:pointer;
-  background:transparent;color:var(--text2);
-  font-family:inherit;font-size:12px;font-weight:600;white-space:nowrap;
-  transition:color .15s,background .15s
-}
-.seg-item:hover{color:var(--text)}
-.seg-item.active{
-  background:var(--bg2);color:var(--text);font-weight:700;
-  box-shadow:0 1px 2px rgba(15,23,42,.08),0 1px 3px rgba(15,23,42,.06)
-}
-[data-theme="dark"] .seg-item.active{background:rgba(255,255,255,.10);box-shadow:0 1px 2px rgba(0,0,0,.3)}
-.seg-item:focus-visible{outline:2px solid var(--pf);outline-offset:1px}
-.seg-count{
-  font-size:10px;font-weight:800;padding:1px 6px;border-radius:8px;
-  background:var(--dn);color:#fff;line-height:1.4;font-variant-numeric:tabular-nums
-}
-.seg-item.active .seg-count{background:var(--dn)}
-.seg-item:not(.active) .seg-count{background:var(--dn-bg);color:var(--dn)}
-.seg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-/* Clean select */
+/* Clean select with custom chevron */
 .filter-select{
-  padding:8px 32px 8px 12px;border-radius:9px;
-  border:1px solid var(--border);background:var(--bg2);color:var(--text);
-  font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;
+  padding:9px 34px 9px 13px;border-radius:9px;min-width:160px;
+  border:1px solid var(--border);background:var(--bg);color:var(--text);
+  font-family:inherit;font-size:12.5px;font-weight:600;cursor:pointer;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23576180' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 11px center;
-  appearance:none;-webkit-appearance:none;-moz-appearance:none;box-shadow:var(--sh)
+  background-repeat:no-repeat;background-position:right 12px center;
+  appearance:none;-webkit-appearance:none;-moz-appearance:none;
+  transition:border-color .15s,box-shadow .15s
 }
+.filter-select:hover{border-color:var(--text3)}
 .filter-select:focus{outline:none;border-color:var(--pf);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
 @media (max-width:768px){
-  .filter-bar{gap:12px;padding:12px}
-  .seg{width:100%;overflow-x:auto;flex-wrap:nowrap}
-  .filter-group{width:100%;flex-direction:column;align-items:flex-start;gap:6px}
-  .filter-select{width:100%}
+  .filter-bar{gap:12px;padding:12px;flex-direction:column;align-items:stretch}
+  .filter-group{width:100%}
+  .filter-select{width:100%;min-width:0}
 }
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce){
@@ -1312,41 +1286,40 @@ function rUp(){
     </div>
     <button class="btn btn-primary btn-sm no-print" onclick="printUpcoming()" ${filtered.length?'':'disabled style="opacity:.4;cursor:not-allowed"'} title="Imprimer la liste filtrée"><svg style="width:13px;height:13px;vertical-align:middle;margin-right:4px" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimer ${printLabel} (${filtered.length})</button>
   </div>`;
-  // Filters: clean segmented controls
-  h+=`<div class="up-filters filter-bar no-print">`;
-  // Urgency segmented control
-  const urgencyFilters=[{k:"all",l:"Toutes"},{k:"late",l:"En retard",count:lateCount,dot:"var(--dn)"},{k:"urgent",l:"Urgentes",dot:"var(--warn)"},{k:"week",l:"Cette semaine",dot:"var(--tc)"},{k:"month",l:"Ce mois",dot:"var(--ok)"}];
-  h+=`<div class="filter-group"><span class="filter-label">Urgence</span><div class="seg" role="tablist">`;
-  urgencyFilters.forEach(f=>{
-    const active=upFilter.urg===f.k;
-    const dot=f.dot?`<span class="seg-dot" style="background:${f.dot}"></span>`:'';
-    const cnt=(f.k==="late"&&f.count)?`<span class="seg-count">${f.count}</span>`:'';
-    h+=`<button class="seg-item${active?' active':''}" role="tab" aria-selected="${active}" onclick="upSetFilter('urg','${f.k}')">${dot}${f.l}${cnt}</button>`;
-  });
-  h+=`</div></div>`;
-  // Task segmented control
-  const taskFilters=[{k:"all",l:"Toutes"},{k:"pointFixe",l:"Pt Fixe",dot:"var(--pf)"},{k:"lavage",l:"Lavage",dot:"var(--lav)"},{k:"corrosion",l:"Insp. Anti-Corr.",dot:"var(--tc)"},{k:"lavComp",l:"Lav.Comp.",dot:"var(--lc)"}];
-  h+=`<div class="filter-group"><span class="filter-label">Tâche</span><div class="seg" role="tablist">`;
-  taskFilters.forEach(f=>{
-    const active=upFilter.type===f.k;
-    const dot=f.dot?`<span class="seg-dot" style="background:${f.dot}"></span>`:'';
-    h+=`<button class="seg-item${active?' active':''}" role="tab" aria-selected="${active}" onclick="upSetFilter('type','${f.k}')">${dot}${f.l}</button>`;
-  });
-  h+=`</div></div>`;
-  // Sort select
-  h+=`<div class="filter-group" style="margin-left:auto"><span class="filter-label">Tri</span>
-    <select class="filter-select" onchange="upSetFilter('sort',this.value)">
-      <option value="urgency"${upFilter.sort==="urgency"?' selected':''}>Urgence</option>
-      <option value="immat"${upFilter.sort==="immat"?' selected':''}>Aéronef</option>
-      <option value="task"${upFilter.sort==="task"?' selected':''}>Tâche</option>
-    </select>
+  // Filters: dropdown menus
+  h+=`<div class="up-filters filter-bar no-print">
+    <div class="filter-group"><span class="filter-label">Urgence</span>
+      <select class="filter-select" onchange="upSetFilter('urg',this.value)">
+        <option value="all"${upFilter.urg==="all"?' selected':''}>Toutes</option>
+        <option value="late"${upFilter.urg==="late"?' selected':''}>En retard${lateCount?` (${lateCount})`:''}</option>
+        <option value="urgent"${upFilter.urg==="urgent"?' selected':''}>Urgentes (≤ 3 jours)</option>
+        <option value="week"${upFilter.urg==="week"?' selected':''}>Cette semaine (≤ 7 jours)</option>
+        <option value="month"${upFilter.urg==="month"?' selected':''}>Ce mois (≤ 30 jours)</option>
+      </select>
+    </div>
+    <div class="filter-group"><span class="filter-label">Tâche</span>
+      <select class="filter-select" onchange="upSetFilter('type',this.value)">
+        <option value="all"${upFilter.type==="all"?' selected':''}>Toutes</option>
+        <option value="pointFixe"${upFilter.type==="pointFixe"?' selected':''}>Point Fixe</option>
+        <option value="lavage"${upFilter.type==="lavage"?' selected':''}>Lavage</option>
+        <option value="corrosion"${upFilter.type==="corrosion"?' selected':''}>Insp. Anti-Corrosion</option>
+        <option value="lavComp"${upFilter.type==="lavComp"?' selected':''}>Lavage Compresseur</option>
+      </select>
+    </div>
+    <div class="filter-group" style="margin-left:auto"><span class="filter-label">Tri</span>
+      <select class="filter-select" onchange="upSetFilter('sort',this.value)">
+        <option value="urgency"${upFilter.sort==="urgency"?' selected':''}>Urgence</option>
+        <option value="immat"${upFilter.sort==="immat"?' selected':''}>Aéronef</option>
+        <option value="task"${upFilter.sort==="task"?' selected':''}>Tâche</option>
+      </select>
+    </div>
   </div>`;
   if(!filtered.length){
     h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:10px;padding:30px;text-align:center"><div style="font-size:28px;margin-bottom:6px">✅</div><div style="font-weight:900;color:var(--ok-dark)">Aucune tâche dans cette plage</div></div>`;
   } else {
     h+=`<div class="up-table-wrap" style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;overflow-x:auto">
       <table class="up-table"><thead><tr>
-        <th>Aéronef</th><th>Type</th><th>Tâche</th><th>Dernière fois</th><th>Échéance</th><th>Délai</th><th>Statut</th>${isSuper?'<th class="up-action-col no-print">Action</th>':''}
+        <th>Aéronef</th><th>Type</th><th>Tâche</th><th>Dernière fois</th><th>Échéance</th><th>Délai</th><th>Statut</th>
       </tr></thead><tbody>`;
     filtered.forEach(it=>{
       const isLate=it.daysUntil<0;
@@ -1359,7 +1332,6 @@ function rUp(){
         <td style="font-weight:700;font-variant-numeric:tabular-nums">${fmt(it.dueDate)}</td>
         <td>${lateBadge}</td>
         <td><span style="background:${it.urgColor};color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:5px">${it.urgLabel}</span></td>
-        ${isSuper?`<td class="up-action-col no-print"><button class="btn btn-ok btn-xs" onclick="upMarkDone('${it.immat}','${it.task}')" title="Marquer fait aujourd'hui">✓ Fait</button></td>`:''}
       </tr>`;
     });
     h+=`</tbody></table></div>`;
