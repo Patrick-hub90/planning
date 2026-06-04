@@ -255,6 +255,20 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
 .dcol.today{background:linear-gradient(180deg,rgba(59,130,246,.10),transparent 65%)}
 .dcol.today .dhead{background:var(--grad);color:#fff;box-shadow:0 4px 14px -2px rgba(59,130,246,.5)}
 .dcol.outside{opacity:.2;pointer-events:none}
+.dcol.holiday{
+  background:repeating-linear-gradient(45deg,var(--bg3),var(--bg3) 6px,transparent 6px,transparent 12px);
+  position:relative
+}
+[data-theme="dark"] .dcol.holiday{
+  background:repeating-linear-gradient(45deg,rgba(255,255,255,.04),rgba(255,255,255,.04) 6px,transparent 6px,transparent 12px)
+}
+.hol-label{
+  text-align:center;font-size:9.5px;font-weight:800;color:var(--text2);
+  text-transform:uppercase;letter-spacing:.4px;
+  margin-top:14px;padding:6px 4px;
+  background:var(--glass-strong);border-radius:6px;
+  border:1px dashed var(--glass-bd2)
+}
 .dhead{display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;padding:5px 9px;border-radius:9px;margin-bottom:8px;background:rgba(15,23,42,.04);letter-spacing:.5px}
 [data-theme="dark"] .dhead{background:rgba(255,255,255,.04)}
 .tsec{margin-bottom:6px}
@@ -813,6 +827,11 @@ tbody tr:hover{background:rgba(59,130,246,.04)!important}
           <span class="sb-it-lbl">Retards</span>
           <span class="sb-badge" id="rb" style="display:none">0</span>
         </button>
+        <button class="sb-it" id="bUp" onclick="sv('upcoming')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="sb-it-lbl">À venir</span>
+          <span class="sb-badge warn" id="ub" style="display:none">0</span>
+        </button>
       </div>
     </div>
 
@@ -893,7 +912,7 @@ tbody tr:hover{background:rgba(59,130,246,.04)!important}
   <div id="notif"></div>
   <div class="content">
     <div class="stats" id="stBar"></div>
-    <div id="vSch"></div><div id="vFlt" style="display:none"></div><div id="vRet" style="display:none"></div><div id="vVal" style="display:none"></div><div id="vAdm" style="display:none"></div><div id="vLog" style="display:none"></div>
+    <div id="vSch"></div><div id="vFlt" style="display:none"></div><div id="vRet" style="display:none"></div><div id="vUp" style="display:none"></div><div id="vVal" style="display:none"></div><div id="vAdm" style="display:none"></div><div id="vLog" style="display:none"></div>
     <div class="print-footer"><div id="sigA"></div></div>
   </div>
 </main>
@@ -905,6 +924,8 @@ const iso=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()
 const addD=(d,n)=>{const r=new Date(d);r.setDate(r.getDate()+n);return r;};
 const dk=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0');};
 const isWE=d=>{const x=new Date(d+'T12:00:00');return x.getDay()===0||x.getDay()===6;};
+const isHoliday=d=>!!(holidays&&holidays[d]);
+const holidayLabel=d=>(holidays&&holidays[d])||"";
 const fmt=d=>{if(!d)return"";return new Date(d+'T12:00:00').toLocaleDateString("fr-FR",{day:"2-digit",month:"2-digit",year:"numeric"});};
 const fmtL=d=>{if(!d)return"";return new Date(d+'T12:00:00').toLocaleDateString("fr-FR",{day:"2-digit",month:"long",year:"numeric"});};
 const daysBetween=(a,b)=>{if(!a||!b)return 999;return Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/86400000);};
@@ -915,11 +936,12 @@ const TLABEL={pointFixe:"Pt Fixe",lavage:"Lavage",corrosion:"Insp. Anti-Corr.",l
 const FLABEL={lastFlight:"Dernier Vol",lastLavage:"Dernier Lavage",lastPointFixe:"Dernier Pt Fixe",lastCorrosion:"Dernier Insp. Anti-Corrosion",lastLavComp:"Dernier Lav. Compresseur"};
 const TASK_TYPES=["pointFixe","lavage","corrosion","lavComp"];
 
-let fleet=[],pubSched=null,pendingSubs={},admins={admin:{name:"Administrateur",password:"admin",role:"super"}},auditLogs=[],mobileUsers={},curAdmin=null,isSuper=false,cv="schedule",db=null,isDark=false;
+let fleet=[],pubSched=null,pendingSubs={},admins={admin:{name:"Administrateur",password:"admin",role:"super"}},auditLogs=[],mobileUsers={},curAdmin=null,isSuper=false,cv="schedule",db=null,isDark=false,holidays={};
 let sigName="",sigPost="",sigImage="";
 let pFonts={title:18,subtitle:11,weekHeader:12,dayHeader:12,sectionLabel:9,taskName:10,taskBadge:7,signature:11};
 let maxDay={pointFixe:1,lavage:1,corrosion:1,lavComp:1};
 let cM=new Date().getMonth(),cY=new Date().getFullYear();
+let upFilter={type:"all",horizon:30,sort:"urgency"};
 
 function tTh(){isDark=!isDark;document.documentElement.setAttribute("data-theme",isDark?"dark":"");localStorage.setItem("piste_theme",isDark?"dark":"light");document.getElementById("tIco").innerHTML=isDark?'<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>':'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';}
 if(localStorage.getItem("piste_theme")==="dark")tTh();
@@ -960,7 +982,13 @@ function initFB(){try{
   db.ref("fleet").on("value",s=>{const d=s.val();if(d)fleet=Object.values(d);else fleet=[];loadOrGen();});
   db.ref("pendingSubmissions").on("value",s=>{pendingSubs=s.val()||{};render();});
   db.ref("auditLog").limitToLast(100).on("value",s=>{const d=s.val();auditLogs=d?Object.values(d).reverse():[];if(cv==="logs")rLog();});
-  db.ref("config").on("value",s=>{const c=s.val()||{};sigName=c.sigName||"";sigPost=c.sigPost||"";sigImage=c.sigImage||"";if(c.pFonts)pFonts={...pFonts,...c.pFonts};if(c.maxDay)maxDay={...maxDay,...c.maxDay};applyPrintFonts();});
+  db.ref("config").on("value",s=>{const c=s.val()||{};sigName=c.sigName||"";sigPost=c.sigPost||"";sigImage=c.sigImage||"";if(c.pFonts)pFonts={...pFonts,...c.pFonts};if(c.maxDay)maxDay={...maxDay,...c.maxDay};
+    const newHols=c.holidays||{};
+    const changed=JSON.stringify(holidays)!==JSON.stringify(newHols);
+    holidays=newHols;
+    if(changed&&pubSched)publishSchedule();
+    if(cv==="admin")rAdm();
+    applyPrintFonts();});
 }catch(e){console.error(e);}}
 
 // ===== TASK STATUS =====
@@ -989,7 +1017,7 @@ function generateSchedule(){
   });
   needs.sort((a,b)=>a.pr-b.pr);const used=new Set();
   for(let i=0;i<needs.length;i++){const n=needs[i],k=`${n.im}-${n.ty}-${n.due.getTime()}`;if(used.has(k))continue;
-    for(let j=0;j<nd;j++){const d=addD(sd,j),d2=dk(d);if(d2<today||isWE(d2)||d<n.due)continue;const s=sc[d2];if(!s)continue;
+    for(let j=0;j<nd;j++){const d=addD(sd,j),d2=dk(d);if(d2<today||isWE(d2)||isHoliday(d2)||d<n.due)continue;const s=sc[d2];if(!s)continue;
       if(n.ty==="pointFixe"&&s.pointFixe.length>=maxDay.pointFixe)continue;if(n.ty==="lavage"&&s.lavage.length>=maxDay.lavage)continue;if(n.ty==="corrosion"&&s.corrosion.length>=maxDay.corrosion)continue;if(n.ty==="lavComp"&&s.lavComp.length>=maxDay.lavComp)continue;
       if(n.ty==="pointFixe"&&(s.lavage.includes(n.im)||s.corrosion.includes(n.im)||s.lavComp.includes(n.im)))continue;
       if((n.ty==="lavage"||n.ty==="corrosion"||n.ty==="lavComp")&&s.pointFixe.includes(n.im))continue;
@@ -1067,8 +1095,10 @@ function rSch(){
     h+=`<div class="wblock" data-week="${weekIdx}"><div class="wheader"><span class="wheader-label">Sem. ${fmt(ws)} — ${fmt(we)}</span><div class="wprog">${wDone}/${wTotal}<div class="wprog-bar"><div class="wprog-fill" style="width:${wPct}%;background:${bc}"></div></div>${wPct}%</div></div><div class="wgrid">`;
     // ... day columns rendered below
     w.forEach(({d,in:inM})=>{
-      const dt=new Date(d+'T12:00:00'),isT=d===today,isP=d<today;
+      const dt=new Date(d+'T12:00:00'),isT=d===today,isP=d<today,isHol=isHoliday(d);
       if(!inM){h+=`<div class="dcol outside"><div class="dhead">${WD[dt.getDay()]} ${dt.getDate()}</div></div>`;return;}
+      // Holiday: show banner, no tasks
+      if(isHol){h+=`<div class="dcol holiday"><div class="dhead">${WD[dt.getDay()]} ${dt.getDate()}</div><div class="hol-label">🎉 ${holidayLabel(d)}</div></div>`;return;}
       const sl=pubSched[d]||{pointFixe:[],lavage:[],corrosion:[],lavComp:[]};
       const hasTasks=TASK_TYPES.some(ty=>sl[ty]&&sl[ty].length);
       // Skip past empty days
@@ -1135,6 +1165,126 @@ function rRet(){let missed=[];
       h+=`</tbody></table></div>`;});}
   document.getElementById("vRet").innerHTML=h;}
 
+// ===== UPCOMING TASKS (anticipation) =====
+function getUpcomingTasks(){
+  const items=[];
+  fleet.filter(a=>a.active).forEach(ac=>{
+    if(!ac.lastFlight&&!ac.lastLavage&&!ac.lastCorrosion&&!ac.lastPointFixe&&!ac.lastLavComp)return;
+    // Pt Fixe: based on max(lastFlight, lastPointFixe)
+    const pfRef=ac.lastPointFixe&&(!ac.lastFlight||ac.lastPointFixe>ac.lastFlight)?ac.lastPointFixe:ac.lastFlight;
+    if(pfRef)items.push({immat:ac.immat,type:ac.type,task:"pointFixe",lastDate:pfRef,lastLabel:pfRef===ac.lastPointFixe?"Dernier PF":"Dernier Vol"});
+    // Lavage
+    const lavRef=ac.lastLavage||ac.lastFlight;
+    if(lavRef)items.push({immat:ac.immat,type:ac.type,task:"lavage",lastDate:lavRef,lastLabel:ac.lastLavage?"Dernier Lavage":"Dernier Vol"});
+    // Corrosion
+    const corRef=ac.lastCorrosion||ac.lastFlight;
+    if(corRef)items.push({immat:ac.immat,type:ac.type,task:"corrosion",lastDate:corRef,lastLabel:ac.lastCorrosion?"Dernière Insp.":"Dernier Vol"});
+    // Lav.Comp (only if hasLavComp)
+    if(ac.hasLavComp){
+      const lcRef=ac.lastLavComp||ac.lastFlight;
+      if(lcRef)items.push({immat:ac.immat,type:ac.type,task:"lavComp",lastDate:lcRef,lastLabel:ac.lastLavComp?"Dernier Lav.Comp.":"Dernier Vol"});
+    }
+  });
+  // Compute due date, days until, urgency
+  return items.map(it=>{
+    const interval=MIN_INT[it.task];
+    const dueDate=dk(addD(new Date(it.lastDate+'T12:00:00'),interval));
+    const daysUntil=daysBetween(today,dueDate);
+    let urgency,urgLabel,urgColor;
+    if(daysUntil<0){urgency=0;urgLabel="En retard";urgColor="var(--dn)";}
+    else if(daysUntil<=3){urgency=1;urgLabel="Urgent";urgColor="var(--dn)";}
+    else if(daysUntil<=7){urgency=2;urgLabel="Cette semaine";urgColor="var(--warn)";}
+    else if(daysUntil<=14){urgency=3;urgLabel="2 semaines";urgColor="var(--tc)";}
+    else if(daysUntil<=30){urgency=4;urgLabel="Ce mois";urgColor="var(--ok)";}
+    else{urgency=5;urgLabel="Plus tard";urgColor="var(--text3)";}
+    return{...it,interval,dueDate,daysUntil,urgency,urgLabel,urgColor};
+  });
+}
+function rUp(){
+  const all=getUpcomingTasks();
+  // Apply filters
+  let filtered=all;
+  if(upFilter.type!=="all")filtered=filtered.filter(x=>x.task===upFilter.type);
+  if(upFilter.horizon!=="all")filtered=filtered.filter(x=>x.daysUntil<=upFilter.horizon);
+  // Sort
+  if(upFilter.sort==="urgency")filtered.sort((a,b)=>a.daysUntil-b.daysUntil);
+  else if(upFilter.sort==="immat")filtered.sort((a,b)=>a.immat.localeCompare(b.immat)||a.daysUntil-b.daysUntil);
+  else if(upFilter.sort==="task")filtered.sort((a,b)=>a.task.localeCompare(b.task)||a.daysUntil-b.daysUntil);
+  // Count by urgency for stats
+  const lateCount=all.filter(x=>x.daysUntil<0).length;
+  const urgentCount=all.filter(x=>x.daysUntil>=0&&x.daysUntil<=3).length;
+  const soonCount=all.filter(x=>x.daysUntil>=4&&x.daysUntil<=14).length;
+  // Render
+  let h=`<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;align-items:center;justify-content:space-between">
+    <div>
+      <h2 style="font-size:16px;font-weight:800;margin-bottom:4px">Tâches à anticiper</h2>
+      <p style="font-size:12px;color:var(--text2)">${all.length} tâches recensées · ${lateCount} en retard · ${urgentCount} urgentes · ${soonCount} sous 15 jours</p>
+    </div>
+  </div>`;
+  // Filters
+  h+=`<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">`;
+  const taskFilters=[{k:"all",l:"Toutes"},{k:"pointFixe",l:"Pt Fixe"},{k:"lavage",l:"Lavage"},{k:"corrosion",l:"Insp. Anti-Corr."},{k:"lavComp",l:"Lav.Comp."}];
+  taskFilters.forEach(f=>{
+    const active=upFilter.type===f.k;
+    h+=`<button class="btn btn-sm${active?' active':''}" onclick="upSetFilter('type','${f.k}')">${f.l}</button>`;
+  });
+  h+=`<div style="width:1px;background:var(--border);margin:0 4px"></div>`;
+  const horizons=[{k:7,l:"7j"},{k:14,l:"15j"},{k:30,l:"30j"},{k:60,l:"60j"},{k:"all",l:"Tout"}];
+  horizons.forEach(f=>{
+    const active=upFilter.horizon===f.k;
+    h+=`<button class="btn btn-sm${active?' active':''}" onclick="upSetFilter('horizon','${f.k}')">${f.l}</button>`;
+  });
+  h+=`<div style="flex:1"></div>
+    <select onchange="upSetFilter('sort',this.value)" style="padding:7px 10px">
+      <option value="urgency"${upFilter.sort==="urgency"?' selected':''}>Trier par urgence</option>
+      <option value="immat"${upFilter.sort==="immat"?' selected':''}>Trier par aéronef</option>
+      <option value="task"${upFilter.sort==="task"?' selected':''}>Trier par tâche</option>
+    </select>
+  </div>`;
+  if(!filtered.length){
+    h+=`<div style="background:var(--ok-bg);border:1px solid var(--ok-bd);border-radius:10px;padding:30px;text-align:center"><div style="font-size:28px;margin-bottom:6px">✅</div><div style="font-weight:900;color:var(--ok-dark)">Aucune tâche dans cette plage</div></div>`;
+  } else {
+    h+=`<div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden;overflow-x:auto">
+      <table><thead><tr>
+        <th>Aéronef</th><th>Type</th><th>Tâche</th><th>Dernière fois</th><th>Échéance</th><th>Délai</th><th>Statut</th>${isSuper?'<th>Action</th>':''}
+      </tr></thead><tbody>`;
+    filtered.forEach(it=>{
+      const lateBadge=it.daysUntil<0?`<span style="background:var(--dn);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px;font-variant-numeric:tabular-nums">+${-it.daysUntil}j</span>`:`<span style="font-weight:700;color:${it.urgColor};font-variant-numeric:tabular-nums">${it.daysUntil>0?'dans ':''}${it.daysUntil}j</span>`;
+      h+=`<tr>
+        <td style="font-weight:800">${it.immat}</td>
+        <td><span class="tag" style="background:${it.type==='ULM'?'var(--pf-bg)':'#f5f3ff'};color:${it.type==='ULM'?'var(--pf-dark)':'#7c3aed'}">${it.type}</span></td>
+        <td><span class="tag" style="background:${tC(it.task).bg};color:${tC(it.task).c};border:1px solid ${tC(it.task).bd};font-weight:700">${TLABEL[it.task]}</span></td>
+        <td style="font-size:11px"><div style="font-weight:700">${fmt(it.lastDate)}</div><div style="font-size:9.5px;color:var(--text3)">${it.lastLabel}</div></td>
+        <td style="font-weight:700;font-variant-numeric:tabular-nums">${fmt(it.dueDate)}</td>
+        <td>${lateBadge}</td>
+        <td><span style="background:${it.urgColor};color:#fff;font-size:10px;font-weight:800;padding:3px 8px;border-radius:5px">${it.urgLabel}</span></td>
+        ${isSuper?`<td><button class="btn btn-ok btn-xs" onclick="upMarkDone('${it.immat}','${it.task}')" title="Marquer fait aujourd'hui">✓ Fait</button></td>`:''}
+      </tr>`;
+    });
+    h+=`</tbody></table></div>`;
+  }
+  document.getElementById("vUp").innerHTML=h;
+  // Update sidebar badge
+  const ub=document.getElementById("ub");
+  if(ub){const tot=lateCount+urgentCount;ub.textContent=tot;ub.style.display=tot?"inline-flex":"none";}
+}
+function upSetFilter(key,val){
+  if(key==="horizon"&&val!=="all")val=parseInt(val);
+  upFilter[key]=val;
+  rUp();
+}
+function upMarkDone(immat,task){
+  const labelMap={pointFixe:"lastPointFixe",lavage:"lastLavage",corrosion:"lastCorrosion",lavComp:"lastLavComp"};
+  const field=labelMap[task];if(!field)return;
+  const ac=fleet.find(a=>a.immat===immat);if(!ac)return;
+  if(!confirm(`Marquer ${TLABEL[task]} de ${immat} comme fait aujourd'hui (${fmt(today)}) ?`))return;
+  ac[field]=today;
+  if(db)db.ref("fleet/"+fbK(immat)+"/"+field).set(today);
+  addLog(`Anticipation: ${immat} ${TLABEL[task]} marqué fait aujourd'hui`);
+  publishSchedule();
+  rUp();
+}
+
 function rAdm(){if(!isSuper){document.getElementById("vAdm").innerHTML=`<div style="text-align:center;padding:30px;color:var(--text2)"><div style="font-size:28px;margin-bottom:8px">🔒</div><div style="font-weight:800">Accès réservé à l'administrateur principal</div></div>`;return;}
   let h="";
   // ===== Section: Comptes admin =====
@@ -1189,6 +1339,46 @@ function rAdm(){if(!isSuper){document.getElementById("vAdm").innerHTML=`<div sty
       <div class="field"><label>Poste / Fonction</label><input type="text" id="sP" value="${sigPost}" style="width:100%;padding:8px" onchange="sSig()"></div>
     </div>
   </div>`;
+  // ===== Section: Jours fériés =====
+  const holList=Object.entries(holidays).sort((a,b)=>a[0].localeCompare(b[0]));
+  h+=`<div class="settings-section" id="sect-holidays" data-title="Jours fériés">
+    <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">Jours fériés</h2>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:16px">Les jours fériés sont exclus de la planification — les tâches sont redistribuées automatiquement sur les jours ouvrés disponibles</p>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px">
+      <div style="font-weight:800;font-size:12px;margin-bottom:8px">+ Ajouter un jour férié</div>
+      <div style="display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:end">
+        <div class="field"><label>Date</label><input type="date" id="hDate" style="width:150px"></div>
+        <div class="field"><label>Libellé (optionnel)</label><input type="text" id="hLabel" placeholder="Ex: Noël, Pont, RTT..." style="width:100%"></div>
+        <button class="btn btn-primary btn-sm" onclick="addHoliday()">+ Ajouter</button>
+      </div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--bg3);display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button class="btn btn-sm" onclick="addPresetFR()">🇫🇷 Auto-jours fériés France ${cY}</button>
+        <span style="font-size:11px;color:var(--text2)">Charge automatiquement les 11 jours fériés français pour l'année affichée</span>
+      </div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-weight:800;font-size:12px">Jours fériés enregistrés <span style="color:var(--text3);font-weight:600">(${holList.length})</span></div>
+        ${holList.length?`<button class="btn btn-dn btn-xs" onclick="clearAllHolidays()">Tout supprimer</button>`:''}
+      </div>`;
+  if(!holList.length){
+    h+=`<p style="font-size:11px;color:var(--text2);text-align:center;padding:20px">Aucun jour férié enregistré</p>`;
+  } else {
+    h+=`<div style="display:grid;gap:6px">`;
+    holList.forEach(([d,lbl])=>{
+      const dt=new Date(d+'T12:00:00');
+      const dayName=WD[dt.getDay()];
+      const isPast=d<today;
+      h+=`<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:${isPast?'var(--bg3)':'var(--bg)'};border-radius:8px;border:1px solid var(--border);${isPast?'opacity:.55':''}">
+        <span style="font-weight:800;min-width:120px;font-variant-numeric:tabular-nums">${dayName} ${fmt(d)}</span>
+        <span style="flex:1;font-size:12px;color:var(--text)">${lbl}</span>
+        ${isPast?'<span style="font-size:9.5px;color:var(--text3);font-weight:700;text-transform:uppercase">Passé</span>':''}
+        <button class="btn btn-dn btn-xs" onclick="removeHoliday('${d}')">Suppr.</button>
+      </div>`;
+    });
+    h+=`</div>`;
+  }
+  h+=`</div></div>`;
   // ===== Section: Max par jour =====
   h+=`<div class="settings-section" id="sect-maxday" data-title="Max par jour">
     <h2 style="font-size:18px;font-weight:800;margin-bottom:6px">Tâches par jour</h2>
@@ -1258,11 +1448,65 @@ function changePwd(id){const el=document.getElementById("pwd_"+id);if(!el)return
 // Mobile user management
 function rmMobileUser(key){if(!confirm("Supprimer ce compte mobile ?"))return;if(db)db.ref("mobileUsers/"+key).remove();addLog("Supprimé compte mobile: "+key);}
 
+// ===== Holiday management =====
+function addHoliday(){
+  const date=document.getElementById("hDate").value;
+  const label=document.getElementById("hLabel").value.trim()||"Férié";
+  if(!date){alert("Sélectionnez une date");return;}
+  if(holidays[date]){if(!confirm(`${fmt(date)} est déjà marqué comme "${holidays[date]}". Remplacer ?`))return;}
+  if(db)db.ref("config/holidays/"+date).set(label);
+  addLog(`Jour férié ajouté: ${fmt(date)} (${label})`);
+  document.getElementById("hDate").value="";
+  document.getElementById("hLabel").value="";
+}
+function removeHoliday(date){
+  if(!confirm(`Supprimer le jour férié du ${fmt(date)} ?`))return;
+  if(db)db.ref("config/holidays/"+date).remove();
+  addLog(`Jour férié supprimé: ${fmt(date)}`);
+}
+function clearAllHolidays(){
+  if(!confirm("Supprimer TOUS les jours fériés ?"))return;
+  if(db)db.ref("config/holidays").remove();
+  addLog("Tous les jours fériés supprimés");
+}
+// Computus algorithm — calculates Easter Sunday for a given year
+function easterSunday(year){
+  const a=year%19,b=Math.floor(year/100),c=year%100;
+  const d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25);
+  const g=Math.floor((b-f+1)/3);
+  const h=(19*a+b-d-g+15)%30;
+  const i=Math.floor(c/4),k=c%4;
+  const l=(32+2*e+2*i-h-k)%7;
+  const m=Math.floor((a+11*h+22*l)/451);
+  const month=Math.floor((h+l-7*m+114)/31);
+  const day=((h+l-7*m+114)%31)+1;
+  return new Date(year,month-1,day);
+}
+function addPresetFR(){
+  const y=cY;
+  const fixed={
+    [`${y}-01-01`]:"Jour de l'an",
+    [`${y}-05-01`]:"Fête du Travail",
+    [`${y}-05-08`]:"Victoire 1945",
+    [`${y}-07-14`]:"Fête nationale",
+    [`${y}-08-15`]:"Assomption",
+    [`${y}-11-01`]:"Toussaint",
+    [`${y}-11-11`]:"Armistice 1918",
+    [`${y}-12-25`]:"Noël"
+  };
+  const easter=easterSunday(y);
+  fixed[dk(addD(easter,1))]="Lundi de Pâques";
+  fixed[dk(addD(easter,39))]="Ascension";
+  fixed[dk(addD(easter,50))]="Lundi de Pentecôte";
+  if(db)db.ref("config/holidays").update(fixed);
+  addLog(`Jours fériés français ${y} ajoutés (${Object.keys(fixed).length})`);
+}
+
 // Signature
 function sSig(){sigName=document.getElementById("sN").value;sigPost=document.getElementById("sP").value;if(db){db.ref("config/sigName").set(sigName);db.ref("config/sigPost").set(sigPost);}addLog("Signature modifiée");}
 function uSig(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{sigImage=ev.target.result;if(db)db.ref("config/sigImage").set(sigImage);rAdm();};r.readAsDataURL(f);}
 function rSig(){sigImage="";if(db)db.ref("config/sigImage").remove();rAdm();}
-function xBk(){const d=JSON.stringify({fleet,sigName,sigPost,sigImage},null,2);const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([d],{type:"application/json"}));a.download="piste_backup.json";a.click();}
+function xBk(){const d=JSON.stringify({fleet,sigName,sigPost,sigImage,holidays,maxDay,pFonts},null,2);const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([d],{type:"application/json"}));a.download="piste_backup.json";a.click();}
 
 // Get weeks (Mon-Fri) for current month
 function getWeeksList(){
@@ -1329,6 +1573,7 @@ function exportTasksJSON(){
       taskCount:tasks.length
     },
     taskTypes:{pointFixe:{label:"Point Fixe",interval:7,maxPerDay:maxDay.pointFixe},lavage:{label:"Lavage",interval:9,maxPerDay:maxDay.lavage},corrosion:{label:"Inspection Anti-Corrosion",interval:9,maxPerDay:maxDay.corrosion},lavComp:{label:"Lavage Compresseur",interval:7,maxPerDay:maxDay.lavComp}},
+    holidays:Object.fromEntries(Object.entries(holidays).filter(([d])=>{if(scope==="all"){return d.startsWith(mKey(cM,cY));}else{const[s,e]=scope.split("|");return d>=s&&d<=e;}})),
     tasks
   };
 
@@ -1336,7 +1581,7 @@ function exportTasksJSON(){
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`piste_tasks_${scopeLabel}.json`;a.click();
   addLog(`Export JSON: ${tasks.length} tâches (${scope==="all"?"mois complet":"semaine"})`);
 }
-function iBk(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.fleet){fleet=d.fleet;sigName=d.sigName||"";sigPost=d.sigPost||"";sigImage=d.sigImage||"";if(db){const o={};fleet.forEach(a=>{o[fbK(a.immat)]=a;});db.ref("fleet").set(o);db.ref("config").set({sigName,sigPost,sigImage});}addLog("Import backup");publishSchedule();}}catch(e){}};r.readAsText(f);e.target.value="";}
+function iBk(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.fleet){fleet=d.fleet;sigName=d.sigName||"";sigPost=d.sigPost||"";sigImage=d.sigImage||"";holidays=d.holidays||{};if(d.maxDay)maxDay={...maxDay,...d.maxDay};if(d.pFonts)pFonts={...pFonts,...d.pFonts};if(db){const o={};fleet.forEach(a=>{o[fbK(a.immat)]=a;});db.ref("fleet").set(o);db.ref("config").set({sigName,sigPost,sigImage,holidays,maxDay,pFonts});}addLog("Import backup");publishSchedule();}}catch(e){}};r.readAsText(f);e.target.value="";}
 
 // Print fonts
 function applyPrintFonts(){
@@ -1389,8 +1634,8 @@ function doPrint(){
 }
 function pM(){cM--;if(cM<0){cM=11;cY--;}pubSched=null;loadOrGen();}
 function nM(){cM++;if(cM>11){cM=0;cY++;}pubSched=null;loadOrGen();}
-function sv(v){if((v==="admin"||v==="validation")&&!isSuper){v="schedule";}cv=v;["Sch","Flt","Ret","Val","Adm","Log"].forEach(id=>{document.getElementById("v"+id).style.display="none";const b=document.getElementById("b"+id);if(b)b.classList.remove("active");});const m={schedule:"Sch",fleet:"Flt",retards:"Ret",validation:"Val",admin:"Adm",logs:"Log"};document.getElementById("v"+m[v]).style.display="block";const b2=document.getElementById("b"+m[v]);if(b2)b2.classList.add("active");if(v==="admin")rAdm();if(v==="validation")rVal();if(v==="logs")rLog();}
-function render(){rSt();rFlt();rSch();rRet();rVal();}
+function sv(v){if((v==="admin"||v==="validation")&&!isSuper){v="schedule";}cv=v;["Sch","Flt","Ret","Up","Val","Adm","Log"].forEach(id=>{document.getElementById("v"+id).style.display="none";const b=document.getElementById("b"+id);if(b)b.classList.remove("active");});const m={schedule:"Sch",fleet:"Flt",retards:"Ret",upcoming:"Up",validation:"Val",admin:"Adm",logs:"Log"};document.getElementById("v"+m[v]).style.display="block";const b2=document.getElementById("b"+m[v]);if(b2)b2.classList.add("active");if(v==="admin")rAdm();if(v==="validation")rVal();if(v==="logs")rLog();if(v==="upcoming")rUp();}
+function render(){rSt();rFlt();rSch();rRet();rUp();rVal();}
 
 // Fleet ops
 function uFld(i,f,v){fleet[i][f]=v||null;if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/"+f).set(v||null);addLog(`${fleet[i].immat}: ${FLABEL[f]||f}=${v?fmt(v):'vide'}`);render();}
@@ -1406,6 +1651,7 @@ const PAGE_META={
   schedule:{title:"Planning",sub:()=>`${MO[cM]} ${cY}`},
   fleet:{title:"Flotte",sub:()=>`${fleet.length} avion${fleet.length>1?'s':''}`},
   retards:{title:"Retards",sub:()=>{let m=0;if(pubSched)Object.entries(pubSched).forEach(([dt,s])=>{if(!s||dt.startsWith("_"))return;TASK_TYPES.forEach(ty=>{if(!s[ty])return;s[ty].forEach(im=>{if(taskStatus(im,ty,dt).st==="missed")m++;});});});return `${m} tâche${m>1?'s':''} en retard`;}},
+  upcoming:{title:"À venir",sub:()=>{const u=getUpcomingTasks();const ur=u.filter(x=>x.daysUntil<=3).length;return `${u.length} tâches recensées · ${ur} urgentes`;}},
   validation:{title:"Validation",sub:()=>{const n=Object.keys(pendingSubs).length;return `${n} soumission${n>1?'s':''} à valider`;}},
   admin:{title:"Paramètres",sub:()=>""},
   logs:{title:"Logs",sub:()=>"100 dernières actions"}
@@ -1416,7 +1662,7 @@ function updateTopbar(v){
   if(t)t.textContent=meta.title;
   if(s){const sub=meta.sub();s.textContent=sub||"";s.style.display=sub?"":"none";}
   // aria-current on active sidebar item
-  ["bSch","bFlt","bRet","bVal","bAdm","bLog"].forEach(id=>{const b=document.getElementById(id);if(b){if(b.classList.contains("active"))b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");}});
+  ["bSch","bFlt","bRet","bUp","bVal","bAdm","bLog"].forEach(id=>{const b=document.getElementById(id);if(b){if(b.classList.contains("active"))b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");}});
   // Print actions only relevant for schedule
   const sel=document.getElementById("printScope");
   if(sel)sel.style.display=(v==="schedule")?"":"none";
@@ -1490,7 +1736,8 @@ function wrapSettingsLayout(){
     {id:"sect-admins",label:"Comptes admin",icon:'<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-3-3.87"/><path d="M7 21v-2a4 4 0 014-4h2"/><circle cx="9" cy="7" r="4"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>'},
     {id:"sect-mobile",label:"Utilisateurs mobile",icon:'<svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>'},
     {id:"sect-signature",label:"Signature",icon:'<svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8"/><polyline points="14 7 21 7 21 14"/></svg>'},
-    {id:"sect-maxday",label:"Tâches/jour",icon:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>'},
+    {id:"sect-holidays",label:"Jours fériés",icon:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="15" r="1.5"/><circle cx="16" cy="15" r="1.5"/></svg>'},
+    {id:"sect-maxday",label:"Tâches/jour",icon:'<svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>'},
     {id:"sect-print",label:"Impression",icon:'<svg viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>'},
     {id:"sect-export",label:"Export JSON",icon:'<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>'},
     {id:"sect-backup",label:"Sauvegarde",icon:'<svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>'}
