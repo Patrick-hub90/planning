@@ -1291,10 +1291,10 @@ function rUp(){
     <div class="filter-group"><span class="filter-label">Urgence</span>
       <select class="filter-select" onchange="upSetFilter('urg',this.value)">
         <option value="all"${upFilter.urg==="all"?' selected':''}>Toutes</option>
-        <option value="late"${upFilter.urg==="late"?' selected':''}>En retard${lateCount?` (${lateCount})`:''}</option>
-        <option value="urgent"${upFilter.urg==="urgent"?' selected':''}>Urgentes (≤ 3 jours)</option>
-        <option value="week"${upFilter.urg==="week"?' selected':''}>Cette semaine (≤ 7 jours)</option>
-        <option value="month"${upFilter.urg==="month"?' selected':''}>Ce mois (≤ 30 jours)</option>
+        <option value="late"${upFilter.urg==="late"?' selected':''}>En retard</option>
+        <option value="urgent"${upFilter.urg==="urgent"?' selected':''}>Urgentes</option>
+        <option value="week"${upFilter.urg==="week"?' selected':''}>Cette semaine</option>
+        <option value="month"${upFilter.urg==="month"?' selected':''}>Ce mois</option>
       </select>
     </div>
     <div class="filter-group"><span class="filter-label">Tâche</span>
