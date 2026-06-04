@@ -638,6 +638,61 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
   .settings-nav-item.active::before{display:none}
   .settings-nav-item.active{background:var(--pf);color:#fff}
 }
+/* ===== Filter bar + Segmented control ===== */
+.filter-bar{
+  display:flex;flex-wrap:wrap;gap:16px 24px;align-items:center;
+  padding:14px 16px;margin-bottom:16px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:12px;
+  box-shadow:var(--sh)
+}
+.filter-group{display:flex;align-items:center;gap:10px;min-width:0}
+.filter-label{
+  font-size:10px;font-weight:700;color:var(--text3);
+  text-transform:uppercase;letter-spacing:.7px;white-space:nowrap
+}
+.seg{
+  display:inline-flex;align-items:center;gap:2px;
+  padding:3px;border-radius:9px;
+  background:var(--bg3);border:1px solid var(--border)
+}
+[data-theme="dark"] .seg{background:rgba(255,255,255,.04)}
+.seg-item{
+  position:relative;display:inline-flex;align-items:center;gap:6px;
+  padding:6px 13px;border-radius:7px;border:none;cursor:pointer;
+  background:transparent;color:var(--text2);
+  font-family:inherit;font-size:12px;font-weight:600;white-space:nowrap;
+  transition:color .15s,background .15s
+}
+.seg-item:hover{color:var(--text)}
+.seg-item.active{
+  background:var(--bg2);color:var(--text);font-weight:700;
+  box-shadow:0 1px 2px rgba(15,23,42,.08),0 1px 3px rgba(15,23,42,.06)
+}
+[data-theme="dark"] .seg-item.active{background:rgba(255,255,255,.10);box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.seg-item:focus-visible{outline:2px solid var(--pf);outline-offset:1px}
+.seg-count{
+  font-size:10px;font-weight:800;padding:1px 6px;border-radius:8px;
+  background:var(--dn);color:#fff;line-height:1.4;font-variant-numeric:tabular-nums
+}
+.seg-item.active .seg-count{background:var(--dn)}
+.seg-item:not(.active) .seg-count{background:var(--dn-bg);color:var(--dn)}
+.seg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+/* Clean select */
+.filter-select{
+  padding:8px 32px 8px 12px;border-radius:9px;
+  border:1px solid var(--border);background:var(--bg2);color:var(--text);
+  font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23576180' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center;
+  appearance:none;-webkit-appearance:none;-moz-appearance:none;box-shadow:var(--sh)
+}
+.filter-select:focus{outline:none;border-color:var(--pf);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
+@media (max-width:768px){
+  .filter-bar{gap:12px;padding:12px}
+  .seg{width:100%;overflow-x:auto;flex-wrap:nowrap}
+  .filter-group{width:100%;flex-direction:column;align-items:flex-start;gap:6px}
+  .filter-select{width:100%}
+}
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce){
   #sidebar,.app-shell,.sb-it,.sb-icon-btn,.sb-toggle svg{transition:none!important}
@@ -1257,27 +1312,33 @@ function rUp(){
     </div>
     <button class="btn btn-primary btn-sm no-print" onclick="printUpcoming()" ${filtered.length?'':'disabled style="opacity:.4;cursor:not-allowed"'} title="Imprimer la liste filtrée"><svg style="width:13px;height:13px;vertical-align:middle;margin-right:4px" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimer ${printLabel} (${filtered.length})</button>
   </div>`;
-  // Filters: urgency + task type + sort
-  h+=`<div class="up-filters" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;align-items:center">
-    <span style="font-size:10.5px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-right:4px">Urgence</span>`;
-  const urgencyFilters=[{k:"all",l:"Toutes"},{k:"late",l:`En retard${lateCount?` (${lateCount})`:''}`},{k:"urgent",l:"Urgentes ≤3j"},{k:"week",l:"Cette semaine"},{k:"month",l:"Ce mois"}];
+  // Filters: clean segmented controls
+  h+=`<div class="up-filters filter-bar no-print">`;
+  // Urgency segmented control
+  const urgencyFilters=[{k:"all",l:"Toutes"},{k:"late",l:"En retard",count:lateCount,dot:"var(--dn)"},{k:"urgent",l:"Urgentes",dot:"var(--warn)"},{k:"week",l:"Cette semaine",dot:"var(--tc)"},{k:"month",l:"Ce mois",dot:"var(--ok)"}];
+  h+=`<div class="filter-group"><span class="filter-label">Urgence</span><div class="seg" role="tablist">`;
   urgencyFilters.forEach(f=>{
     const active=upFilter.urg===f.k;
-    h+=`<button class="btn btn-sm${active?' active':''}" onclick="upSetFilter('urg','${f.k}')">${f.l}</button>`;
+    const dot=f.dot?`<span class="seg-dot" style="background:${f.dot}"></span>`:'';
+    const cnt=(f.k==="late"&&f.count)?`<span class="seg-count">${f.count}</span>`:'';
+    h+=`<button class="seg-item${active?' active':''}" role="tab" aria-selected="${active}" onclick="upSetFilter('urg','${f.k}')">${dot}${f.l}${cnt}</button>`;
   });
-  h+=`</div>`;
-  h+=`<div class="up-filters" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center">
-    <span style="font-size:10.5px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-right:4px">Tâche</span>`;
-  const taskFilters=[{k:"all",l:"Toutes"},{k:"pointFixe",l:"Pt Fixe"},{k:"lavage",l:"Lavage"},{k:"corrosion",l:"Insp. Anti-Corr."},{k:"lavComp",l:"Lav.Comp."}];
+  h+=`</div></div>`;
+  // Task segmented control
+  const taskFilters=[{k:"all",l:"Toutes"},{k:"pointFixe",l:"Pt Fixe",dot:"var(--pf)"},{k:"lavage",l:"Lavage",dot:"var(--lav)"},{k:"corrosion",l:"Insp. Anti-Corr.",dot:"var(--tc)"},{k:"lavComp",l:"Lav.Comp.",dot:"var(--lc)"}];
+  h+=`<div class="filter-group"><span class="filter-label">Tâche</span><div class="seg" role="tablist">`;
   taskFilters.forEach(f=>{
     const active=upFilter.type===f.k;
-    h+=`<button class="btn btn-sm${active?' active':''}" onclick="upSetFilter('type','${f.k}')">${f.l}</button>`;
+    const dot=f.dot?`<span class="seg-dot" style="background:${f.dot}"></span>`:'';
+    h+=`<button class="seg-item${active?' active':''}" role="tab" aria-selected="${active}" onclick="upSetFilter('type','${f.k}')">${dot}${f.l}</button>`;
   });
-  h+=`<div style="flex:1"></div>
-    <select onchange="upSetFilter('sort',this.value)" style="padding:7px 10px">
-      <option value="urgency"${upFilter.sort==="urgency"?' selected':''}>Trier par urgence</option>
-      <option value="immat"${upFilter.sort==="immat"?' selected':''}>Trier par aéronef</option>
-      <option value="task"${upFilter.sort==="task"?' selected':''}>Trier par tâche</option>
+  h+=`</div></div>`;
+  // Sort select
+  h+=`<div class="filter-group" style="margin-left:auto"><span class="filter-label">Tri</span>
+    <select class="filter-select" onchange="upSetFilter('sort',this.value)">
+      <option value="urgency"${upFilter.sort==="urgency"?' selected':''}>Urgence</option>
+      <option value="immat"${upFilter.sort==="immat"?' selected':''}>Aéronef</option>
+      <option value="task"${upFilter.sort==="task"?' selected':''}>Tâche</option>
     </select>
   </div>`;
   if(!filtered.length){
