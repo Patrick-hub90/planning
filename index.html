@@ -1000,7 +1000,10 @@ function initFB(){try{
     if(saved&&admins[saved]){curAdmin=admins[saved];curAdmin.id=saved;isSuper=(saved==="admin"||curAdmin.role==="super");document.getElementById("loginScreen").style.display="none";document.getElementById("appWrap").style.display="grid";document.getElementById("adminName").textContent=(curAdmin.name||saved)+(isSuper?" (Admin)":" (Lecture)");document.getElementById("superBtns").style.display=isSuper?"block":"none";document.getElementById("sysBtns").style.display=isSuper?"block":"none";updateUserCard();render();}
   });
   db.ref("mobileUsers").on("value",s=>{mobileUsers=s.val()||{};if(cv==="admin")rAdm();});
-  db.ref("fleet").on("value",s=>{const d=s.val();if(d)fleet=Object.values(d);else fleet=[];loadOrGen();});
+  db.ref("fleet").on("value",s=>{const d=s.val();if(d)fleet=Object.values(d);else fleet=[];
+    // Auto-sync historical data: every flight counts as a point fixe
+    if(isSuper){let synced=0;fleet.forEach(ac=>{if(ac.lastFlight&&(!ac.lastPointFixe||ac.lastPointFixe<ac.lastFlight)){ac.lastPointFixe=ac.lastFlight;db.ref("fleet/"+fbK(ac.immat)+"/lastPointFixe").set(ac.lastFlight);synced++;}});if(synced)console.log(`Auto-sync: ${synced} aéronefs Pt Fixe alignés sur Vol`);}
+    loadOrGen();});
   db.ref("pendingSubmissions").on("value",s=>{pendingSubs=s.val()||{};render();});
   db.ref("auditLog").limitToLast(100).on("value",s=>{const d=s.val();auditLogs=d?Object.values(d).reverse():[];if(cv==="logs")rLog();});
   db.ref("config").on("value",s=>{const c=s.val()||{};sigName=c.sigName||"";sigPost=c.sigPost||"";sigImage=c.sigImage||"";if(c.pFonts)pFonts={...pFonts,...c.pFonts};if(c.maxDay)maxDay={...maxDay,...c.maxDay};
@@ -1054,7 +1057,13 @@ function publishSchedule(){pubSched=generateSchedule();if(db){db.ref("schedules/
 function loadOrGen(){if(!db){pubSched=generateSchedule();render();return;}db.ref("schedules/"+mKey(cM,cY)).once("value",s=>{const d=s.val();if(d){pubSched=d;render();}else publishSchedule();});}
 
 // ===== VALIDATION =====
-function approveSub(id){const p=pendingSubs[id];if(!p||!db)return;db.ref("fleet/"+fbK(p.immat)+"/"+p.field).set(p.value);db.ref("pendingSubmissions/"+id).remove();const who=curAdmin?(curAdmin.name||curAdmin.id):"admin";addLog(`Validé par ${who}: ${p.immat} ${p.label}=${fmt(p.value)} (soumis par ${p.submittedBy||'—'})`);}
+function approveSub(id){const p=pendingSubs[id];if(!p||!db)return;db.ref("fleet/"+fbK(p.immat)+"/"+p.field).set(p.value);
+  // Update local fleet to keep sync helper in sync
+  const ac=fleet.find(a=>a.immat===p.immat);if(ac)ac[p.field]=p.value;
+  let pfSynced=false;
+  if(p.field==="lastFlight"&&p.value)pfSynced=syncFlightToPF(p.immat);
+  db.ref("pendingSubmissions/"+id).remove();const who=curAdmin?(curAdmin.name||curAdmin.id):"admin";
+  addLog(`Validé par ${who}: ${p.immat} ${p.label}=${fmt(p.value)} (soumis par ${p.submittedBy||'—'})${pfSynced?` · Pt Fixe auto-synchronisé`:''}`);}
 function rejectSub(id){const p=pendingSubs[id];if(!db)return;db.ref("pendingSubmissions/"+id).remove();const who=curAdmin?(curAdmin.name||curAdmin.id):"admin";if(p)addLog(`Rejeté par ${who}: ${p.immat} ${p.label} (soumis par ${p.submittedBy||'—'})`);}
 function approveAll(){Object.keys(pendingSubs).forEach(id=>approveSub(id));}
 
@@ -1690,12 +1699,31 @@ function sv(v){if((v==="admin"||v==="validation")&&!isSuper){v="schedule";}cv=v;
 function render(){rSt();rFlt();rSch();rRet();rUp();rVal();}
 
 // Fleet ops
-function uFld(i,f,v){fleet[i][f]=v||null;if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/"+f).set(v||null);addLog(`${fleet[i].immat}: ${FLABEL[f]||f}=${v?fmt(v):'vide'}`);render();}
+// Helper: every flight counts as a point fixe — sync lastPointFixe ≥ lastFlight
+function syncFlightToPF(immat){
+  const ac=fleet.find(a=>a.immat===immat);if(!ac)return false;
+  if(ac.lastFlight&&(!ac.lastPointFixe||ac.lastPointFixe<ac.lastFlight)){
+    ac.lastPointFixe=ac.lastFlight;
+    if(db)db.ref("fleet/"+fbK(immat)+"/lastPointFixe").set(ac.lastFlight);
+    return true;
+  }
+  return false;
+}
+function uFld(i,f,v){
+  fleet[i][f]=v||null;
+  if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/"+f).set(v||null);
+  addLog(`${fleet[i].immat}: ${FLABEL[f]||f}=${v?fmt(v):'vide'}`);
+  // Auto-sync: every flight is a point fixe
+  if(f==="lastFlight"&&v&&syncFlightToPF(fleet[i].immat)){
+    addLog(`${fleet[i].immat}: Pt Fixe auto-synchronisé sur le vol (${fmt(v)})`);
+  }
+  render();
+}
 function tLC(i,v){fleet[i].hasLavComp=v;if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/hasLavComp").set(v);render();}
 function tA(i){fleet[i].active=!fleet[i].active;if(db)db.ref("fleet/"+fbK(fleet[i].immat)+"/active").set(fleet[i].active);addLog(`${fleet[i].immat}: ${fleet[i].active?'Activé':'Désactivé'}`);render();}
 function rmA(i){if(!confirm("Supprimer "+fleet[i].immat+" ?"))return;const im=fleet[i].immat;fleet.splice(i,1);if(db)db.ref("fleet/"+fbK(im)).remove();addLog("Supprimé: "+im);render();}
 function addA(){const im=document.getElementById("nI").value.trim().toUpperCase(),ty=document.getElementById("nT").value.trim()||"ULM",lc=document.getElementById("nLC").checked;if(!im||fleet.find(a=>a.immat===im))return;const ac={immat:im,type:ty,active:true,hasLavComp:lc,lastFlight:null,lastLavage:null,lastCorrosion:null,lastPointFixe:null,lastLavComp:null};fleet.push(ac);if(db)db.ref("fleet/"+fbK(im)).set(ac);document.getElementById("aR").style.display="none";document.getElementById("nI").value="";addLog("Ajouté: "+im);render();}
-function bulkEdit(){const f=document.getElementById("bF").value,d=document.getElementById("bD").value;if(!d){alert("Date?");return;}const sel=[...document.querySelectorAll(".bk-c:checked")].map(c=>c.dataset.im);if(!sel.length){alert("Cochez des aéronefs");return;}if(!confirm(`Appliquer ${FLABEL[f]||f}=${fmt(d)} à ${sel.length} aéronef(s)?`))return;sel.forEach(im=>{const ac=fleet.find(a=>a.immat===im);if(ac){ac[f]=d;if(db)db.ref("fleet/"+fbK(im)+"/"+f).set(d);}});addLog(`Modif groupée: ${FLABEL[f]||f}=${fmt(d)} sur ${sel.length} aéronefs`);render();}
+function bulkEdit(){const f=document.getElementById("bF").value,d=document.getElementById("bD").value;if(!d){alert("Date?");return;}const sel=[...document.querySelectorAll(".bk-c:checked")].map(c=>c.dataset.im);if(!sel.length){alert("Cochez des aéronefs");return;}if(!confirm(`Appliquer ${FLABEL[f]||f}=${fmt(d)} à ${sel.length} aéronef(s)?`))return;let pfSynced=0;sel.forEach(im=>{const ac=fleet.find(a=>a.immat===im);if(ac){ac[f]=d;if(db)db.ref("fleet/"+fbK(im)+"/"+f).set(d);if(f==="lastFlight"&&syncFlightToPF(im))pfSynced++;}});addLog(`Modif groupée: ${FLABEL[f]||f}=${fmt(d)} sur ${sel.length} aéronefs${pfSynced?` (Pt Fixe auto-synchronisé sur ${pfSynced})`:''}`);render();}
 function bkAll(v){document.querySelectorAll(".bk-c").forEach(c=>{c.checked=v;});}
 
 // ===== Sidebar + Topbar (Maya v2) =====
