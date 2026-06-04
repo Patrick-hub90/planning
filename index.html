@@ -773,27 +773,26 @@ tbody tr:hover{background:rgba(59,130,246,.04)!important}
   #mainArea{display:block!important;grid-column:auto!important;height:auto!important;overflow:visible!important}
   .wgrid{grid-template-columns:repeat(5,1fr)!important}
 }
-/* Print mode: Upcoming late only — show only the late-rows table */
+/* Print mode: Upcoming list (respects current filter) */
 @media print{
-  body.print-mode-upcoming-late .stats,
-  body.print-mode-upcoming-late #vSch,
-  body.print-mode-upcoming-late #vFlt,
-  body.print-mode-upcoming-late #vRet,
-  body.print-mode-upcoming-late #vVal,
-  body.print-mode-upcoming-late #vAdm,
-  body.print-mode-upcoming-late #vLog{display:none!important}
-  body.print-mode-upcoming-late #vUp{display:block!important}
-  body.print-mode-upcoming-late .up-header,
-  body.print-mode-upcoming-late .up-filters{display:none!important}
-  body.print-mode-upcoming-late .up-table tbody tr[data-late="0"]{display:none!important}
-  body.print-mode-upcoming-late .up-action-col{display:none!important}
-  body.print-mode-upcoming-late .up-table-wrap{
+  body.print-mode-upcoming .stats,
+  body.print-mode-upcoming #vSch,
+  body.print-mode-upcoming #vFlt,
+  body.print-mode-upcoming #vRet,
+  body.print-mode-upcoming #vVal,
+  body.print-mode-upcoming #vAdm,
+  body.print-mode-upcoming #vLog{display:none!important}
+  body.print-mode-upcoming #vUp{display:block!important}
+  body.print-mode-upcoming .up-header,
+  body.print-mode-upcoming .up-filters{display:none!important}
+  body.print-mode-upcoming .up-action-col{display:none!important}
+  body.print-mode-upcoming .up-table-wrap{
     border:1.5px solid #999!important;border-radius:6px!important;background:#fff!important;box-shadow:none!important
   }
-  body.print-mode-upcoming-late .up-table{font-size:11px;width:100%}
-  body.print-mode-upcoming-late .up-table th{font-size:10px;font-weight:900;background:#f0f2f5!important;border-bottom:1.5px solid #999!important;color:#000!important;padding:8px 10px}
-  body.print-mode-upcoming-late .up-table td{padding:8px 10px;border-bottom:1px solid #ccc!important;font-size:11px}
-  body.print-mode-upcoming-late .up-table tr:last-child td{border-bottom:none!important}
+  body.print-mode-upcoming .up-table{font-size:11px;width:100%}
+  body.print-mode-upcoming .up-table th{font-size:10px;font-weight:900;background:#f0f2f5!important;border-bottom:1.5px solid #999!important;color:#000!important;padding:8px 10px}
+  body.print-mode-upcoming .up-table td{padding:8px 10px;border-bottom:1px solid #ccc!important;font-size:11px}
+  body.print-mode-upcoming .up-table tr:last-child td{border-bottom:none!important}
 }
 </style>
 </head>
@@ -963,7 +962,7 @@ let sigName="",sigPost="",sigImage="";
 let pFonts={title:18,subtitle:11,weekHeader:12,dayHeader:12,sectionLabel:9,taskName:10,taskBadge:7,signature:11};
 let maxDay={pointFixe:1,lavage:1,corrosion:1,lavComp:1};
 let cM=new Date().getMonth(),cY=new Date().getFullYear();
-let upFilter={type:"all",sort:"urgency"};
+let upFilter={type:"all",urg:"all",sort:"urgency"};
 
 function tTh(){isDark=!isDark;document.documentElement.setAttribute("data-theme",isDark?"dark":"");localStorage.setItem("piste_theme",isDark?"dark":"light");document.getElementById("tIco").innerHTML=isDark?'<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>':'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';}
 if(localStorage.getItem("piste_theme")==="dark")tTh();
@@ -1224,9 +1223,13 @@ function getUpcomingTasks(){
 }
 function rUp(){
   const all=getUpcomingTasks();
-  // Apply task-type filter only (no horizon — continuous view)
+  // Apply filters (type + urgency)
   let filtered=all;
   if(upFilter.type!=="all")filtered=filtered.filter(x=>x.task===upFilter.type);
+  if(upFilter.urg==="late")filtered=filtered.filter(x=>x.daysUntil<0);
+  else if(upFilter.urg==="urgent")filtered=filtered.filter(x=>x.daysUntil<=3);
+  else if(upFilter.urg==="week")filtered=filtered.filter(x=>x.daysUntil<=7);
+  else if(upFilter.urg==="month")filtered=filtered.filter(x=>x.daysUntil<=30);
   // Sort
   if(upFilter.sort==="urgency")filtered.sort((a,b)=>a.daysUntil-b.daysUntil);
   else if(upFilter.sort==="immat")filtered.sort((a,b)=>a.immat.localeCompare(b.immat)||a.daysUntil-b.daysUntil);
@@ -1235,16 +1238,27 @@ function rUp(){
   const lateCount=all.filter(x=>x.daysUntil<0).length;
   const urgentCount=all.filter(x=>x.daysUntil>=0&&x.daysUntil<=3).length;
   const soonCount=all.filter(x=>x.daysUntil>=4&&x.daysUntil<=14).length;
-  // Render — header with print-late button
+  // Build dynamic print label based on filter
+  const printLabel=upFilter.urg==="late"?"retards":upFilter.urg==="urgent"?"urgentes":upFilter.urg==="week"?"cette semaine":upFilter.urg==="month"?"ce mois":"liste";
+  // Render — header with print button (respects current filter)
   let h=`<div class="up-header" style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:18px;align-items:center;justify-content:space-between">
     <div>
       <h2 style="font-size:16px;font-weight:800;margin-bottom:4px">Tâches à anticiper</h2>
       <p style="font-size:12px;color:var(--text2)">${all.length} tâches recensées · <span style="color:var(--dn);font-weight:700">${lateCount} en retard</span> · <span style="color:var(--warn);font-weight:700">${urgentCount} urgentes</span> · ${soonCount} sous 15 jours</p>
     </div>
-    <button class="btn btn-dn btn-sm no-print" onclick="printUpcomingLate()" ${lateCount?'':'disabled style="opacity:.4;cursor:not-allowed"'} title="Imprimer la liste des retards"><svg style="width:13px;height:13px;vertical-align:middle;margin-right:4px" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimer retards (${lateCount})</button>
+    <button class="btn btn-primary btn-sm no-print" onclick="printUpcoming()" ${filtered.length?'':'disabled style="opacity:.4;cursor:not-allowed"'} title="Imprimer la liste filtrée"><svg style="width:13px;height:13px;vertical-align:middle;margin-right:4px" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Imprimer ${printLabel} (${filtered.length})</button>
   </div>`;
-  // Filters: task type + sort only
-  h+=`<div class="up-filters" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center">`;
+  // Filters: urgency + task type + sort
+  h+=`<div class="up-filters" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;align-items:center">
+    <span style="font-size:10.5px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-right:4px">Urgence</span>`;
+  const urgencyFilters=[{k:"all",l:"Toutes"},{k:"late",l:`En retard${lateCount?` (${lateCount})`:''}`},{k:"urgent",l:"Urgentes ≤3j"},{k:"week",l:"Cette semaine"},{k:"month",l:"Ce mois"}];
+  urgencyFilters.forEach(f=>{
+    const active=upFilter.urg===f.k;
+    h+=`<button class="btn btn-sm${active?' active':''}" onclick="upSetFilter('urg','${f.k}')">${f.l}</button>`;
+  });
+  h+=`</div>`;
+  h+=`<div class="up-filters" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;align-items:center">
+    <span style="font-size:10.5px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-right:4px">Tâche</span>`;
   const taskFilters=[{k:"all",l:"Toutes"},{k:"pointFixe",l:"Pt Fixe"},{k:"lavage",l:"Lavage"},{k:"corrosion",l:"Insp. Anti-Corr."},{k:"lavComp",l:"Lav.Comp."}];
   taskFilters.forEach(f=>{
     const active=upFilter.type===f.k;
@@ -1289,25 +1303,28 @@ function upSetFilter(key,val){
   upFilter[key]=val;
   rUp();
 }
-function printUpcomingLate(){
-  const all=getUpcomingTasks();
-  const late=all.filter(x=>x.daysUntil<0);
-  if(!late.length){alert("Aucun aéronef en retard à imprimer");return;}
-  // Set print mode + update header
-  document.body.classList.add("print-mode-upcoming-late");
-  document.getElementById("pT").textContent="AÉRONEFS EN RETARD DE MAINTENANCE";
-  document.getElementById("pS").textContent=`Au ${fmtL(today)} · ${late.length} tâche${late.length>1?'s':''} en retard sur ${fleet.filter(a=>a.active).length} aéronefs actifs`;
+function printUpcoming(){
+  // Respect current filters — only print rows that pass type+urgency filters
+  const visibleRows=document.querySelectorAll("#vUp .up-table tbody tr");
+  if(!visibleRows.length){alert("Aucune tâche à imprimer avec ce filtre");return;}
+  // Build dynamic print title based on current filters
+  const urgLabelMap={all:"TÂCHES À ANTICIPER",late:"AÉRONEFS EN RETARD DE MAINTENANCE",urgent:"TÂCHES URGENTES (≤ 3 jours)",week:"TÂCHES DE LA SEMAINE",month:"TÂCHES DU MOIS"};
+  let title=urgLabelMap[upFilter.urg]||"TÂCHES À ANTICIPER";
+  if(upFilter.type!=="all")title+=" — "+TLABEL[upFilter.type].toUpperCase();
+  document.body.classList.add("print-mode-upcoming");
+  document.getElementById("pT").textContent=title;
+  document.getElementById("pS").textContent=`Au ${fmtL(today)} · ${visibleRows.length} tâche${visibleRows.length>1?'s':''} · ${fleet.filter(a=>a.active).length} aéronefs actifs`;
   // Force the upcoming view visible during print
   const prevView=cv;
-  if(cv!=="upcoming"){
-    sv("upcoming");
-  }
+  if(cv!=="upcoming")sv("upcoming");
   setTimeout(()=>{
     window.print();
-    document.body.classList.remove("print-mode-upcoming-late");
+    document.body.classList.remove("print-mode-upcoming");
     if(prevView!=="upcoming")sv(prevView);
   },200);
 }
+// Backward-compat alias
+function printUpcomingLate(){upFilter.urg="late";rUp();printUpcoming();}
 function upMarkDone(immat,task){
   const labelMap={pointFixe:"lastPointFixe",lavage:"lastLavage",corrosion:"lastCorrosion",lavComp:"lastLavComp"};
   const field=labelMap[task];if(!field)return;
