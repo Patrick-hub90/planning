@@ -1060,24 +1060,35 @@ function taskStatus(im,ty,schedDate){
 function generateSchedule(){
   const nd=dim(cM,cY),sd=new Date(cY,cM,1),sc={};
   for(let i=0;i<nd;i++){sc[dk(addD(sd,i))]={pointFixe:[],lavage:[],corrosion:[],lavComp:[]};}
-  const af=fleet.filter(a=>a.active),needs=[];
+  const af=fleet.filter(a=>a.active);
+  const me=dk(new Date(cY,cM,nd));
+  const mkNeed=(im,ty,due)=>({im,ty,due,pr:due.getTime()});
+  // Build the initial work queue: one entry per aircraft × task
+  let queue=[];
   af.forEach(ac=>{if(!ac.lastFlight)return;const lf=new Date(ac.lastFlight);
     const pfR=ac.lastPointFixe?new Date(ac.lastPointFixe):null,pfB=pfR&&pfR>lf?pfR:lf;
-    needs.push({im:ac.immat,ty:"pointFixe",due:addD(pfB,7),pr:addD(pfB,7).getTime()});
-    const lR=ac.lastLavage?new Date(ac.lastLavage):lf;needs.push({im:ac.immat,ty:"lavage",due:addD(lR,9),pr:addD(lR,9).getTime()});
-    const cR=ac.lastCorrosion?new Date(ac.lastCorrosion):lf;needs.push({im:ac.immat,ty:"corrosion",due:addD(cR,9),pr:addD(cR,9).getTime()});
-    if(ac.hasLavComp){const lcR=ac.lastLavComp?new Date(ac.lastLavComp):lf;needs.push({im:ac.immat,ty:"lavComp",due:addD(lcR,7),pr:addD(lcR,7).getTime()});}
+    queue.push(mkNeed(ac.immat,"pointFixe",addD(pfB,7)));
+    const lR=ac.lastLavage?new Date(ac.lastLavage):lf;queue.push(mkNeed(ac.immat,"lavage",addD(lR,9)));
+    const cR=ac.lastCorrosion?new Date(ac.lastCorrosion):lf;queue.push(mkNeed(ac.immat,"corrosion",addD(cR,9)));
+    if(ac.hasLavComp){const lcR=ac.lastLavComp?new Date(ac.lastLavComp):lf;queue.push(mkNeed(ac.immat,"lavComp",addD(lcR,7)));}
   });
-  needs.sort((a,b)=>a.pr-b.pr);const used=new Set();
-  for(let i=0;i<needs.length;i++){const n=needs[i],k=`${n.im}-${n.ty}-${n.due.getTime()}`;if(used.has(k))continue;
+  const used=new Set();
+  // Priority queue: always process the MOST overdue task first (earliest due date).
+  // Using shift() on a freshly-sorted queue avoids index corruption from in-loop re-sorts.
+  while(queue.length){
+    // earliest due first = most overdue first; tie-break keeps task order stable
+    queue.sort((a,b)=>a.pr-b.pr);
+    const n=queue.shift();
+    const k=`${n.im}-${n.ty}-${n.due.getTime()}`;if(used.has(k))continue;
     for(let j=0;j<nd;j++){const d=addD(sd,j),d2=dk(d);if(d2<today||isWE(d2)||isHoliday(d2)||d<n.due)continue;const s=sc[d2];if(!s)continue;
-      if(n.ty==="pointFixe"&&s.pointFixe.length>=maxDay.pointFixe)continue;if(n.ty==="lavage"&&s.lavage.length>=maxDay.lavage)continue;if(n.ty==="corrosion"&&s.corrosion.length>=maxDay.corrosion)continue;if(n.ty==="lavComp"&&s.lavComp.length>=maxDay.lavComp)continue;
+      if(s[n.ty].length>=maxDay[n.ty])continue;
       if(n.ty==="pointFixe"&&(s.lavage.includes(n.im)||s.corrosion.includes(n.im)||s.lavComp.includes(n.im)))continue;
-      if((n.ty==="lavage"||n.ty==="corrosion"||n.ty==="lavComp")&&s.pointFixe.includes(n.im))continue;
+      if(n.ty!=="pointFixe"&&s.pointFixe.includes(n.im))continue;
       if(s[n.ty].includes(n.im))continue;
-      s[n.ty].push(n.im);used.add(k);const me=dk(new Date(cY,cM,nd));
+      s[n.ty].push(n.im);used.add(k);
       const interval=n.ty==="lavComp"||n.ty==="pointFixe"?7:9;
-      const nx=addD(d,interval);if(dk(nx)<=me){needs.push({im:n.im,ty:n.ty,due:nx,pr:nx.getTime()});needs.sort((a,b)=>a.pr-b.pr);}break;
+      const nx=addD(d,interval);if(dk(nx)<=me)queue.push(mkNeed(n.im,n.ty,nx));
+      break;
     }
   }
   sc._genDate=today;return sc;
