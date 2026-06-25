@@ -255,6 +255,11 @@ td{padding:9px 12px;border-bottom:1px solid var(--glass-bd2);font-size:11.5px}
 .dcol.today{background:linear-gradient(180deg,rgba(59,130,246,.10),transparent 65%)}
 .dcol.today .dhead{background:var(--grad);color:#fff;box-shadow:0 4px 14px -2px rgba(59,130,246,.5)}
 .dcol.outside{opacity:.2;pointer-events:none}
+/* Spillover day from adjacent month — shown so weeks stay complete & printable */
+.dcol.spill{background:repeating-linear-gradient(135deg,transparent,transparent 8px,rgba(99,102,241,.025) 8px,rgba(99,102,241,.025) 16px)}
+.dcol.spill .dhead{color:var(--text2)}
+.dcol.spill .dhead::after{content:'';display:inline-block}
+[data-theme="dark"] .dcol.spill{background:repeating-linear-gradient(135deg,transparent,transparent 8px,rgba(255,255,255,.02) 8px,rgba(255,255,255,.02) 16px)}
 .dcol.holiday{
   background:repeating-linear-gradient(45deg,var(--bg3),var(--bg3) 6px,transparent 6px,transparent 12px);
   position:relative
@@ -986,7 +991,7 @@ const TLABEL={pointFixe:"Pt Fixe",lavage:"Lavage",corrosion:"Insp. Anti-Corr.",l
 const FLABEL={lastFlight:"Dernier Vol",lastLavage:"Dernier Lavage",lastPointFixe:"Dernier Pt Fixe",lastCorrosion:"Dernier Insp. Anti-Corrosion",lastLavComp:"Dernier Lav. Compresseur"};
 const TASK_TYPES=["pointFixe","lavage","corrosion","lavComp"];
 
-let fleet=[],pubSched=null,pendingSubs={},admins={admin:{name:"Administrateur",password:"admin",role:"super"}},auditLogs=[],mobileUsers={},curAdmin=null,isSuper=false,cv="schedule",db=null,isDark=false,holidays={};
+let fleet=[],pubSched=null,pubSchedAdj={},pendingSubs={},admins={admin:{name:"Administrateur",password:"admin",role:"super"}},auditLogs=[],mobileUsers={},curAdmin=null,isSuper=false,cv="schedule",db=null,isDark=false,holidays={};
 let sigName="",sigPost="",sigImage="";
 let pFonts={title:18,subtitle:11,weekHeader:12,dayHeader:12,sectionLabel:9,taskName:10,taskBadge:7,signature:11};
 let maxDay={pointFixe:1,lavage:1,corrosion:1,lavComp:1};
@@ -1057,7 +1062,9 @@ function taskStatus(im,ty,schedDate){
 }
 
 // ===== SCHEDULE =====
-function generateSchedule(){
+function generateSchedule(m,y){
+  if(m===undefined)m=cM;if(y===undefined)y=cY;
+  const cM=m,cY=y;
   const nd=dim(cM,cY),sd=new Date(cY,cM,1),sc={};
   for(let i=0;i<nd;i++){sc[dk(addD(sd,i))]={pointFixe:[],lavage:[],corrosion:[],lavComp:[]};}
   const af=fleet.filter(a=>a.active);
@@ -1093,8 +1100,25 @@ function generateSchedule(){
   }
   sc._genDate=today;return sc;
 }
-function publishSchedule(){pubSched=generateSchedule();if(db){db.ref("schedules/"+mKey(cM,cY)).set(pubSched);if(pubSched[today])db.ref("todaySchedule").set(pubSched[today]);}addLog("Planning regénéré ("+MO[cM]+" "+cY+")");render();}
-function loadOrGen(){if(!db){pubSched=generateSchedule();render();return;}db.ref("schedules/"+mKey(cM,cY)).once("value",s=>{const d=s.val();if(d){pubSched=d;render();}else publishSchedule();});}
+function publishSchedule(){pubSched=generateSchedule();if(db){db.ref("schedules/"+mKey(cM,cY)).set(pubSched);if(pubSched[today])db.ref("todaySchedule").set(pubSched[today]);}addLog("Planning regénéré ("+MO[cM]+" "+cY+")");loadAdjacent(()=>render());}
+function loadOrGen(){if(!db){pubSched=generateSchedule();loadAdjacent(()=>render());return;}db.ref("schedules/"+mKey(cM,cY)).once("value",s=>{const d=s.val();if(d){pubSched=d;loadAdjacent(()=>render());}else publishSchedule();});}
+// Adjacent months: prev + next, so cross-month weeks render & print complete
+function adjMonths(){const p={m:cM-1,y:cY};if(p.m<0){p.m=11;p.y--;}const n={m:cM+1,y:cY};if(n.m>11){n.m=0;n.y++;}return[p,n];}
+function mergeAdj(sc){Object.keys(sc).forEach(k=>{if(!k.startsWith("_"))pubSchedAdj[k]=sc[k];});}
+function loadAdjacent(cb){
+  pubSchedAdj={};
+  const months=adjMonths();
+  if(!db){months.forEach(({m,y})=>mergeAdj(generateSchedule(m,y)));cb&&cb();return;}
+  let pending=months.length;
+  months.forEach(({m,y})=>{
+    db.ref("schedules/"+mKey(m,y)).once("value",s=>{
+      const d=s.val();mergeAdj(d||generateSchedule(m,y));
+      if(--pending===0)cb&&cb();
+    });
+  });
+}
+// Day schedule lookup: current month first, then adjacent-month spillover
+function daySched(d){return (pubSched&&pubSched[d])||pubSchedAdj[d]||null;}
 
 // ===== VALIDATION =====
 function approveSub(id){const p=pendingSubs[id];if(!p||!db)return;db.ref("fleet/"+fbK(p.immat)+"/"+p.field).set(p.value);
@@ -1147,34 +1171,35 @@ function rSch(){
   if(pc&&isSuper)h+=`<div onclick="sv('validation')" style="background:var(--warn-bg);border:1px solid var(--warn-bd);border-radius:8px;padding:8px 14px;margin-bottom:10px;cursor:pointer;display:flex;justify-content:space-between;font-weight:800;font-size:12px;color:var(--warn)" class="no-print"><span>📋 ${pc} saisie(s) en attente</span><span>→</span></div>`;
 
   let weekIdx=0;const weeksInfo=[];
-  // Filter weeks with content
+  // Day header label — append month for spillover days (different month than current)
+  const dHead=dt=>`${WD[dt.getDay()]} ${dt.getDate()}${dt.getMonth()!==cM?'/'+String(dt.getMonth()+1).padStart(2,'0'):''}`;
+  // Each week is a full Mon→Fri block, including days that spill into adjacent months
   wks.forEach(w=>{
-    const inW=w.filter(x=>x.in);
-    // Check if week has any tasks
+    // Check if week has any tasks (across all 5 days, current + spillover)
     let weekHasTasks=false;
-    w.forEach(({d,in:inM})=>{if(!inM)return;const sl=pubSched[d];if(!sl)return;if(TASK_TYPES.some(ty=>sl[ty]&&sl[ty].length))weekHasTasks=true;});
-    // Skip weeks entirely in past with no tasks
-    const allPast=inW.every(x=>x.d<today);
+    w.forEach(({d})=>{const sl=daySched(d);if(sl&&TASK_TYPES.some(ty=>sl[ty]&&sl[ty].length))weekHasTasks=true;});
+    // Skip weeks entirely in the past with no tasks
+    const allPast=w.every(x=>x.d<today);
     if(allPast&&!weekHasTasks)return;
 
-    const ws=inW.length?inW[0].d:w[0].d,we=inW.length?inW[inW.length-1].d:w[4].d;
+    const ws=w[0].d,we=w[4].d;
     let wDone=0,wTotal=0;
-    w.forEach(({d,in:inM})=>{if(!inM)return;const sl=pubSched[d];if(!sl)return;TASK_TYPES.forEach(ty=>{if(!sl[ty])return;sl[ty].forEach(im=>{const r=taskStatus(im,ty,d);if(r.st!=="skip"){wTotal++;if(r.st==="done")wDone++;}});});});
+    w.forEach(({d})=>{const sl=daySched(d);if(!sl)return;TASK_TYPES.forEach(ty=>{if(!sl[ty])return;sl[ty].forEach(im=>{const r=taskStatus(im,ty,d);if(r.st!=="skip"){wTotal++;if(r.st==="done")wDone++;}});});});
     const wPct=wTotal?Math.round(wDone/wTotal*100):0;const bc=wPct>=80?"var(--ok)":wPct>=40?"var(--tc)":"var(--dn)";
     weeksInfo.push({idx:weekIdx,label:`Sem. ${fmt(ws)} — ${fmt(we)}`,ws,we});
     h+=`<div class="wblock" data-week="${weekIdx}"><div class="wheader"><span class="wheader-label">Sem. ${fmt(ws)} — ${fmt(we)}</span><div class="wprog">${wDone}/${wTotal}<div class="wprog-bar"><div class="wprog-fill" style="width:${wPct}%;background:${bc}"></div></div>${wPct}%</div></div><div class="wgrid">`;
     // ... day columns rendered below
     w.forEach(({d,in:inM})=>{
       const dt=new Date(d+'T12:00:00'),isT=d===today,isP=d<today,isHol=isHoliday(d);
-      if(!inM){h+=`<div class="dcol outside"><div class="dhead">${WD[dt.getDay()]} ${dt.getDate()}</div></div>`;return;}
+      const spill=inM?'':' spill';
       // Holiday: show banner, no tasks
-      if(isHol){h+=`<div class="dcol holiday"><div class="dhead">${WD[dt.getDay()]} ${dt.getDate()}</div><div class="hol-label">🎉 ${holidayLabel(d)}</div></div>`;return;}
-      const sl=pubSched[d]||{pointFixe:[],lavage:[],corrosion:[],lavComp:[]};
+      if(isHol){h+=`<div class="dcol holiday${spill}"><div class="dhead">${dHead(dt)}</div><div class="hol-label">🎉 ${holidayLabel(d)}</div></div>`;return;}
+      const sl=daySched(d)||{pointFixe:[],lavage:[],corrosion:[],lavComp:[]};
       const hasTasks=TASK_TYPES.some(ty=>sl[ty]&&sl[ty].length);
       // Skip past empty days
-      if(isP&&!isT&&!hasTasks){h+=`<div class="dcol" style="opacity:.2"><div class="dhead">${WD[dt.getDay()]} ${dt.getDate()}</div><div style="text-align:center;margin-top:12px;font-size:7px;color:var(--text3);font-weight:700">PASSÉ</div></div>`;return;}
+      if(isP&&!isT&&!hasTasks){h+=`<div class="dcol${spill}" style="opacity:.2"><div class="dhead">${dHead(dt)}</div><div style="text-align:center;margin-top:12px;font-size:7px;color:var(--text3);font-weight:700">PASSÉ</div></div>`;return;}
 
-      h+=`<div class="dcol${isT?' today':''}"><div class="dhead">${WD[dt.getDay()]} ${dt.getDate()}</div>`;
+      h+=`<div class="dcol${isT?' today':''}${spill}"><div class="dhead">${dHead(dt)}</div>`;
       TASK_TYPES.forEach(ty=>{
         if(!sl[ty]||!sl[ty].length)return;
         h+=`<div class="tsec"><div class="tsec-head ${tH(ty)}">${tl(ty)}</div>`;
@@ -1622,11 +1647,10 @@ function getWeeksList(){
   const wks=[];let cur=new Date(mon);
   while(cur<=fri){
     const days=[];for(let i=0;i<5;i++){days.push(dk(new Date(cur)));cur.setDate(cur.getDate()+1);}cur.setDate(cur.getDate()+2);
-    // Only keep weeks that have at least one day in the current month
+    // Keep weeks that touch the current month, but expose the FULL Mon→Fri range
     const inMonth=days.filter(d=>{const x=new Date(d+'T12:00:00');return x.getMonth()===cM&&x.getFullYear()===cY;});
     if(inMonth.length){
-      const start=inMonth[0],end=inMonth[inMonth.length-1];
-      wks.push({start,end,days:inMonth});
+      wks.push({start:days[0],end:days[4],days});
     }
   }
   return wks;
@@ -1639,8 +1663,10 @@ function exportTasksJSON(){
   let filterDays=null;
   if(scope!=="all"){const[start,end]=scope.split("|");filterDays=d=>d>=start&&d<=end;}
 
+  // Merge current month + adjacent spillover so a cross-month week exports fully
+  const srcDays={...pubSchedAdj,...pubSched};
   const tasks=[];
-  Object.entries(pubSched).forEach(([dt,s])=>{
+  Object.entries(srcDays).forEach(([dt,s])=>{
     if(!s||dt.startsWith("_"))return;
     if(filterDays&&!filterDays(dt))return;
     ["pointFixe","lavage","corrosion","lavComp"].forEach(ty=>{
