@@ -843,13 +843,10 @@ tbody tr:hover{background:rgba(59,130,246,.04)!important}
 <div class="logo-big"><svg viewBox="0 0 24 24"><path d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0011.5 2 1.5 1.5 0 0010 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></svg></div>
 <h1>PISTE — Connexion</h1>
 <p>Admin principal: lecture + écriture · Autres comptes: lecture seule</p>
-<input type="text" id="loginUser" placeholder="Identifiant" value="admin" autocomplete="username">
-<input type="password" id="loginPwd" placeholder="Mot de passe" value="admin" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+<input type="text" id="loginUser" placeholder="Identifiant" autocomplete="username">
+<input type="password" id="loginPwd" placeholder="Mot de passe" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
 <button onclick="doLogin()">Connexion</button>
 <div class="error" id="loginError">Identifiant ou mot de passe incorrect</div>
-<div style="margin-top:14px;padding:10px 12px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:10px;font-size:11px;color:var(--text2);font-weight:600;position:relative">
-  <span style="color:var(--pf);font-weight:800">Compte démo:</span> admin / admin
-</div>
 </div></div>
 
 <!-- APP -->
