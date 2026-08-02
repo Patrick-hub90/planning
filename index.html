@@ -1574,9 +1574,8 @@ function uSig(e){const f=e.target.files[0];if(!f)return;const r=new FileReader()
 function rSig(){sigImage="";if(db)db.ref("config/sigImage").remove();rAdm();}
 function xBk(){const d=JSON.stringify({fleet,sigName,sigPost,sigImage,holidays,maxDay,pFonts},null,2);const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([d],{type:"application/json"}));a.download="piste_backup.json";a.click();}
 
-// Get weeks (Mon-Fri) for current month
+// Get weeks (Mon-Fri) for current month — calculé depuis le mois/année, indépendant du planning chargé
 function getWeeksList(){
-  if(!pubSched)return[];
   const nd=dim(cM,cY),sd=new Date(cY,cM,1),le=new Date(cY,cM,nd);
   let mon=new Date(sd);while(mon.getDay()!==1)mon.setDate(mon.getDate()-1);
   let fri=new Date(le);while(fri.getDay()!==5)fri.setDate(fri.getDate()+1);
@@ -1612,6 +1611,11 @@ function exportTasksJSON(){
       s[ty].forEach(im=>{
         const ac=fleet.find(a=>a.immat===im);
         const status=taskStatus(im,ty,dt);
+        const lastDate=ac?(ty==="pointFixe"?ac.lastPointFixe:ty==="lavage"?ac.lastLavage:ty==="corrosion"?ac.lastCorrosion:ac.lastLavComp):null;
+        // Échéance théorique = dernière exécution (+ vol pour Pt Fixe) + intervalle ; retard = jours écoulés depuis
+        const refLast=ty==="pointFixe"?((ac&&ac.lastPointFixe&&(!ac.lastFlight||ac.lastPointFixe>ac.lastFlight))?ac.lastPointFixe:(ac?ac.lastFlight:null)):(lastDate||(ac?ac.lastFlight:null));
+        const dueDate=refLast?dk(addD(new Date(refLast+'T12:00:00'),MIN_INT[ty])):null;
+        const daysUntilDue=dueDate?daysBetween(today,dueDate):null;
         tasks.push({
           date:dt,
           taskType:ty,
@@ -1622,12 +1626,22 @@ function exportTasksJSON(){
           status:status.st,
           statusDetails:status.label||status.doneDate||null,
           lastFlight:ac?.lastFlight||null,
-          lastDate:ac?(ty==="pointFixe"?ac.lastPointFixe:ty==="lavage"?ac.lastLavage:ty==="corrosion"?ac.lastCorrosion:ac.lastLavComp):null
+          lastDate,
+          dueDate,
+          daysUntilDue,
+          overdue:daysUntilDue!=null&&daysUntilDue<0,
+          daysOverdue:daysUntilDue!=null&&daysUntilDue<0?-daysUntilDue:0
         });
       });
     });
   });
-  tasks.sort((a,b)=>a.date.localeCompare(b.date)||a.aircraft.localeCompare(b.aircraft));
+  // Tri par priorité : le plus en retard d'abord (échéance la plus ancienne), puis par date planifiée
+  tasks.sort((a,b)=>{
+    const au=a.daysUntilDue==null?9999:a.daysUntilDue, bu=b.daysUntilDue==null?9999:b.daysUntilDue;
+    return au-bu || a.date.localeCompare(b.date) || a.aircraft.localeCompare(b.aircraft);
+  });
+  // Rang de priorité explicite (1 = à traiter en premier)
+  tasks.forEach((t,i)=>{t.priorityRank=i+1;});
 
   const scopeLabel=scope==="all"?`${MO[cM]}_${cY}`:`Sem_${scope.split("|")[0]}`;
   const payload={
@@ -1639,7 +1653,10 @@ function exportTasksJSON(){
       month:MO[cM]+" "+cY,
       scope:scope==="all"?"month":"week",
       scopeRange:scope==="all"?{start:dk(new Date(cY,cM,1)),end:dk(new Date(cY,cM,dim(cM,cY)))}:{start:scope.split("|")[0],end:scope.split("|")[1]},
-      taskCount:tasks.length
+      taskCount:tasks.length,
+      generatedFor:today,
+      sortOrder:"priority",
+      sortDescription:"Tâches triées par priorité : aéronefs les plus en retard d'abord (priorityRank=1 = à traiter en premier). Champs: overdue, daysOverdue, daysUntilDue, dueDate."
     },
     taskTypes:{pointFixe:{label:"Point Fixe",interval:7,maxPerDay:maxDay.pointFixe},lavage:{label:"Lavage",interval:9,maxPerDay:maxDay.lavage},corrosion:{label:"Inspection Anti-Corrosion",interval:9,maxPerDay:maxDay.corrosion},lavComp:{label:"Lavage Compresseur",interval:7,maxPerDay:maxDay.lavComp}},
     holidays:Object.fromEntries(Object.entries(holidays).filter(([d])=>{if(scope==="all"){return d.startsWith(mKey(cM,cY));}else{const[s,e]=scope.split("|");return d>=s&&d<=e;}})),
